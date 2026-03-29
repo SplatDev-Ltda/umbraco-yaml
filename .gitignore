@@ -1,1 +1,4 @@
 .worktrees/
+/.vs
+/Umbraco.Plugins.Yaml2Schema.Tests/bin
+/Umbraco.Plugins.Yaml2Schema.Tests/obj
