@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Umbraco.Plugins.Yaml2Schema.Tests/Umbraco.Plugins.Yaml2Schema.Tests.csproj" />
+  <Project Path="Umbraco.Plugins.Yaml2Schema/Umbraco.Plugins.Yaml2Schema.csproj" />
+  <Project Path="UmbracoYaml.Web/UmbracoYaml.Web.csproj" />
+</Solution>

@@ -1,0 +1,44 @@
+umbraco:
+  dataTypes:
+    - alias: textString
+      name: Text String
+      editor: Umbraco.TextBox
+      config:
+        maxLength: 255
+    - alias: richText
+      name: Rich Text
+      editor: Umbraco.RichText
+      config:
+        toolbar: "bold,italic,underline,oembed"
+
+  documentTypes:
+    - alias: page
+      name: Page
+      icon: icon-document
+      allowAsRoot: true
+      allowedChildTypes:
+        - page
+      tabs:
+        - name: Content
+          properties:
+            - alias: title
+              name: Title
+              dataType: textString
+              required: true
+              description: The page title
+
+  templates:
+    - alias: masterPage
+      name: Master Page
+      path: Master.cshtml
+      masterTemplate: null
+
+  content:
+    - alias: home
+      name: Home
+      type: page
+      published: true
+      sortOrder: 0
+      values:
+        title: Welcome to Umbraco
+      children: []
