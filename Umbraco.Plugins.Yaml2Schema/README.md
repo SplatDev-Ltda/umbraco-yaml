@@ -235,4 +235,4 @@ dotnet test
 
 ## License
 
-MIT © 2026 [SplatDev](https://github.com/ccasalicchio)
+MIT © 2026 [SplatDev](https://github.com/SplatDev-Ltda)

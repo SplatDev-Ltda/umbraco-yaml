@@ -8,7 +8,7 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Yaml2Schema</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
@@ -17,8 +17,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/ccasalicchio/umbraco-yaml</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/ccasalicchio/umbraco-yaml</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
