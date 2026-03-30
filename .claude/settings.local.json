@@ -52,7 +52,16 @@
       "Bash(ROOT=/mnt/e/Source/Repos/Umbraco-Yaml/.worktrees/yaml-plugin-impl)",
       "Bash(rm -rf \"$ROOT/UmbracoYaml\" \"$ROOT/UmbracoYaml.Tests\")",
       "Read(//mnt/e/Source/Repos/Umbraco-Yaml/.worktrees/yaml-plugin-impl/**)",
-      "Bash(echo \"Exit: $?\")"
+      "Bash(echo \"Exit: $?\")",
+      "Bash(find /mnt/e/Source/Repos/Umbraco-Yaml/Umbraco.Plugins.Yaml2Schema.Tests -name \"*.cs\" -exec head -50 {})",
+      "Skill(svg-icon-generator)",
+      "mcp__imagemagick-mcp__convert_image_format",
+      "mcp__microsoft_playwright-mcp__browser_navigate",
+      "mcp__microsoft_playwright-mcp__browser_fill_form",
+      "mcp__microsoft_playwright-mcp__browser_click",
+      "Bash(gh auth:*)",
+      "Bash(gh org:*)",
+      "Bash(git --version)"
     ]
   }
 }
