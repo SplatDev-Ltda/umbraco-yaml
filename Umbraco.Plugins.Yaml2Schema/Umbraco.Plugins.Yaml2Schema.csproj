@@ -7,13 +7,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
 
     <!-- NuGet package metadata -->
-    <PackageId>Umbraco.Plugins.Yaml2Schema</PackageId>
-    <Version>1.0.0</Version>
-    <Authors>Umbraco.Plugins.Yaml2Schema Contributors</Authors>
-    <Description>A declarative, Infrastructure-as-Code style plugin for Umbraco 17 that enables programmatic creation of DataTypes, DocumentTypes, Templates, and Content from a YAML configuration file.</Description>
-    <PackageTags>umbraco yaml infrastructure-as-code cms content-management</PackageTags>
+    <PackageId>SplatDev.Umbraco.Plugins.Yaml2Schema</PackageId>
+    <Version>1.0.1</Version>
+    <Authors>Carlos Casalicchio</Authors>
+    <Company>SplatDev</Company>
+    <Copyright>Copyright © 2026 SplatDev</Copyright>
+    <Description>A declarative, Infrastructure-as-Code style plugin for Umbraco 17 that enables programmatic creation of DataTypes, DocumentTypes, Templates, and Content from a YAML configuration file. Define your entire Umbraco structure in YAML — the plugin builds it automatically on startup.</Description>
+    <PackageTags>umbraco yaml infrastructure-as-code cms content-management document-types data-types templates seeding umbraco-marketplace</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/ccasalicchio/umbraco-yaml</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ccasalicchio/umbraco-yaml</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
@@ -22,9 +28,10 @@
     <PackageReference Include="YamlDotNet" Version="15.1.0" />
   </ItemGroup>
 
-  <!-- Include README in the NuGet package -->
+  <!-- Include README and icon in the NuGet package -->
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
