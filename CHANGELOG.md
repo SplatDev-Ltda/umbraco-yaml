@@ -9,6 +9,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-03-31
+
+### Fixed
+
+#### Runtime-level guard in `YamlInitializationHandler`
+- Handler now checks `IRuntimeState.Level == RuntimeLevel.Run` before executing any initialization logic.
+- Previously, the handler fired during the Umbraco installer (before the database schema existed), causing `Invalid object name 'umbracoLanguage'` SQL exceptions and cascading failures (`DataType` editor aliases not found, templates not written, `DocumentType` linking skipped).
+- When the runtime level is not `Run` (i.e., `Install` or `Upgrade`), the handler logs an informational message and exits immediately without touching the database.
+
 ## [1.0.5] - 2026-03-31
 
 ### Added

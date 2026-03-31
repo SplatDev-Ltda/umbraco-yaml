@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Plugins.Yaml2Schema.Services;
 
 namespace Umbraco.Plugins.Yaml2Schema.Handlers
@@ -24,6 +25,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
         private readonly DictionaryCreator _dictionaryCreator;
         private readonly MemberCreator _memberCreator;
         private readonly UserCreator _userCreator;
+        private readonly IRuntimeState _runtimeState;
         private readonly ILogger<YamlInitializationHandler> _logger;
         private readonly IConfiguration _configuration;
         private readonly IHostEnvironment _hostEnvironment;
@@ -41,6 +43,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             DictionaryCreator dictionaryCreator,
             MemberCreator memberCreator,
             UserCreator userCreator,
+            IRuntimeState runtimeState,
             ILogger<YamlInitializationHandler> logger,
             IConfiguration configuration,
             IHostEnvironment hostEnvironment)
@@ -57,6 +60,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             _dictionaryCreator = dictionaryCreator ?? throw new ArgumentNullException(nameof(dictionaryCreator));
             _memberCreator = memberCreator ?? throw new ArgumentNullException(nameof(memberCreator));
             _userCreator = userCreator ?? throw new ArgumentNullException(nameof(userCreator));
+            _runtimeState = runtimeState ?? throw new ArgumentNullException(nameof(runtimeState));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _hostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
@@ -64,6 +68,15 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
 
         public async Task HandleAsync(UmbracoApplicationStartedNotification notification, CancellationToken cancellationToken)
         {
+            // Only run when Umbraco is fully installed and running — skip during installer/upgrade
+            if (_runtimeState.Level != Umbraco.Cms.Core.RuntimeLevel.Run)
+            {
+                _logger.LogInformation(
+                    "YamlInitializationHandler: Skipping YAML initialization — runtime level is {Level} (requires Run).",
+                    _runtimeState.Level);
+                return;
+            }
+
             _logger.LogInformation("YamlInitializationHandler: Umbraco application started, initializing YAML configuration.");
 
             try
