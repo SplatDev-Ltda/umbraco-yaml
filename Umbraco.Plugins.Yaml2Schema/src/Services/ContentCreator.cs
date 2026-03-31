@@ -43,8 +43,9 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         {
                             foreach (var kvp in yamlContent.Values)
                             {
-                                if (toUpdate.Properties.Any(p => p.Alias == kvp.Key))
-                                    toUpdate.SetValue(kvp.Key, kvp.Value);
+                                var prop = toUpdate.Properties.FirstOrDefault(p => p.Alias == kvp.Key);
+                                if (prop != null)
+                                    toUpdate.SetValue(kvp.Key, CoerceValue(kvp.Value, prop));
                             }
 
                             toUpdate.SortOrder = yamlContent.SortOrder;
@@ -55,7 +56,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
                             _logger?.LogInformation("Content '{Name}' updated.", yamlContent.Name);
 
-                            if (yamlContent.Children.Any())
+                            if (yamlContent.Children?.Any() == true)
                                 CreateContent(yamlContent.Children, toUpdate.Id);
                         }
                         else
@@ -98,10 +99,9 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     // Set property values
                     foreach (var kvp in yamlContent.Values)
                     {
-                        if (content.Properties.Any(p => p.Alias == kvp.Key))
-                        {
-                            content.SetValue(kvp.Key, kvp.Value);
-                        }
+                        var prop = content.Properties.FirstOrDefault(p => p.Alias == kvp.Key);
+                        if (prop != null)
+                            content.SetValue(kvp.Key, CoerceValue(kvp.Value, prop));
                     }
 
                     content.SortOrder = yamlContent.SortOrder;
@@ -116,7 +116,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     _logger?.LogInformation("Created Content: {Alias}", yamlContent.Alias);
 
                     // Recursively create children
-                    if (yamlContent.Children.Any())
+                    if (yamlContent.Children?.Any() == true)
                     {
                         CreateContent(yamlContent.Children, content.Id);
                     }
@@ -127,6 +127,30 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     throw;
                 }
             }
+        }
+        /// <summary>
+        /// YamlDotNet deserialises all scalar values to strings when the target type is object.
+        /// This converts "true"/"false" to 1/0 for Integer-typed properties (e.g. Umbraco.TrueFalse),
+        /// and coerces numeric strings for Decimal properties.
+        /// </summary>
+        private static object CoerceValue(object value, IProperty property)
+        {
+            if (value is not string strVal) return value;
+
+            return property.PropertyType.ValueStorageType switch
+            {
+                ValueStorageType.Integer => strVal.ToLowerInvariant() switch
+                {
+                    "true"  => (object)1,
+                    "false" => (object)0,
+                    _       => int.TryParse(strVal, out var i) ? (object)i : value
+                },
+                ValueStorageType.Decimal => decimal.TryParse(strVal,
+                    System.Globalization.NumberStyles.Any,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    out var d) ? (object)d : value,
+                _ => value
+            };
         }
     }
 }

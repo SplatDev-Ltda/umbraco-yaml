@@ -62,7 +62,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // [UPDATE] — update if exists, skip if not found
+                    // [UPDATE] — update if exists, create if not found
                     if (yamlDocType.Update)
                     {
                         var toUpdate = _contentTypeService.Get(yamlDocType.Alias);
@@ -73,15 +73,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                             _logger?.LogInformation(
                                 "DocumentType '{Name}' with alias '{Alias}' updated.",
                                 yamlDocType.Name, yamlDocType.Alias);
+                            processedAliases.Add(yamlDocType.Alias);
+                            continue;
                         }
-                        else
-                        {
-                            _logger?.LogInformation(
-                                "DocumentType with alias '{Alias}' not found. Skipping update.",
-                                yamlDocType.Alias);
-                        }
-                        processedAliases.Add(yamlDocType.Alias);
-                        continue;
+                        // Not found — fall through to creation below
+                        _logger?.LogInformation(
+                            "DocumentType '{Alias}' not found during UPDATE; will create it.",
+                            yamlDocType.Alias);
                     }
 
                     // [REMOVE] — delete the DocumentType if flagged
@@ -127,7 +125,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     };
 
                     // Add tabs and properties
-                    foreach (var tab in yamlDocType.Tabs)
+                    foreach (var tab in yamlDocType.Tabs ?? [])
                     {
                         var tabAlias = _shortStringHelper.CleanStringForSafeAlias(tab.Name);
                         var contentTab = new PropertyGroup(false) { Name = tab.Name, Alias = tabAlias };
@@ -162,7 +160,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     }
 
                     // Set allowed child types
-                    if (yamlDocType.AllowedChildTypes.Any())
+                    if (yamlDocType.AllowedChildTypes?.Any() == true)
                     {
                         var childTypes = yamlDocType.AllowedChildTypes
                             .Select(alias => _contentTypeService.Get(alias))
@@ -258,7 +256,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             existing.AllowedAsRoot = yaml.AllowAsRoot;
 
             // Merge tabs and properties — additive only, existing properties are never removed
-            foreach (var tab in yaml.Tabs)
+            foreach (var tab in yaml.Tabs ?? [])
             {
                 var tabAlias = _shortStringHelper.CleanStringForSafeAlias(tab.Name);
                 var existingTab = existing.PropertyGroups.FirstOrDefault(g => g.Alias == tabAlias);
@@ -317,7 +315,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             }
 
             // Update allowed child types when explicitly provided
-            if (yaml.AllowedChildTypes.Any())
+            if (yaml.AllowedChildTypes?.Any() == true)
             {
                 var childTypes = yaml.AllowedChildTypes
                     .Select(alias => _contentTypeService.Get(alias))

@@ -9,6 +9,53 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.13] - 2026-03-31
+
+### Fixed
+
+#### Dropdown `items` config format corrected in `DataTypeCreator`
+- `ValueListConfiguration.Items` in Umbraco 17 is `List<string>`, not a list of `{ id, value }` objects.
+- The `NormalizeConfig` helper introduced in v1.0.8 was converting plain string items to `[{ id: N, value: "..." }]` dicts — the wrong shape — causing `InvalidDataTypeConfiguration` validation errors on every dropdown DataType (`Umbraco.DropDown.Flexible`, checkboxlist, etc.) and intermittent `GetDataType` null returns that cascaded into missing properties on DocumentTypes.
+- Fix: added `IsValueListConfig` predicate; when the `items` key holds a plain string list, `NormalizeConfig` is skipped and the raw `{ "items": ["val1", "val2"] }` dict is passed directly to `SetConfigurationData` — matching the actual `List<string>` structure Umbraco 17 expects.
+- Removed the broken `TryBuildValueListConfiguration` approach (which attempted `dataType.Configuration = ...` and `dataType.ConfigurationObject = ...` — both inaccessible in Umbraco 17).
+
+## [1.0.12] - 2026-03-31
+
+### Fixed
+
+#### Boolean/numeric property coercion in `ContentCreator`
+- YamlDotNet deserialises all YAML scalar values (including `true`/`false`) as `System.String` when the target property type is `object`.
+- Umbraco's `Property.SetValue` for checkbox (`Umbraco.TrueFalse`) and other integer-backed editors expects `System.Int32`, causing `Cannot assign value "true" of type System.String to property expecting System.Int32`.
+- Added `CoerceValue` helper: for `ValueStorageType.Integer` properties, `"true"`→`1`, `"false"`→`0`, numeric strings parsed to `int`; for `ValueStorageType.Decimal` properties, numeric strings parsed with invariant culture. Applied on both create and update paths.
+
+## [1.0.11] - 2026-03-31
+
+### Fixed
+
+#### DataType database storage type derived from editor in `DataTypeCreator`
+- `DatabaseType` was hardcoded to `ValueStorageType.Nvarchar` for every DataType, causing SQL truncation errors (`String or binary data would be truncated in column 'varcharValue'`) when seeding content into properties backed by rich text or other long-value editors.
+- Now uses `DataType.GetDatabaseType(editor.GetValueEditor().ValueType)` so each DataType gets the correct storage type: `Ntext` for rich text / markdown, `Nvarchar` for short text, `Integer`/`Decimal` for numeric editors, etc.
+
+## [1.0.10] - 2026-03-31
+
+### Fixed
+
+#### Null-safe collection guards in `DocumentTypeCreator`, `ContentCreator`, and `MediaCreator`
+- YamlDotNet can override `= new()` property initializers with `null` when deserializing YAML that omits or explicitly nulls a list field.
+- `AllowedChildTypes.Any()` in both the create and update paths of `DocumentTypeCreator` now uses `?.Any() == true`.
+- `Tabs` foreach in both create and update paths now uses `?? []` to avoid null iteration.
+- `Children.Any()` in `ContentCreator` and `MediaCreator` (all three call sites in each) use `?.Any() == true`.
+- Previously these threw `ArgumentNullException` from `Enumerable.Any` whenever a DocumentType, content node, or media node omitted a list property.
+
+## [1.0.9] - 2026-03-31
+
+### Fixed
+
+#### True upsert behaviour for `update: true` entities in `DataTypeCreator`, `DocumentTypeCreator`, and `TemplateCreator`
+- When `update: true` is set and the entity **does not yet exist**, all three creators now fall through to the creation path instead of logging "not found, skipping" and calling `continue`.
+- Previously, every entity flagged with `update: true` was unconditionally skipped on a fresh database (first install), meaning all 20/21 DocumentTypes, all 13 Templates, and any DataType with `update: true` were never created — causing cascading failures in content seeding.
+- Now `update: true` behaves as a true upsert: **update if exists, create if not found**.
+
 ## [1.0.8] - 2026-03-31
 
 ### Fixed

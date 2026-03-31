@@ -53,7 +53,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // [UPDATE] — skip if not found; update (no-op) if already present
+                    // [UPDATE] — update (no-op) if already present; create if not found
                     if (yamlDataType.Update)
                     {
                         var existing = _dataTypeService.GetDataType(yamlDataType.Name);
@@ -62,15 +62,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                             _logger?.LogInformation(
                                 "DataType '{Name}' already exists. No structural update required.",
                                 yamlDataType.Name);
+                            processedAliases.Add(yamlDataType.Alias);
+                            continue;
                         }
-                        else
-                        {
-                            _logger?.LogInformation(
-                                "DataType '{Name}' not found. Skipping update.",
-                                yamlDataType.Name);
-                        }
-                        processedAliases.Add(yamlDataType.Alias);
-                        continue;
+                        // Not found — fall through to creation below
+                        _logger?.LogInformation(
+                            "DataType '{Name}' not found during UPDATE; will create it.",
+                            yamlDataType.Name);
                     }
 
                     // [REMOVE] — delete the DataType if flagged
@@ -118,16 +116,32 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     }
 
                     // Create new DataType
+                    var dbType = editor.GetValueEditor().ValueType switch
+                    {
+                        "TEXT"    => ValueStorageType.Ntext,
+                        "INT"     => ValueStorageType.Integer,
+                        "INTEGER" => ValueStorageType.Integer,
+                        "BIGINT"  => ValueStorageType.Integer,
+                        "DECIMAL" => ValueStorageType.Decimal,
+                        "DATE"    => ValueStorageType.Date,
+                        _         => ValueStorageType.Nvarchar
+                    };
+
                     var dataType = new DataType(editor, _configSerializer, -1)
                     {
                         Name = yamlDataType.Name,
-                        DatabaseType = ValueStorageType.Nvarchar
+                        DatabaseType = dbType
                     };
 
                     // Apply config from YAML (supports Block List, Image Cropper, etc.)
                     if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
                     {
-                        NormalizeConfig(yamlDataType.Config);
+                        // ValueListConfiguration.Items is List<string> in Umbraco 17.
+                        // Do NOT convert string items to {id,value} dicts — pass them as-is.
+                        // NormalizeConfig is only applied for editors whose item format differs.
+                        if (!IsValueListConfig(yamlDataType.Config))
+                            NormalizeConfig(yamlDataType.Config);
+
                         dataType.SetConfigurationData(yamlDataType.Config);
                     }
 
@@ -155,16 +169,27 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
         }
 
         /// <summary>
-        /// Converts simple string lists under the "items" key to the
-        /// { id, value } format required by Umbraco.DropDown.Flexible and similar editors.
-        /// YamlDotNet deserialises "- Foo\n- Bar" as List&lt;object&gt; of strings;
-        /// Umbraco's ValueListConfiguration expects List of { id: int, value: string }.
+        /// Returns true when config contains a plain string list under "items",
+        /// i.e. it is already in the format expected by ValueListConfiguration.Items (List&lt;string&gt;).
+        /// In that case NormalizeConfig must be skipped — converting strings to {id,value}
+        /// dicts would produce the wrong shape and cause validation errors.
+        /// </summary>
+        private static bool IsValueListConfig(Dictionary<string, object> config)
+        {
+            if (!config.TryGetValue("items", out var raw)) return false;
+            if (raw is not List<object> items) return false;
+            return items.Count == 0 || items[0] is string;
+        }
+
+        /// <summary>
+        /// Normalisation for non-ValueList editors that store an "items" list
+        /// (e.g. custom editors). Converts "- Foo\n- Bar" to [{ id, value }] format
+        /// so SetConfigurationData receives a serialisable structure.
         /// </summary>
         private static void NormalizeConfig(Dictionary<string, object> config)
         {
             if (!config.TryGetValue("items", out var raw)) return;
 
-            // Already a list of dicts — nothing to do
             if (raw is List<object> items && items.Count > 0 && items[0] is string)
             {
                 config["items"] = items

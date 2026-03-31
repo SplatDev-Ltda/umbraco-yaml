@@ -82,7 +82,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                             _mediaService.Save(toUpdate, Constants.Security.SuperUserId);
                             _logger?.LogInformation("Media '{Name}' updated.", yamlMedia.Name);
 
-                            if (yamlMedia.Children.Any())
+                            if (yamlMedia.Children?.Any() == true)
                                 CreateMedia(yamlMedia.Children, toUpdate.Id);
                         }
                         else
@@ -100,7 +100,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     if (existing != null)
                     {
                         _logger?.LogInformation("Media '{Name}' already exists. Skipping.", yamlMedia.Name);
-                        if (yamlMedia.Children.Any())
+                        if (yamlMedia.Children?.Any() == true)
                             CreateMedia(yamlMedia.Children, existing.Id);
                         continue;
                     }
@@ -121,7 +121,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     _mediaService.Save(media, Constants.Security.SuperUserId);
                     _logger?.LogInformation("Media '{Name}' created.", yamlMedia.Name);
 
-                    if (yamlMedia.Children.Any())
+                    if (yamlMedia.Children?.Any() == true)
                         CreateMedia(yamlMedia.Children, media.Id);
                 }
                 catch (Exception ex)

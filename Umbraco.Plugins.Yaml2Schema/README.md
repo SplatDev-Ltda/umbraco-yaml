@@ -82,6 +82,15 @@ dataTypes:
     config:
       maxLength: 100
 
+  - alias: status
+    name: Status
+    editorUiAlias: Umbraco.DropDown.Flexible
+    config:
+      items:
+        - Draft
+        - Published
+        - Archived
+
   - alias: blockList
     name: Block List
     editorUiAlias: Umbraco.BlockList
@@ -432,6 +441,8 @@ users:
 | `Umbraco.MediaPicker3` | Media picker |
 | `Umbraco.ContentPicker` | Content picker |
 | `Umbraco.Tags` | Tag input |
+| `Umbraco.DropDown.Flexible` | Dropdown / multi-select (use `config.items` string list) |
+| `Umbraco.CheckBoxList` | Checkbox list (use `config.items` string list) |
 | `Umbraco.BlockList` | Block List editor |
 | `Umbraco.ImageCropper` | Image with crop config |
 
