@@ -5371,84 +5371,90 @@ media:
       - alias: about-hero
         name: "RISIN – Sobre Nós"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-about-hero/1600/900"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/about-hero.jpg"
         update: true
 
       - alias: ecosystem-hero
         name: "RISIN – Ecossistema Digital"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-ecosystem-hero/1600/900"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/ecosystem-hero.jpg"
         update: true
 
-      - alias: franquias-hero
-        name: "RISIN – Franquias"
+      - alias: ecosystem-clikashop
+        name: "RISIN – Ecossistema Clikashop"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-franquias-hero/1600/900"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/ecosystem-clikashop.jpg"
         update: true
 
-      - alias: para-lojistas-hero
-        name: "RISIN – Para Lojistas"
+      - alias: home-hero
+        name: "RISIN – Home Hero"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-para-lojistas-hero/1600/900"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/home-hero.jpg"
+        update: true
+
+      - alias: home-map
+        name: "RISIN – Mapa Home"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/home-map.jpg"
         update: true
 
       - alias: governance-hero
         name: "RISIN – Governança"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-governance-hero/1600/900"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/governance-hero.jpg"
         update: true
 
       - alias: relations-hero
         name: "RISIN – Relações Institucionais"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-relations-hero/1600/900"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/relations-hero.jpg"
         update: true
 
       - alias: expansion-map
         name: "RISIN – Mapa de Expansão"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-expansion-map/1200/800"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-map.jpg"
         update: true
 
       - alias: expansion-sp
         name: "RISIN – Regional São Paulo"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-expansion-sp/800/600"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-sp.jpg"
         update: true
 
       - alias: expansion-rj
         name: "RISIN – Regional Rio de Janeiro"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-expansion-rj/800/600"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-rj.jpg"
         update: true
 
       - alias: partners-hero
         name: "RISIN – Parceiros"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-partners-hero/1600/900"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-hero.jpg"
         update: true
 
       - alias: partners-tech
         name: "RISIN – Parceiro Tecnologia"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-partners-tech/800/600"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-tech.jpg"
         update: true
 
       - alias: partners-institutional
         name: "RISIN – Parceiro Institucional"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-partners-institutional/800/600"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-institutional.jpg"
         update: true
 
       - alias: business-contract
         name: "RISIN – Modelo de Negócio Contrato"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-business-contract/1200/800"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/business-contract.jpg"
         update: true
 
       - alias: relations-council
         name: "RISIN – Conselho Consultivo"
         mediaType: Image
-        url: "https://picsum.photos/seed/risin-relations-council/800/600"
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/relations-council.jpg"
         update: true
 
