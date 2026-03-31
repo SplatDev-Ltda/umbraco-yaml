@@ -127,6 +127,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     // Apply config from YAML (supports Block List, Image Cropper, etc.)
                     if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
                     {
+                        NormalizeConfig(yamlDataType.Config);
                         dataType.SetConfigurationData(yamlDataType.Config);
                     }
 
@@ -150,6 +151,29 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     );
                     throw;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Converts simple string lists under the "items" key to the
+        /// { id, value } format required by Umbraco.DropDown.Flexible and similar editors.
+        /// YamlDotNet deserialises "- Foo\n- Bar" as List&lt;object&gt; of strings;
+        /// Umbraco's ValueListConfiguration expects List of { id: int, value: string }.
+        /// </summary>
+        private static void NormalizeConfig(Dictionary<string, object> config)
+        {
+            if (!config.TryGetValue("items", out var raw)) return;
+
+            // Already a list of dicts — nothing to do
+            if (raw is List<object> items && items.Count > 0 && items[0] is string)
+            {
+                config["items"] = items
+                    .Select((item, idx) => (object)new Dictionary<string, object>
+                    {
+                        ["id"]    = idx + 1,
+                        ["value"] = item?.ToString() ?? string.Empty
+                    })
+                    .ToList();
             }
         }
     }

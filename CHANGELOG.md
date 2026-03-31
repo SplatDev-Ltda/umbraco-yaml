@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.8] - 2026-03-31
+
+### Fixed
+
+#### Dropdown `items` config normalisation in `DataTypeCreator`
+- Added `NormalizeConfig` helper that converts a plain string list under the `items` key into the `[{ id, value }]` format required by `Umbraco.DropDown.Flexible` (and any other editor using `ValueListConfiguration`).
+- Previously, YAML `items: [- Foo, - Bar]` was passed as `List<object>` of strings, causing Umbraco to throw `The configuration value ... is not a valid value list configuration` for every dropdown DataType, leaving them unsaved and cascading into `DataType not found` warnings in DocumentTypeCreator.
+
 ## [1.0.7] - 2026-03-31
 
 ### Fixed
