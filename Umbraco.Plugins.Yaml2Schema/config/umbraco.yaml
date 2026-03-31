@@ -1,11 +1,30 @@
-# Umbraco YAML Configuration Example
-# This file demonstrates the complete structure for managing Umbraco content
-# using YAML format, including DataTypes, DocumentTypes, Templates, and Content
+# Umbraco YAML Configuration – Plugin Demo
+# Plugin: SplatDev.Umbraco.Plugins.Yaml2Schema v1.0.5+
+# Demonstrates all supported sections and flags.
+
+languages:
+  - isoCode: en-US
+    cultureName: English (United States)
+    isDefault: true
+    isMandatory: true
+    update: true
+
+dataTypes:
+  - alias: textString
+    name: Text String
+    editorUiAlias: Umbraco.TextBox
+    config:
+      maxLength: 512
+
+  - alias: richText
+    name: Rich Text
+    editorUiAlias: Umbraco.TinyMCE
 
 scripts:
   - alias: siteJs
     name: Site JavaScript
     path: js/site.js
+    update: true
     content: |
       document.addEventListener('DOMContentLoaded', function () {
         console.log('Site JS loaded');
@@ -15,216 +34,105 @@ stylesheets:
   - alias: siteStyles
     name: Site Styles
     path: css/site.css
+    update: true
     content: |
-      body {
-        margin: 0;
-        font-family: sans-serif;
-      }
-
-dataTypes:
-  - name: textString
-    alias: textString
-    editorUiAlias: Umbraco.TextBox
-    databaseType: Nvarchar
-    description: "Simple text input field"
-
-  - name: richText
-    alias: richText
-    editorUiAlias: Umbraco.TinyMCE
-    databaseType: Ntext
-    description: "Rich text editor with formatting"
-
-  - name: markdown
-    alias: markdown
-    editorUiAlias: Umbraco.MarkdownEditor
-    databaseType: Ntext
-    description: "Markdown editor"
+      body { margin: 0; font-family: sans-serif; }
 
 documentTypes:
-  - name: page
-    alias: page
-    description: "Standard page document type"
+  - alias: page
+    name: Page
+    icon: icon-document
     allowAsRoot: true
+    update: true
+    allowedChildTypes:
+      - page
+    allowedTemplates:
+      - page
+    defaultTemplate: page
     tabs:
       - name: Content
         properties:
-          - name: Title
-            alias: title
+          - alias: title
+            name: Title
             dataType: textString
-            mandatory: true
-
-          - name: Body Content
-            alias: bodyContent
+            required: true
+          - alias: bodyContent
+            name: Body Content
             dataType: richText
-            mandatory: false
 
-      - name: Settings
-        properties:
-          - name: Page Title
-            alias: pageTitle
-            dataType: textString
-            mandatory: false
-
-          - name: Meta Description
-            alias: metaDescription
-            dataType: textString
-            mandatory: false
-
-  - name: article
-    alias: article
-    description: "Article document type for blog posts"
+  - alias: article
+    name: Article
+    icon: icon-article
     allowAsRoot: false
+    update: true
+    allowedChildTypes: []
+    allowedTemplates:
+      - article
+    defaultTemplate: article
     tabs:
       - name: Content
         properties:
-          - name: Article Title
-            alias: articleTitle
+          - alias: articleTitle
+            name: Article Title
             dataType: textString
-            mandatory: true
-
-          - name: Article Body
-            alias: articleBody
+            required: true
+          - alias: articleBody
+            name: Article Body
             dataType: richText
-            mandatory: true
-
-          - name: Summary
-            alias: summary
-            dataType: textString
-            mandatory: false
-
-      - name: Metadata
-        properties:
-          - name: Publish Date
-            alias: publishDate
-            dataType: textString
-            mandatory: true
-
-          - name: Author
-            alias: author
-            dataType: textString
-            mandatory: true
-
-          - name: Tags
-            alias: tags
-            dataType: textString
-            mandatory: false
 
 templates:
-  - name: page
-    alias: page
-    description: "Master template for standard pages"
+  - alias: page
+    name: Page
+    path: Page.cshtml
     masterTemplate: null
-    stylesheets:
-      - css/site.css
-    scripts:
-      - js/site.js
+    update: true
     content: |
-      @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+      @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{
           Layout = null;
       }
-
       <!DOCTYPE html>
       <html>
       <head>
-          <title>@Model.Content.Value("pageTitle")</title>
-          <meta name="description" content="@Model.Content.Value("metaDescription")" />
+          <title>@Model.Value("title")</title>
       </head>
       <body>
-          <h1>@Model.Content.Value("title")</h1>
-          @Html.Raw(Model.Content.Value("bodyContent"))
+          <h1>@Model.Value("title")</h1>
+          @Html.Raw(Model.Value("bodyContent"))
+          @RenderBody()
       </body>
       </html>
 
-  - name: article
-    alias: article
-    description: "Template for article pages"
+  - alias: article
+    name: Article
+    path: Article.cshtml
     masterTemplate: page
+    update: true
     content: |
-      @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+      @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{
-          Layout = "page";
+          Layout = "Page.cshtml";
       }
-
       <article>
-          <header>
-              <h1>@Model.Content.Value("articleTitle")</h1>
-              <p class="meta">
-                  By @Model.Content.Value("author") on @Model.Content.Value("publishDate")
-              </p>
-          </header>
-          <div class="content">
-              @Html.Raw(Model.Content.Value("articleBody"))
-          </div>
-          @if (!string.IsNullOrEmpty(Model.Content.Value("tags")))
-          {
-              <footer>
-                  <p>Tags: @Model.Content.Value("tags")</p>
-              </footer>
-          }
+          <h1>@Model.Value("articleTitle")</h1>
+          @Html.Raw(Model.Value("articleBody"))
       </article>
 
 content:
-  - name: Home
-    alias: home
+  - alias: home
+    name: Home
     documentType: page
     isPublished: true
+    sortOrder: 0
     properties:
-      title: "Welcome to Our Website"
-      pageTitle: "Home - Our Website"
-      metaDescription: "Welcome to our professional website showcasing our services"
-      bodyContent: "<p>This is the home page content with rich formatting and multiple paragraphs.</p><p>We specialize in providing quality services to our clients.</p>"
+      title: "Welcome to Umbraco"
+      bodyContent: "<p>Getting started with YAML-driven Umbraco.</p>"
     children:
-      - name: About Us
-        alias: about-us
+      - alias: about
+        name: About
         documentType: page
         isPublished: true
+        sortOrder: 1
         properties:
-          title: "About Our Company"
-          pageTitle: "About Us - Our Website"
-          metaDescription: "Learn more about our company, mission, and values"
-          bodyContent: "<p>Founded in 2020, our company has grown to serve hundreds of satisfied clients.</p><p>Our mission is to provide exceptional service with integrity and innovation.</p>"
-
-      - name: Contact
-        alias: contact
-        documentType: page
-        isPublished: true
-        properties:
-          title: "Get In Touch"
-          pageTitle: "Contact Us - Our Website"
-          metaDescription: "Contact us for inquiries and support"
-          bodyContent: "<p>We would love to hear from you. Please reach out with any questions or inquiries.</p><p>Email: info@example.com</p><p>Phone: +1 (555) 123-4567</p>"
-
-      - name: Blog
-        alias: blog
-        documentType: page
-        isPublished: true
-        properties:
-          title: "Blog Articles"
-          pageTitle: "Blog - Our Website"
-          metaDescription: "Read our latest articles and insights"
-          bodyContent: "<p>Explore our collection of informative articles on industry trends and best practices.</p>"
-        children:
-          - name: "Getting Started with YAML"
-            alias: getting-started-yaml
-            documentType: article
-            isPublished: true
-            properties:
-              articleTitle: "Getting Started with YAML Configuration"
-              articleBody: "<p>YAML provides a simple and intuitive way to configure your Umbraco installation.</p><p>In this article, we'll explore the basics of YAML syntax and how to structure your configuration files for optimal maintainability.</p><p>YAML is human-readable and uses indentation to denote structure, making it perfect for configuration management.</p>"
-              summary: "Learn the fundamentals of YAML configuration for Umbraco"
-              publishDate: "2026-03-15"
-              author: "John Smith"
-              tags: "yaml, configuration, umbraco, tutorial"
-
-          - name: "Advanced Content Management"
-            alias: advanced-content-management
-            documentType: article
-            isPublished: true
-            properties:
-              articleTitle: "Advanced Content Management Techniques"
-              articleBody: "<p>Master the advanced features of Umbraco for managing complex content hierarchies.</p><p>Learn how to leverage document types, content versioning, and workflow management to create a powerful content management system.</p><p>Discover best practices for organizing your content structure and maximizing editorial efficiency.</p>"
-              summary: "Discover advanced strategies for managing content in Umbraco"
-              publishDate: "2026-03-22"
-              author: "Jane Doe"
-              tags: "umbraco, content-management, advanced, workflow"
+          title: "About Us"
+          bodyContent: "<p>Learn more about our team and mission.</p>"

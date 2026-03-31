@@ -127,6 +127,7 @@ dataTypes:
 
   - alias: governanceRole
     name: Governance Role
+    update: true
     editorUiAlias: Umbraco.DropDown.Flexible
     config:
       multiple: false
@@ -216,6 +217,7 @@ documentTypes:
       - paraLojistasPage
       - franquiasPage
       - contatoPage
+    update: true
     tabs:
       - name: Site Settings
         properties:
@@ -276,6 +278,7 @@ documentTypes:
     icon: icon-document
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
     tabs:
       - name: SEO
         properties:
@@ -299,6 +302,10 @@ documentTypes:
     icon: icon-home
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
+    allowedTemplates:
+      - home
+    defaultTemplate: home
     tabs:
       - name: Hero
         properties:
@@ -473,6 +480,10 @@ documentTypes:
     icon: icon-document-2
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
+    allowedTemplates:
+      - aRisin
+    defaultTemplate: aRisin
     tabs:
       - name: Hero
         properties:
@@ -700,6 +711,7 @@ documentTypes:
     icon: icon-globe
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
     tabs:
       - name: Content
         properties:
@@ -755,6 +767,10 @@ documentTypes:
     icon: icon-nodes
     allowAsRoot: false
     allowedChildTypes:
+    update: true
+    allowedTemplates:
+      - ecossistema
+    defaultTemplate: ecossistema
       - ecosystemWebsite
     tabs:
       - name: Hero
@@ -825,6 +841,10 @@ documentTypes:
     icon: icon-bill-alt
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
+    allowedTemplates:
+      - modeloNegocio
+    defaultTemplate: modeloNegocio
     tabs:
       - name: Hero
         properties:
@@ -962,6 +982,10 @@ documentTypes:
     icon: icon-shield
     allowAsRoot: false
     allowedChildTypes:
+    update: true
+    allowedTemplates:
+      - governanca
+    defaultTemplate: governanca
       - governanceRole
     tabs:
       - name: Hero
@@ -1055,6 +1079,7 @@ documentTypes:
     icon: icon-handshake
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
     tabs:
       - name: Content
         properties:
@@ -1092,6 +1117,10 @@ documentTypes:
     icon: icon-handshake
     allowAsRoot: false
     allowedChildTypes:
+    update: true
+    allowedTemplates:
+      - parceiros
+    defaultTemplate: parceiros
       - partnerItem
     tabs:
       - name: Hero
@@ -1166,6 +1195,7 @@ documentTypes:
     icon: icon-pin
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
     tabs:
       - name: Content
         properties:
@@ -1205,6 +1235,10 @@ documentTypes:
     icon: icon-map
     allowAsRoot: false
     allowedChildTypes:
+    update: true
+    allowedTemplates:
+      - regionais
+    defaultTemplate: regionais
       - regionalItem
     tabs:
       - name: Hero
@@ -1283,6 +1317,7 @@ documentTypes:
     icon: icon-document-line
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
     tabs:
       - name: Content
         properties:
@@ -1320,6 +1355,10 @@ documentTypes:
     icon: icon-groups
     allowAsRoot: false
     allowedChildTypes:
+    update: true
+    allowedTemplates:
+      - relacoesInstitucionais
+    defaultTemplate: relacoesInstitucionais
       - institutionalBlock
     tabs:
       - name: Hero
@@ -1391,6 +1430,7 @@ documentTypes:
     icon: icon-document-dashed-line
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
     tabs:
       - name: Content
         properties:
@@ -1427,6 +1467,10 @@ documentTypes:
     icon: icon-document-dashed-line
     allowAsRoot: false
     allowedChildTypes:
+    update: true
+    allowedTemplates:
+      - transparencia
+    defaultTemplate: transparencia
       - policyItem
     tabs:
       - name: Hero
@@ -1465,6 +1509,10 @@ documentTypes:
     icon: icon-store
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
+    allowedTemplates:
+      - paraLojistas
+    defaultTemplate: paraLojistas
     tabs:
       - name: Hero
         properties:
@@ -1558,6 +1606,10 @@ documentTypes:
     icon: icon-network
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
+    allowedTemplates:
+      - franquias
+    defaultTemplate: franquias
     tabs:
       - name: Hero
         properties:
@@ -1635,6 +1687,10 @@ documentTypes:
     icon: icon-message
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
+    allowedTemplates:
+      - contato
+    defaultTemplate: contato
     tabs:
       - name: Hero
         properties:
@@ -1696,6 +1752,7 @@ documentTypes:
     icon: icon-document
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
     tabs:
       - name: Content
         properties:

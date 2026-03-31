@@ -59,12 +59,18 @@ dataTypes:
       toolbar: "bold,italic,underline,oembed"
 
 documentTypes:
+  # [UPDATE] — applies name/icon/tab changes to existing doc type; new allowedTemplates are linked after templates are created
   - alias: page
     name: Page
     icon: icon-document
     allowAsRoot: true
+    update: true
     allowedChildTypes:
       - page
+    allowedTemplates:
+      - masterPage
+      - customPage
+    defaultTemplate: masterPage
     tabs:
       - name: Content
         properties:
@@ -73,6 +79,10 @@ documentTypes:
             dataType: textString
             required: true
             description: The page title
+  # [REMOVE] — deletes the article document type
+  - alias: article
+    name: Article
+    remove: true
 
 templates:
   - alias: masterPage
