@@ -53,14 +53,47 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // [UPDATE] — update (no-op) if already present; create if not found
+                    // [UPDATE] — re-apply config + DatabaseType if exists; create if not found
                     if (yamlDataType.Update)
                     {
-                        var existing = _dataTypeService.GetDataType(yamlDataType.Name);
-                        if (existing != null)
+                        var existingIface = _dataTypeService.GetDataType(yamlDataType.Name);
+                        if (existingIface is DataType existing)
                         {
+                            // Re-derive storage type from the editor so stale entries are corrected
+                            if (_propertyEditors.TryGet(yamlDataType.Editor, out var updEditor) && updEditor != null)
+                            {
+                                existing.DatabaseType = updEditor.GetValueEditor().ValueType switch
+                                {
+                                    "TEXT"    => ValueStorageType.Ntext,
+                                    "INT"     => ValueStorageType.Integer,
+                                    "INTEGER" => ValueStorageType.Integer,
+                                    "BIGINT"  => ValueStorageType.Integer,
+                                    "DECIMAL" => ValueStorageType.Decimal,
+                                    "DATE"    => ValueStorageType.Date,
+                                    _         => ValueStorageType.Nvarchar
+                                };
+                            }
+
+                            // Re-apply config so stale or incorrectly-formatted config is fixed
+                            if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
+                            {
+                                if (!IsValueListConfig(yamlDataType.Config))
+                                    NormalizeConfig(yamlDataType.Config);
+                                existing.SetConfigurationData(yamlDataType.Config);
+                            }
+
+                            _dataTypeService.Save(existing, Constants.Security.SuperUserId);
                             _logger?.LogInformation(
-                                "DataType '{Name}' already exists. No structural update required.",
+                                "DataType '{Name}' updated (config + storage type re-applied).",
+                                yamlDataType.Name);
+                            processedAliases.Add(yamlDataType.Alias);
+                            continue;
+                        }
+                        if (existingIface != null)
+                        {
+                            // Unexpected concrete type — skip update, treat as existing
+                            _logger?.LogInformation(
+                                "DataType '{Name}' exists but is not a concrete DataType; skipping update.",
                                 yamlDataType.Name);
                             processedAliases.Add(yamlDataType.Alias);
                             continue;

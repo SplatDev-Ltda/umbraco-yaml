@@ -9,6 +9,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.14] - 2026-03-31
+
+### Fixed
+
+#### `DataTypeCreator` UPDATE path now re-applies config and DatabaseType
+- When `update: true` is set and a DataType already exists in the database, the UPDATE path previously did nothing ("no structural update required") and skipped — leaving stale entries with incorrect config or wrong `DatabaseType` untouched.
+- Fix: the UPDATE path now re-looks up the property editor, re-derives the `DatabaseType` from `editor.GetValueEditor().ValueType` (same logic as creation), re-applies the `config` dict (respecting the `IsValueListConfig` fix from v1.0.13), and re-saves via `IDataTypeService.Save`.
+- This corrects: (a) dropdown DataTypes left with `{id,value}` item format from pre-v1.0.13 runs; (b) rich text / text area DataTypes left with `Nvarchar` storage from pre-v1.0.11 runs.
+- Cast from `IDataType` to concrete `DataType` is required to call `SetConfigurationData`; graceful skip added for non-concrete instances.
+
 ## [1.0.13] - 2026-03-31
 
 ### Fixed
