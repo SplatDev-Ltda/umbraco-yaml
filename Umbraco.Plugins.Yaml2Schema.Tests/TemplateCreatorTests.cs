@@ -66,40 +66,147 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
         [Fact]
         public void CreateTemplates_ShouldSkipDuplicateAliases()
         {
-            // Arrange
             var templates = new List<YamlTemplate>
             {
-                new YamlTemplate
-                {
-                    Alias = "duplicatePage",
-                    Name = "Duplicate Page",
-                    Path = "Duplicate",
-                    MasterTemplate = null
-                },
-                new YamlTemplate
-                {
-                    Alias = "duplicatePage",
-                    Name = "Duplicate Page Again",
-                    Path = "Duplicate2",
-                    MasterTemplate = null
-                }
+                new YamlTemplate { Alias = "duplicatePage", Name = "Duplicate Page", Path = "Duplicate" },
+                new YamlTemplate { Alias = "duplicatePage", Name = "Duplicate Page Again", Path = "Duplicate2" }
             };
 
-            // Mock: GetAsync returns null (templates don't exist)
             _mockTemplateService
                 .Setup(x => x.GetAsync(It.IsAny<string>()))
                 .ReturnsAsync((ITemplate?)null);
 
-            // Act
             _templateCreator.CreateTemplates(templates);
 
-            // Assert
-            // Verify that CreateAsync was called only once (first duplicate is created, second is skipped)
             _mockTemplateService.Verify(
                 x => x.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid?>()),
                 Times.Once,
                 "CreateAsync should have been called only once - second duplicate should be skipped"
             );
+        }
+
+        // ── REMOVE ────────────────────────────────────────────────────────────
+
+        [Fact]
+        public void CreateTemplates_ShouldRemoveExistingTemplate()
+        {
+            var existingTemplate = new Mock<ITemplate>();
+            existingTemplate.Setup(x => x.Key).Returns(Guid.NewGuid());
+
+            _mockTemplateService
+                .Setup(x => x.GetAsync("oldPage"))
+                .ReturnsAsync(existingTemplate.Object);
+
+            _mockTemplateService
+                .Setup(x => x.DeleteAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .Returns(Task.CompletedTask);
+
+            _templateCreator.CreateTemplates(new List<YamlTemplate>
+            {
+                new YamlTemplate { Alias = "oldPage", Name = "Old Page", Remove = true }
+            });
+
+            _mockTemplateService.Verify(
+                x => x.DeleteAsync(existingTemplate.Object.Key, It.IsAny<Guid>()),
+                Times.Once);
+        }
+
+        [Fact]
+        public void CreateTemplates_ShouldNotThrowWhenRemoveTargetMissing()
+        {
+            _mockTemplateService
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync((ITemplate?)null);
+
+            var ex = Record.Exception(() => _templateCreator.CreateTemplates(new List<YamlTemplate>
+            {
+                new YamlTemplate { Alias = "gone", Name = "Gone", Remove = true }
+            }));
+
+            Assert.Null(ex);
+            _mockTemplateService.Verify(
+                x => x.DeleteAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
+                Times.Never);
+        }
+
+        // ── UPDATE ────────────────────────────────────────────────────────────
+
+        [Fact]
+        public void CreateTemplates_ShouldUpdateExistingTemplate()
+        {
+            var existingTemplate = new Mock<ITemplate>();
+            existingTemplate.SetupProperty(x => x.Content);
+
+            _mockTemplateService
+                .Setup(x => x.GetAsync("masterPage"))
+                .ReturnsAsync(existingTemplate.Object);
+
+            _mockTemplateService
+                .Setup(x => x.UpdateAsync(It.IsAny<ITemplate>(), It.IsAny<Guid>()))
+                .Returns(Task.CompletedTask);
+
+            _templateCreator.CreateTemplates(new List<YamlTemplate>
+            {
+                new YamlTemplate { Alias = "masterPage", Name = "Master Page", Update = true }
+            });
+
+            _mockTemplateService.Verify(
+                x => x.UpdateAsync(existingTemplate.Object, It.IsAny<Guid>()),
+                Times.Once);
+
+            _mockTemplateService.Verify(
+                x => x.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid?>()),
+                Times.Never,
+                "Should not create when update target was found");
+        }
+
+        [Fact]
+        public void CreateTemplates_ShouldCreateWhenUpdateTargetMissing()
+        {
+            _mockTemplateService
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync((ITemplate?)null);
+
+            _templateCreator.CreateTemplates(new List<YamlTemplate>
+            {
+                new YamlTemplate { Alias = "newPage", Name = "New Page", Update = true }
+            });
+
+            // update:true but not found → fall through to create
+            _mockTemplateService.Verify(
+                x => x.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid?>()),
+                Times.Once);
+        }
+
+        // ── HTML injection ────────────────────────────────────────────────────
+
+        [Fact]
+        public void CreateTemplates_ShouldInjectStylesheetTagsIntoContent()
+        {
+            string? capturedContent = null;
+
+            _mockTemplateService
+                .Setup(x => x.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync((ITemplate?)null);
+
+            _mockTemplateService
+                .Setup(x => x.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid?>()))
+                .Callback<string, string, string, Guid, Guid?>((_, _, content, _, _) => capturedContent = content);
+
+            _templateCreator.CreateTemplates(new List<YamlTemplate>
+            {
+                new YamlTemplate
+                {
+                    Alias = "site",
+                    Name = "Site",
+                    Stylesheets = new List<string> { "css/site.css" },
+                    Scripts = new List<string> { "js/app.js" }
+                }
+            });
+
+            Assert.NotNull(capturedContent);
+            Assert.Contains("<link rel=\"stylesheet\" href=\"/css/site.css\"", capturedContent);
+            Assert.Contains("<script src=\"/js/app.js\">", capturedContent);
         }
     }
 }

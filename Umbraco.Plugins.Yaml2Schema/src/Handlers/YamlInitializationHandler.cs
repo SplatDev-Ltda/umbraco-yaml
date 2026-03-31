@@ -15,8 +15,15 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
         private readonly YamlParser _yamlParser;
         private readonly DataTypeCreator _dataTypeCreator;
         private readonly DocumentTypeCreator _documentTypeCreator;
+        private readonly MediaTypeCreator _mediaTypeCreator;
         private readonly TemplateCreator _templateCreator;
         private readonly ContentCreator _contentCreator;
+        private readonly MediaCreator _mediaCreator;
+        private readonly StaticAssetCreator _staticAssetCreator;
+        private readonly LanguageCreator _languageCreator;
+        private readonly DictionaryCreator _dictionaryCreator;
+        private readonly MemberCreator _memberCreator;
+        private readonly UserCreator _userCreator;
         private readonly ILogger<YamlInitializationHandler> _logger;
         private readonly IConfiguration _configuration;
         private readonly IHostEnvironment _hostEnvironment;
@@ -25,8 +32,15 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             YamlParser yamlParser,
             DataTypeCreator dataTypeCreator,
             DocumentTypeCreator documentTypeCreator,
+            MediaTypeCreator mediaTypeCreator,
             TemplateCreator templateCreator,
             ContentCreator contentCreator,
+            MediaCreator mediaCreator,
+            StaticAssetCreator staticAssetCreator,
+            LanguageCreator languageCreator,
+            DictionaryCreator dictionaryCreator,
+            MemberCreator memberCreator,
+            UserCreator userCreator,
             ILogger<YamlInitializationHandler> logger,
             IConfiguration configuration,
             IHostEnvironment hostEnvironment)
@@ -34,8 +48,15 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             _yamlParser = yamlParser ?? throw new ArgumentNullException(nameof(yamlParser));
             _dataTypeCreator = dataTypeCreator ?? throw new ArgumentNullException(nameof(dataTypeCreator));
             _documentTypeCreator = documentTypeCreator ?? throw new ArgumentNullException(nameof(documentTypeCreator));
+            _mediaTypeCreator = mediaTypeCreator ?? throw new ArgumentNullException(nameof(mediaTypeCreator));
             _templateCreator = templateCreator ?? throw new ArgumentNullException(nameof(templateCreator));
             _contentCreator = contentCreator ?? throw new ArgumentNullException(nameof(contentCreator));
+            _mediaCreator = mediaCreator ?? throw new ArgumentNullException(nameof(mediaCreator));
+            _staticAssetCreator = staticAssetCreator ?? throw new ArgumentNullException(nameof(staticAssetCreator));
+            _languageCreator = languageCreator ?? throw new ArgumentNullException(nameof(languageCreator));
+            _dictionaryCreator = dictionaryCreator ?? throw new ArgumentNullException(nameof(dictionaryCreator));
+            _memberCreator = memberCreator ?? throw new ArgumentNullException(nameof(memberCreator));
+            _userCreator = userCreator ?? throw new ArgumentNullException(nameof(userCreator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _hostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
@@ -65,6 +86,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                     return;
                 }
 
+                // Create Languages first (other creators may reference culture codes)
+                if (yamlRoot.Umbraco.Languages?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Languages.", yamlRoot.Umbraco.Languages.Count);
+                    _languageCreator.CreateLanguages(yamlRoot.Umbraco.Languages);
+                }
+
                 // Create DataTypes
                 if (yamlRoot.Umbraco.DataTypes?.Count > 0)
                 {
@@ -89,6 +117,37 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                     _logger.LogInformation("YamlInitializationHandler: No DocumentTypes to create.");
                 }
 
+                // Create MediaTypes
+                if (yamlRoot.Umbraco.MediaTypes?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} MediaTypes.", yamlRoot.Umbraco.MediaTypes.Count);
+                    _mediaTypeCreator.CreateMediaTypes(yamlRoot.Umbraco.MediaTypes);
+                }
+
+                // Create static JavaScript files
+                if (yamlRoot.Umbraco.Scripts?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Scripts.", yamlRoot.Umbraco.Scripts.Count);
+                    _staticAssetCreator.CreateScripts(yamlRoot.Umbraco.Scripts);
+                    _logger.LogInformation("YamlInitializationHandler: Successfully created {Count} Scripts.", yamlRoot.Umbraco.Scripts.Count);
+                }
+                else
+                {
+                    _logger.LogInformation("YamlInitializationHandler: No Scripts to create.");
+                }
+
+                // Create static CSS stylesheets
+                if (yamlRoot.Umbraco.Stylesheets?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Stylesheets.", yamlRoot.Umbraco.Stylesheets.Count);
+                    _staticAssetCreator.CreateStylesheets(yamlRoot.Umbraco.Stylesheets);
+                    _logger.LogInformation("YamlInitializationHandler: Successfully created {Count} Stylesheets.", yamlRoot.Umbraco.Stylesheets.Count);
+                }
+                else
+                {
+                    _logger.LogInformation("YamlInitializationHandler: No Stylesheets to create.");
+                }
+
                 // Create Templates
                 if (yamlRoot.Umbraco.Templates?.Count > 0)
                 {
@@ -111,6 +170,34 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                 else
                 {
                     _logger.LogInformation("YamlInitializationHandler: No Content items to create.");
+                }
+
+                // Create Media
+                if (yamlRoot.Umbraco.Media?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Media items.", yamlRoot.Umbraco.Media.Count);
+                    _mediaCreator.CreateMedia(yamlRoot.Umbraco.Media);
+                }
+
+                // Create Dictionary Items
+                if (yamlRoot.Umbraco.DictionaryItems?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Dictionary items.", yamlRoot.Umbraco.DictionaryItems.Count);
+                    _dictionaryCreator.CreateDictionaryItems(yamlRoot.Umbraco.DictionaryItems);
+                }
+
+                // Create Members
+                if (yamlRoot.Umbraco.Members?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Members.", yamlRoot.Umbraco.Members.Count);
+                    _memberCreator.CreateMembers(yamlRoot.Umbraco.Members);
+                }
+
+                // Create Users
+                if (yamlRoot.Umbraco.Users?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Users.", yamlRoot.Umbraco.Users.Count);
+                    _userCreator.CreateUsers(yamlRoot.Umbraco.Users);
                 }
 
                 _logger.LogInformation("YamlInitializationHandler: YAML initialization completed successfully.");

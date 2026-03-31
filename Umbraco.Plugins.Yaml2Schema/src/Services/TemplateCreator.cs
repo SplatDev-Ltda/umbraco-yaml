@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Plugins.Yaml2Schema.Models;
@@ -40,6 +42,46 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
+                    // [UPDATE] — regenerate template content if it exists, create if not
+                    if (yamlTemplate.Update)
+                    {
+                        var toUpdate = _templateService.GetAsync(yamlTemplate.Alias).GetAwaiter().GetResult();
+                        if (toUpdate != null)
+                        {
+                            toUpdate.Content = !string.IsNullOrWhiteSpace(yamlTemplate.RazorContent)
+                                ? yamlTemplate.RazorContent
+                                : GenerateDefaultTemplateContent(yamlTemplate.Name, yamlTemplate.Scripts, yamlTemplate.Stylesheets);
+                            _templateService.UpdateAsync(toUpdate, Guid.Empty).GetAwaiter().GetResult();
+                            _logger?.LogInformation(
+                                "Template '{Name}' with alias '{Alias}' updated.",
+                                yamlTemplate.Name, yamlTemplate.Alias);
+                            processedAliases.Add(yamlTemplate.Alias);
+                            continue;
+                        }
+                        // Not found — fall through to create
+                    }
+
+                    // [REMOVE] — delete the Template if flagged
+                    if (yamlTemplate.Remove)
+                    {
+                        var toDelete = _templateService.GetAsync(yamlTemplate.Alias).GetAwaiter().GetResult();
+                        if (toDelete != null)
+                        {
+                            _templateService.DeleteAsync(toDelete.Key, Guid.Empty).GetAwaiter().GetResult();
+                            _logger?.LogInformation(
+                                "Template '{Name}' with alias '{Alias}' removed.",
+                                yamlTemplate.Name, yamlTemplate.Alias);
+                        }
+                        else
+                        {
+                            _logger?.LogWarning(
+                                "Template with alias '{Alias}' not found for removal. Skipping.",
+                                yamlTemplate.Alias);
+                        }
+                        processedAliases.Add(yamlTemplate.Alias);
+                        continue;
+                    }
+
                     // Check if Template already exists in the system
                     var existingTemplate = _templateService.GetAsync(yamlTemplate.Alias).GetAwaiter().GetResult();
                     if (existingTemplate != null)
@@ -52,8 +94,10 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // Generate default template content
-                    var fileContent = GenerateDefaultTemplateContent(yamlTemplate.Name);
+                    // Use explicit Razor content if provided, otherwise generate a default scaffold
+                    var fileContent = !string.IsNullOrWhiteSpace(yamlTemplate.RazorContent)
+                        ? yamlTemplate.RazorContent
+                        : GenerateDefaultTemplateContent(yamlTemplate.Name, yamlTemplate.Scripts, yamlTemplate.Stylesheets);
 
                     // Create new Template via service
                     _templateService.CreateAsync(yamlTemplate.Name, yamlTemplate.Alias, fileContent, Guid.Empty, null)
@@ -80,8 +124,11 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             }
         }
 
-        private string GenerateDefaultTemplateContent(string templateName)
+        private string GenerateDefaultTemplateContent(string templateName, List<string>? scripts = null, List<string>? stylesheets = null)
         {
+            var stylesheetTags = BuildStylesheetTags(stylesheets);
+            var scriptTags = BuildScriptTags(scripts);
+
             return $$"""
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @{
@@ -92,15 +139,43 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 <html>
 <head>
     <title>{{templateName}}</title>
-</head>
+{{stylesheetTags}}</head>
 <body>
     <h1>{{templateName}}</h1>
     <main>
         @Html.Raw(Model.Value("bodyText"))
     </main>
-</body>
+{{scriptTags}}</body>
 </html>
 """;
+        }
+
+        private static string BuildStylesheetTags(List<string>? stylesheets)
+        {
+            if (stylesheets == null || stylesheets.Count == 0)
+                return string.Empty;
+
+            var sb = new StringBuilder();
+            foreach (var path in stylesheets.Where(p => !string.IsNullOrWhiteSpace(p)))
+            {
+                var href = path.StartsWith('/') ? path : $"/{path}";
+                sb.AppendLine($"    <link rel=\"stylesheet\" href=\"{href}\" />");
+            }
+            return sb.ToString();
+        }
+
+        private static string BuildScriptTags(List<string>? scripts)
+        {
+            if (scripts == null || scripts.Count == 0)
+                return string.Empty;
+
+            var sb = new StringBuilder();
+            foreach (var path in scripts.Where(p => !string.IsNullOrWhiteSpace(p)))
+            {
+                var src = path.StartsWith('/') ? path : $"/{path}";
+                sb.AppendLine($"    <script src=\"{src}\"></script>");
+            }
+            return sb.ToString();
         }
     }
 }

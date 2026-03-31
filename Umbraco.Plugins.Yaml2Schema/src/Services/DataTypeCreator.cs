@@ -53,16 +53,56 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // Check if DataType already exists in the system (by editor alias)
-                    var existingDataTypes = _dataTypeService.GetByEditorAlias(yamlDataType.Editor);
-                    if (existingDataTypes != null && existingDataTypes.Any())
+                    // [UPDATE] — upsert by name: create if not found, skip if already present
+                    if (yamlDataType.Update)
                     {
-                        _logger?.LogInformation(
-                            "DataType with editor alias '{EditorAlias}' already exists. Skipping.",
-                            yamlDataType.Editor
-                        );
+                        var existing = _dataTypeService.GetDataType(yamlDataType.Name);
+                        if (existing != null)
+                        {
+                            _logger?.LogInformation(
+                                "DataType '{Name}' already exists. No structural update required.",
+                                yamlDataType.Name);
+                            processedAliases.Add(yamlDataType.Alias);
+                            continue;
+                        }
+                        // Not found — fall through to create, bypassing the broad editor-alias check below
+                    }
+
+                    // [REMOVE] — delete the DataType if flagged
+                    if (yamlDataType.Remove)
+                    {
+                        var toDelete = _dataTypeService.GetDataType(yamlDataType.Name);
+                        if (toDelete != null)
+                        {
+                            _dataTypeService.Delete(toDelete, Constants.Security.SuperUserId);
+                            _logger?.LogInformation(
+                                "DataType '{Name}' with alias '{Alias}' removed.",
+                                yamlDataType.Name, yamlDataType.Alias);
+                        }
+                        else
+                        {
+                            _logger?.LogWarning(
+                                "DataType '{Name}' not found for removal. Skipping.",
+                                yamlDataType.Name);
+                        }
                         processedAliases.Add(yamlDataType.Alias);
                         continue;
+                    }
+
+                    // Check if DataType already exists in the system (by editor alias)
+                    // Skipped when update:true — already resolved above by name lookup
+                    if (!yamlDataType.Update)
+                    {
+                        var existingDataTypes = _dataTypeService.GetByEditorAlias(yamlDataType.Editor);
+                        if (existingDataTypes != null && existingDataTypes.Any())
+                        {
+                            _logger?.LogInformation(
+                                "DataType with editor alias '{EditorAlias}' already exists. Skipping.",
+                                yamlDataType.Editor
+                            );
+                            processedAliases.Add(yamlDataType.Alias);
+                            continue;
+                        }
                     }
 
                     // Look up the property editor by alias
@@ -82,6 +122,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         Name = yamlDataType.Name,
                         DatabaseType = ValueStorageType.Nvarchar
                     };
+
+                    // Apply config from YAML (supports Block List, Image Cropper, etc.)
+                    if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
+                    {
+                        dataType.Configuration = yamlDataType.Config;
+                    }
 
                     // Save the DataType
                     _dataTypeService.Save(dataType, Constants.Security.SuperUserId);

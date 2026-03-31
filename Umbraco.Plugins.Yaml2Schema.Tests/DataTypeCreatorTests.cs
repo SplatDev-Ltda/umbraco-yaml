@@ -92,40 +92,99 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
         [Fact]
         public void CreateDataTypes_ShouldSkipDuplicateAliases()
         {
-            // Arrange
             var dataTypes = new List<YamlDataType>
             {
-                new YamlDataType
-                {
-                    Alias = "duplicateText",
-                    Name = "Duplicate Text",
-                    Editor = "Umbraco.TextBox",
-                    Config = new Dictionary<string, object>()
-                },
-                new YamlDataType
-                {
-                    Alias = "duplicateText",
-                    Name = "Duplicate Text Again",
-                    Editor = "Umbraco.TextBox",
-                    Config = new Dictionary<string, object>()
-                }
+                new YamlDataType { Alias = "duplicateText", Name = "Duplicate Text",   Editor = "Umbraco.TextBox", Config = new() },
+                new YamlDataType { Alias = "duplicateText", Name = "Duplicate Text 2", Editor = "Umbraco.TextBox", Config = new() }
             };
 
-            // Mock: returns empty (not found in system)
             _mockDataTypeService
                 .Setup(x => x.GetByEditorAlias(It.IsAny<string>()))
                 .Returns(Enumerable.Empty<IDataType>());
 
-            // Act
             _dataTypeCreator.CreateDataTypes(dataTypes);
 
-            // Assert
-            // Verify that Save was called only once (first duplicate is created, second is skipped)
             _mockDataTypeService.Verify(
                 x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()),
                 Times.Once,
                 "Save should have been called only once - second duplicate should be skipped"
             );
+        }
+
+        // ── REMOVE ────────────────────────────────────────────────────────────
+
+        [Fact]
+        public void CreateDataTypes_ShouldRemoveExistingDataType()
+        {
+            var existing = new Mock<IDataType>();
+            _mockDataTypeService.Setup(x => x.GetDataType("Old Type")).Returns(existing.Object);
+
+            _dataTypeCreator.CreateDataTypes(new List<YamlDataType>
+            {
+                new YamlDataType { Alias = "oldType", Name = "Old Type", Editor = "Umbraco.TextBox", Remove = true }
+            });
+
+            _mockDataTypeService.Verify(
+                x => x.Delete(existing.Object, It.IsAny<int>()),
+                Times.Once);
+
+            _mockDataTypeService.Verify(
+                x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()),
+                Times.Never);
+        }
+
+        [Fact]
+        public void CreateDataTypes_ShouldNotThrowWhenRemoveTargetMissing()
+        {
+            _mockDataTypeService.Setup(x => x.GetDataType(It.IsAny<string>())).Returns((IDataType?)null);
+
+            var ex = Record.Exception(() => _dataTypeCreator.CreateDataTypes(new List<YamlDataType>
+            {
+                new YamlDataType { Alias = "gone", Name = "Gone", Editor = "Umbraco.TextBox", Remove = true }
+            }));
+
+            Assert.Null(ex);
+            _mockDataTypeService.Verify(x => x.Delete(It.IsAny<IDataType>(), It.IsAny<int>()), Times.Never);
+        }
+
+        // ── UPDATE ────────────────────────────────────────────────────────────
+
+        [Fact]
+        public void CreateDataTypes_ShouldSkipSaveWhenUpdateAndExists()
+        {
+            var existing = new Mock<IDataType>();
+            _mockDataTypeService.Setup(x => x.GetDataType("My Type")).Returns(existing.Object);
+
+            _dataTypeCreator.CreateDataTypes(new List<YamlDataType>
+            {
+                new YamlDataType { Alias = "myType", Name = "My Type", Editor = "Umbraco.TextBox", Update = true }
+            });
+
+            // Already exists → skip, no Save
+            _mockDataTypeService.Verify(x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public void CreateDataTypes_ShouldCreateWhenUpdateAndNotExists()
+        {
+            // update:true but name not found → fall through to create
+            _mockDataTypeService.Setup(x => x.GetDataType(It.IsAny<string>())).Returns((IDataType?)null);
+            _mockDataTypeService
+                .Setup(x => x.GetByEditorAlias(It.IsAny<string>()))
+                .Returns(Enumerable.Empty<IDataType>());
+
+            _dataTypeCreator.CreateDataTypes(new List<YamlDataType>
+            {
+                new YamlDataType { Alias = "newType", Name = "New Type", Editor = "Umbraco.TextBox", Update = true }
+            });
+
+            _mockDataTypeService.Verify(x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()), Times.Once);
+        }
+
+        [Fact]
+        public void CreateDataTypes_ShouldThrowOnNullList()
+        {
+            Assert.Throws<ArgumentNullException>(() => _dataTypeCreator.CreateDataTypes(null!));
         }
     }
 }

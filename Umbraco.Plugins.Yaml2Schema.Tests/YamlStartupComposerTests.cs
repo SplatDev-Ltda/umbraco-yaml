@@ -30,6 +30,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             Assert.Contains(serviceCollection, sd => sd.ServiceType == typeof(DocumentTypeCreator));
             Assert.Contains(serviceCollection, sd => sd.ServiceType == typeof(TemplateCreator));
             Assert.Contains(serviceCollection, sd => sd.ServiceType == typeof(ContentCreator));
+            Assert.Contains(serviceCollection, sd => sd.ServiceType == typeof(StaticAssetCreator));
             // Note: AddNotificationAsyncHandler is an extension method and cannot be verified via Moq
         }
     }

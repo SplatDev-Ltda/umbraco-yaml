@@ -2,6 +2,25 @@
 # This file demonstrates the complete structure for managing Umbraco content
 # using YAML format, including DataTypes, DocumentTypes, Templates, and Content
 
+scripts:
+  - alias: siteJs
+    name: Site JavaScript
+    path: js/site.js
+    content: |
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('Site JS loaded');
+      });
+
+stylesheets:
+  - alias: siteStyles
+    name: Site Styles
+    path: css/site.css
+    content: |
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+
 dataTypes:
   - name: textString
     alias: textString
@@ -95,6 +114,10 @@ templates:
     alias: page
     description: "Master template for standard pages"
     masterTemplate: null
+    stylesheets:
+      - css/site.css
+    scripts:
+      - js/site.js
     content: |
       @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
       @{

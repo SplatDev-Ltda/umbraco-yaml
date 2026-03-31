@@ -24,16 +24,23 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
 
             Assert.NotNull(result);
             Assert.NotNull(result.Umbraco);
-            Assert.Equal(2, result.Umbraco.DataTypes.Count);
+
+            // 4 dataTypes: textString(update), richText(remove), textString, richText
+            Assert.Equal(4, result.Umbraco.DataTypes.Count);
             Assert.Equal("textString", result.Umbraco.DataTypes[0].Alias);
             Assert.Equal("richText", result.Umbraco.DataTypes[1].Alias);
+
+            // 3 scripts, 2 stylesheets
+            Assert.Equal(3, result.Umbraco.Scripts.Count);
+            Assert.Equal(2, result.Umbraco.Stylesheets.Count);
 
             Assert.Single(result.Umbraco.DocumentTypes);
             Assert.Equal("page", result.Umbraco.DocumentTypes[0].Alias);
             Assert.Single(result.Umbraco.DocumentTypes[0].Tabs);
 
-            Assert.Single(result.Umbraco.Templates);
+            Assert.Equal(2, result.Umbraco.Templates.Count);
             Assert.Equal("masterPage", result.Umbraco.Templates[0].Alias);
+            Assert.Equal("customPage", result.Umbraco.Templates[1].Alias);
 
             Assert.Single(result.Umbraco.Content);
             Assert.Equal("home", result.Umbraco.Content[0].Alias);

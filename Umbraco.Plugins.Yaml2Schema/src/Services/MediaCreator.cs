@@ -1,0 +1,167 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.IO;
+using Umbraco.Cms.Core.Models;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Plugins.Yaml2Schema.Models;
+
+namespace Umbraco.Plugins.Yaml2Schema.Services
+{
+    public class MediaCreator
+    {
+        private readonly IMediaService _mediaService;
+        private readonly IMediaTypeService _mediaTypeService;
+        private readonly MediaFileManager _mediaFileManager;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<MediaCreator>? _logger;
+
+        public MediaCreator(
+            IMediaService mediaService,
+            IMediaTypeService mediaTypeService,
+            MediaFileManager mediaFileManager,
+            IHttpClientFactory httpClientFactory,
+            ILogger<MediaCreator>? logger = null)
+        {
+            _mediaService = mediaService ?? throw new ArgumentNullException(nameof(mediaService));
+            _mediaTypeService = mediaTypeService ?? throw new ArgumentNullException(nameof(mediaTypeService));
+            _mediaFileManager = mediaFileManager ?? throw new ArgumentNullException(nameof(mediaFileManager));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _logger = logger;
+        }
+
+        public void CreateMedia(List<YamlMedia> mediaItems, int? parentId = null)
+        {
+            if (mediaItems == null) throw new ArgumentNullException(nameof(mediaItems));
+
+            foreach (var yamlMedia in mediaItems)
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(yamlMedia.Name))
+                    {
+                        _logger?.LogWarning("Media entry is missing a name. Skipping.");
+                        continue;
+                    }
+
+                    // [REMOVE]
+                    if (yamlMedia.Remove)
+                    {
+                        var candidates = parentId.HasValue
+                            ? _mediaService.GetChildren(parentId.Value).ToList()
+                            : _mediaService.GetRootMedia().ToList();
+
+                        var toDelete = candidates.FirstOrDefault(m => m.Name == yamlMedia.Name);
+                        if (toDelete != null)
+                        {
+                            _mediaService.Delete(toDelete, Constants.Security.SuperUserId);
+                            _logger?.LogInformation("Media '{Name}' removed.", yamlMedia.Name);
+                        }
+                        else
+                        {
+                            _logger?.LogWarning("Media '{Name}' not found for removal. Skipping.", yamlMedia.Name);
+                        }
+                        continue;
+                    }
+
+                    // [UPDATE]
+                    if (yamlMedia.Update)
+                    {
+                        var candidates = parentId.HasValue
+                            ? _mediaService.GetChildren(parentId.Value).ToList()
+                            : _mediaService.GetRootMedia().ToList();
+
+                        var toUpdate = candidates.FirstOrDefault(m => m.Name == yamlMedia.Name);
+                        if (toUpdate != null)
+                        {
+                            SetProperties(toUpdate, yamlMedia);
+                            _mediaService.Save(toUpdate, Constants.Security.SuperUserId);
+                            _logger?.LogInformation("Media '{Name}' updated.", yamlMedia.Name);
+
+                            if (yamlMedia.Children.Any())
+                                CreateMedia(yamlMedia.Children, toUpdate.Id);
+                            continue;
+                        }
+                        // Not found — fall through to create
+                    }
+
+                    // Check if already exists
+                    var existing = (parentId.HasValue
+                        ? _mediaService.GetChildren(parentId.Value)
+                        : _mediaService.GetRootMedia()).FirstOrDefault(m => m.Name == yamlMedia.Name);
+
+                    if (existing != null)
+                    {
+                        _logger?.LogInformation("Media '{Name}' already exists. Skipping.", yamlMedia.Name);
+                        if (yamlMedia.Children.Any())
+                            CreateMedia(yamlMedia.Children, existing.Id);
+                        continue;
+                    }
+
+                    var media = _mediaService.CreateMedia(
+                        yamlMedia.Name,
+                        parentId ?? -1,
+                        yamlMedia.MediaType,
+                        Constants.Security.SuperUserId);
+
+                    // Download file from URL if provided
+                    if (!string.IsNullOrWhiteSpace(yamlMedia.Url))
+                    {
+                        TryAttachFileFromUrl(media, yamlMedia.Url);
+                    }
+
+                    SetProperties(media, yamlMedia);
+                    _mediaService.Save(media, Constants.Security.SuperUserId);
+                    _logger?.LogInformation("Media '{Name}' created.", yamlMedia.Name);
+
+                    if (yamlMedia.Children.Any())
+                        CreateMedia(yamlMedia.Children, media.Id);
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex, "Error processing media '{Name}'.", yamlMedia.Name);
+                    throw;
+                }
+            }
+        }
+
+        private void SetProperties(IMedia media, YamlMedia yamlMedia)
+        {
+            foreach (var kvp in yamlMedia.Properties)
+            {
+                if (media.Properties.Any(p => p.Alias == kvp.Key))
+                    media.SetValue(kvp.Key, kvp.Value);
+            }
+        }
+
+        private void TryAttachFileFromUrl(IMedia media, string url)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                using var response = client.GetAsync(url).GetAwaiter().GetResult();
+                response.EnsureSuccessStatusCode();
+
+                var fileName = Path.GetFileName(new Uri(url).LocalPath);
+                if (string.IsNullOrWhiteSpace(fileName))
+                    fileName = "file";
+
+                using var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+                var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+
+                _mediaFileManager.FileSystem.AddFile(fileName, stream, overrideIfExists: true);
+                media.SetValue(Constants.Conventions.Media.File, fileName);
+
+                _logger?.LogInformation("Attached file '{FileName}' from URL to media '{Name}'.", fileName, media.Name);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogWarning(ex, "Failed to download file from URL '{Url}' for media '{Name}'. Continuing without file.", url, media.Name);
+            }
+        }
+    }
+}

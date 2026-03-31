@@ -3,9 +3,9 @@
 [![NuGet](https://img.shields.io/nuget/v/SplatDev.Umbraco.Plugins.Yaml2Schema.svg)](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Yaml2Schema)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A declarative, **Infrastructure-as-Code** style plugin for **Umbraco 17** that creates DataTypes, DocumentTypes, Templates, and Content automatically from a single YAML configuration file on application startup.
+A declarative, **Infrastructure-as-Code** style plugin for **Umbraco 17** that bootstraps your entire Umbraco site structure from a single YAML file on application startup.
 
-Define your entire Umbraco structure as code. Version-control it. Reproduce it anywhere.
+Define DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users as code. Version-control it. Reproduce it anywhere.
 
 ---
 
@@ -31,7 +31,7 @@ No further registration is required — the plugin self-registers via an Umbraco
 2. Create `config/umbraco.yaml` in your project root
 3. Run your Umbraco application
 
-All structures defined in the YAML file are created automatically. Existing items (matched by alias) are skipped, so restarts are safe.
+All structures defined in the YAML file are created automatically on startup. Existing items (matched by alias/name/email) are skipped — restarts are safe.
 
 ---
 
@@ -53,11 +53,26 @@ The path is relative to the application content root. Absolute paths are also ac
 
 ## YAML Schema
 
-The config file has four top-level sections. All are optional and processed in order: `dataTypes` → `documentTypes` → `templates` → `content`.
+All top-level sections are optional. Processing order:
 
-### DataTypes
+`languages` → `dataTypes` → `documentTypes` → `mediaTypes` → `scripts` → `stylesheets` → `templates` → `content` → `media` → `dictionaryItems` → `members` → `users`
 
-Define the property editors available to your DocumentTypes.
+### Flags (`remove` / `update`)
+
+Every item in every section supports two optional control flags:
+
+| Flag | Behaviour |
+|------|-----------|
+| `remove: true` | Delete the entity on startup. Logs a warning if not found. |
+| `update: true` | Update if found, create if not found (upsert). |
+
+Neither flag is set by default; omitting both means **create if not exists, skip otherwise**.
+
+---
+
+### `dataTypes`
+
+Define property editors. The `config` map is applied directly to the DataType — supports Block List, Image Cropper, and any editor accepting a key/value configuration.
 
 ```yaml
 dataTypes:
@@ -67,19 +82,36 @@ dataTypes:
     config:
       maxLength: 100
 
-  - alias: bodyContent
-    name: Body Content
+  - alias: blockList
+    name: Block List
+    editorUiAlias: Umbraco.BlockList
+    config:
+      blocks:
+        - contentElementTypeKey: "00000000-0000-0000-0000-000000000000"
+
+  # [UPDATE] — upsert; bypasses the broad editor-alias existence check
+  - alias: richText
+    name: Rich Text
     editorUiAlias: Umbraco.TinyMCE
+    update: true
+
+  # [REMOVE] — deletes this DataType
+  - alias: legacyEditor
+    name: Legacy Editor
+    editorUiAlias: Umbraco.TextBox
+    remove: true
 ```
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `alias` | Yes | Unique identifier — referenced by DocumentType properties |
+| `alias` | Yes | Unique identifier |
 | `name` | Yes | Display name in the back-office |
 | `editorUiAlias` | Yes | Registered property editor alias |
 | `config` | No | Editor-specific configuration (key-value map) |
 
-### DocumentTypes
+---
+
+### `documentTypes`
 
 Define content blueprints with tabbed property groups.
 
@@ -100,17 +132,16 @@ documentTypes:
             dataType: pageTitle
             required: true
             description: The main heading shown on the page
-
           - alias: body
             name: Body
-            dataType: bodyContent
+            dataType: richText
 ```
 
 | Field | Required | Default | Description |
 |-------|----------|---------|-------------|
 | `alias` | Yes | — | Unique identifier |
 | `name` | Yes | — | Display name |
-| `icon` | No | — | Umbraco icon CSS class (e.g. `icon-document`) |
+| `icon` | No | `icon-document` | Umbraco icon CSS class |
 | `allowAsRoot` | No | `true` | Allow creation at the content tree root |
 | `allowedChildTypes` | No | `[]` | DocumentType aliases permitted as children |
 | `tabs` | No | `[]` | Property tabs, each with `name` and `properties` |
@@ -119,37 +150,110 @@ documentTypes:
 
 | Field | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `alias` | Yes | — | Unique within the DocumentType; used in templates |
+| `alias` | Yes | — | Unique within the DocumentType |
 | `name` | Yes | — | Editor-facing label |
-| `dataType` | Yes | — | Alias of a DataType defined above |
+| `dataType` | Yes | — | Alias of a DataType defined in `dataTypes` |
 | `required` | No | `false` | Mandatory field for editors |
 | `description` | No | — | Help text shown below the field |
 
-### Templates
+> **UPDATE behaviour**: Additive merge — existing properties and tabs are never removed. New tabs and new properties are added. Top-level fields (`name`, `icon`, `allowAsRoot`) are replaced.
 
-Register Razor view templates. The `.cshtml` file must exist on disk.
+---
+
+### `mediaTypes`
+
+Define media blueprints (mirrors `documentTypes` structure).
+
+```yaml
+mediaTypes:
+  - alias: customImage
+    name: Custom Image
+    icon: icon-picture
+    allowedAtRoot: false
+    tabs:
+      - name: Media
+        properties:
+          - alias: umbracoFile
+            name: File
+            dataType: Upload File
+```
+
+---
+
+### `templates`
+
+Register Razor view templates. A default `@inherits UmbracoViewPage` scaffold is generated automatically. Provide an explicit `content:` field to use your own Razor markup instead.
 
 ```yaml
 templates:
   - alias: master
     name: Master
-    path: Master.cshtml
     masterTemplate: null
+    stylesheets:
+      - css/site.css
+    scripts:
+      - js/app.js
 
   - alias: page
     name: Page
-    path: Page.cshtml
     masterTemplate: master
+    content: |
+      @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+      @{
+          Layout = "master";
+      }
+      <h1>@Model.Value("title")</h1>
+      @Html.Raw(Model.Value("body"))
 ```
 
 | Field | Required | Description |
 |-------|----------|-------------|
 | `alias` | Yes | Unique identifier |
 | `name` | Yes | Display name |
-| `path` | Yes | Path to `.cshtml` relative to `Views/` |
 | `masterTemplate` | No | Alias of the parent layout template, or `null` |
+| `content` | No | Explicit Razor markup; overrides the auto-generated scaffold |
+| `stylesheets` | No | List of wwwroot-relative CSS paths to inject into `<head>` |
+| `scripts` | No | List of wwwroot-relative JS paths to inject before `</body>` |
 
-### Content
+---
+
+### `scripts` / `stylesheets`
+
+Write JavaScript and CSS files to `wwwroot` on startup.
+
+```yaml
+scripts:
+  - alias: siteJs
+    name: Site JavaScript
+    path: js/site.js
+    content: |
+      console.log('loaded');
+  - alias: siteJsUpdate
+    path: js/site.js
+    update: true          # overwrite on every startup
+    content: |
+      console.log('updated');
+  - alias: legacyJs
+    path: js/legacy.js
+    remove: true          # delete from wwwroot
+
+stylesheets:
+  - alias: siteStyles
+    name: Site Styles
+    path: css/site.css
+    content: |
+      body { margin: 0; }
+```
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `alias` | Yes | Unique identifier (deduplication key) |
+| `path` | Yes | Output path relative to `wwwroot` |
+| `content` | No | File content to write |
+
+---
+
+### `content`
 
 Seed content nodes, nested to any depth.
 
@@ -161,7 +265,7 @@ content:
     isPublished: true
     sortOrder: 0
     properties:
-      title: "Welcome to Our Website"
+      title: "Welcome"
       body: "<p>Hello world.</p>"
     children:
       - alias: about
@@ -170,7 +274,6 @@ content:
         isPublished: true
         properties:
           title: "About Us"
-          body: "<p>Who we are.</p>"
 ```
 
 | Field | Required | Default | Description |
@@ -178,10 +281,140 @@ content:
 | `alias` | Yes | — | Unique node identifier |
 | `name` | Yes | — | Name shown in content tree |
 | `documentType` | Yes | — | DocumentType alias |
-| `isPublished` | No | `false` | Publish on creation; otherwise saved as draft |
-| `sortOrder` | No | `0` | Position among siblings (zero-based) |
+| `isPublished` | No | `false` | Publish on creation |
+| `sortOrder` | No | `0` | Position among siblings |
 | `properties` | No | `{}` | Property alias → value pairs |
 | `children` | No | `[]` | Nested child content nodes |
+
+---
+
+### `media`
+
+Create media nodes. Optionally download a file from a URL and attach it.
+
+```yaml
+media:
+  - alias: siteBanner
+    name: Site Banner
+    mediaType: Image
+    url: https://example.com/banner.jpg
+  - alias: docs
+    name: Documents
+    mediaType: Folder
+    children:
+      - alias: brochure
+        name: Brochure
+        mediaType: File
+        url: https://example.com/brochure.pdf
+```
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `alias` | Yes | Unique identifier |
+| `name` | Yes | Name in the media tree |
+| `mediaType` | Yes | Media Type alias (e.g. `Image`, `File`, `Folder`) |
+| `url` | No | URL to download and attach as the file property |
+| `properties` | No | Additional property alias → value pairs |
+| `children` | No | Nested child media nodes |
+
+---
+
+### `languages`
+
+Register Umbraco languages. Languages are created before all other entities.
+
+```yaml
+languages:
+  - isoCode: en-US
+    cultureName: English (United States)
+    isDefault: true
+    isMandatory: true
+  - isoCode: fr-FR
+    cultureName: French (France)
+```
+
+| Field | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `isoCode` | Yes | — | BCP-47 culture code (e.g. `en-US`) |
+| `cultureName` | No | Auto from .NET | Display name; defaults to the .NET culture display name |
+| `isDefault` | No | `false` | Set as the default language |
+| `isMandatory` | No | `false` | Require translation before publishing |
+
+---
+
+### `dictionaryItems`
+
+Seed Umbraco dictionary keys with per-language translations.
+
+```yaml
+dictionaryItems:
+  - key: general.hello
+    translations:
+      en-US: Hello
+      fr-FR: Bonjour
+  - key: nav.home
+    translations:
+      en-US: Home
+      fr-FR: Accueil
+    update: true
+```
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `key` | Yes | Dictionary key (dot-notation recommended) |
+| `translations` | No | ISO code → translated string map |
+
+---
+
+### `members`
+
+Create Umbraco member accounts.
+
+```yaml
+members:
+  - alias: testMember
+    name: Test Member
+    email: test@example.com
+    username: testmember
+    password: "S3cure!Pass"
+    memberType: Member
+    isApproved: true
+    properties:
+      comments: Welcome note
+```
+
+| Field | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `email` | Yes | — | Unique identifier for lookup/dedup |
+| `name` | Yes | — | Display name |
+| `username` | No | email | Login username |
+| `password` | No | — | Initial password |
+| `memberType` | No | `Member` | Member Type alias |
+| `isApproved` | No | `true` | Whether the member can log in |
+| `properties` | No | `{}` | Member property values |
+
+---
+
+### `users`
+
+Create Umbraco backoffice users.
+
+```yaml
+users:
+  - alias: editorUser
+    name: Editor User
+    email: editor@example.com
+    username: editoruser
+    userGroups:
+      - editor
+```
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `email` | Yes | Unique identifier for lookup/dedup |
+| `name` | Yes | Display name |
+| `username` | No | Login username (defaults to email) |
+| `userGroups` | No | List of user group aliases to assign |
 
 ---
 
@@ -199,6 +432,8 @@ content:
 | `Umbraco.MediaPicker3` | Media picker |
 | `Umbraco.ContentPicker` | Content picker |
 | `Umbraco.Tags` | Tag input |
+| `Umbraco.BlockList` | Block List editor |
+| `Umbraco.ImageCropper` | Image with crop config |
 
 ---
 
@@ -206,22 +441,47 @@ content:
 
 | Component | Responsibility |
 |-----------|---------------|
-| `YamlStartupComposer` | Registers services and wires the startup handler |
-| `YamlInitializationHandler` | Fires on `UmbracoApplicationStarted` and orchestrates creation |
+| `YamlStartupComposer` | Registers all services and wires the startup handler |
+| `YamlInitializationHandler` | Fires on `UmbracoApplicationStarted`; orchestrates all creators |
 | `YamlParser` | Deserializes the YAML file using YamlDotNet |
-| `DataTypeCreator` | Creates DataTypes via Umbraco's `IDataTypeService` |
-| `DocumentTypeCreator` | Creates DocumentTypes and their tabbed properties |
-| `TemplateCreator` | Creates template records in Umbraco |
-| `ContentCreator` | Recursively creates and publishes content nodes |
+| `DataTypeCreator` | Creates/updates/removes DataTypes |
+| `DocumentTypeCreator` | Creates/updates/removes DocumentTypes and their tabbed properties |
+| `MediaTypeCreator` | Creates/updates/removes Media Types |
+| `TemplateCreator` | Creates/updates/removes Razor templates |
+| `ContentCreator` | Recursively creates/updates/removes content nodes |
+| `MediaCreator` | Creates/updates/removes media nodes; downloads files from URLs |
+| `StaticAssetCreator` | Writes/deletes JS and CSS files under `wwwroot` |
+| `LanguageCreator` | Creates/updates/removes Umbraco languages |
+| `DictionaryCreator` | Creates/updates/removes dictionary items with translations |
+| `MemberCreator` | Creates/updates/removes member accounts |
+| `UserCreator` | Creates/updates/removes backoffice users |
 
 ---
 
 ## Behaviour
 
-- **Idempotent**: Items already present (by alias) are skipped — safe across restarts
-- **Ordered**: DataTypes → DocumentTypes → Templates → Content
+- **Idempotent**: Items already present are skipped — safe across restarts
+- **Ordered**: Languages first, then DataTypes, DocumentTypes, MediaTypes, Scripts/Stylesheets, Templates, Content, Media, DictionaryItems, Members, Users
 - **Logged**: All activity and warnings go to the standard Umbraco log
-- **Forgiving**: Missing references (e.g. unknown DataType) log a warning and continue
+- **Forgiving**: Missing references log a warning and continue without throwing
+- **Additive updates**: DocumentType/MediaType `[UPDATE]` never removes existing properties — only adds new ones
+
+---
+
+## Repository Structure
+
+```
+Umbraco.Plugins.Yaml2Schema/       NuGet package (source)
+  src/
+    Composers/                     DI registration
+    Handlers/                      Startup notification handler
+    Models/                        YAML model classes
+    Services/                      Creator services
+Umbraco.Plugins.Yaml2Schema.Tests/ xUnit test project
+  fixtures/                        sample.yaml, web-config.yaml
+UmbracoYaml.Web/                   Demo Umbraco 17 website
+  config/umbraco.yaml              Live configuration example
+```
 
 ---
 

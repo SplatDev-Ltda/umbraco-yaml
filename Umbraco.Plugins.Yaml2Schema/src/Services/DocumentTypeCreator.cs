@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Strings;
@@ -48,6 +49,44 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                             "DocumentType with alias '{Alias}' is a duplicate and will be skipped.",
                             yamlDocType.Alias
                         );
+                        continue;
+                    }
+
+                    // [UPDATE] — update the DocumentType if it exists, create if not
+                    if (yamlDocType.Update)
+                    {
+                        var toUpdate = _contentTypeService.Get(yamlDocType.Alias);
+                        if (toUpdate != null)
+                        {
+                            UpdateDocumentType(toUpdate, yamlDocType);
+                            _contentTypeService.Save(toUpdate);
+                            _logger?.LogInformation(
+                                "DocumentType '{Name}' with alias '{Alias}' updated.",
+                                yamlDocType.Name, yamlDocType.Alias);
+                            processedAliases.Add(yamlDocType.Alias);
+                            continue;
+                        }
+                        // Not found — fall through to create
+                    }
+
+                    // [REMOVE] — delete the DocumentType if flagged
+                    if (yamlDocType.Remove)
+                    {
+                        var toDelete = _contentTypeService.Get(yamlDocType.Alias);
+                        if (toDelete != null)
+                        {
+                            _contentTypeService.Delete(toDelete, Constants.Security.SuperUserId);
+                            _logger?.LogInformation(
+                                "DocumentType '{Name}' with alias '{Alias}' removed.",
+                                yamlDocType.Name, yamlDocType.Alias);
+                        }
+                        else
+                        {
+                            _logger?.LogWarning(
+                                "DocumentType with alias '{Alias}' not found for removal. Skipping.",
+                                yamlDocType.Alias);
+                        }
+                        processedAliases.Add(yamlDocType.Alias);
                         continue;
                     }
 
@@ -139,6 +178,83 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     );
                     throw;
                 }
+            }
+        }
+
+        private void UpdateDocumentType(IContentType existing, YamlDocumentType yaml)
+        {
+            existing.Name = yaml.Name;
+            existing.Icon = yaml.Icon ?? "icon-document";
+            existing.AllowedAsRoot = yaml.AllowAsRoot;
+
+            // Merge tabs and properties — additive only, existing properties are never removed
+            foreach (var tab in yaml.Tabs)
+            {
+                var tabAlias = _shortStringHelper.CleanStringForSafeAlias(tab.Name);
+                var existingTab = existing.PropertyGroups.FirstOrDefault(g => g.Alias == tabAlias);
+
+                if (existingTab == null)
+                {
+                    // Add the entire new tab
+                    var newTab = new PropertyGroup(false) { Name = tab.Name, Alias = tabAlias };
+                    foreach (var property in tab.Properties)
+                    {
+                        var dataType = _dataTypeService.GetDataType(property.DataType);
+                        if (dataType == null)
+                        {
+                            _logger?.LogWarning(
+                                "DataType '{DataType}' not found. Skipping property '{PropertyAlias}'.",
+                                property.DataType, property.Alias);
+                            continue;
+                        }
+                        newTab.PropertyTypes!.Add(new PropertyType(_shortStringHelper, dataType)
+                        {
+                            Alias = property.Alias,
+                            Name = property.Name,
+                            Mandatory = property.Required,
+                            Description = property.Description
+                        });
+                    }
+                    existing.PropertyGroups.Add(newTab);
+                }
+                else
+                {
+                    // Merge new properties into the existing tab; skip any whose alias already exists
+                    foreach (var property in tab.Properties)
+                    {
+                        if (existingTab.PropertyTypes?.Any(p => p.Alias == property.Alias) == true)
+                            continue;
+
+                        var dataType = _dataTypeService.GetDataType(property.DataType);
+                        if (dataType == null)
+                        {
+                            _logger?.LogWarning(
+                                "DataType '{DataType}' not found. Skipping property '{PropertyAlias}'.",
+                                property.DataType, property.Alias);
+                            continue;
+                        }
+                        existingTab.PropertyTypes!.Add(new PropertyType(_shortStringHelper, dataType)
+                        {
+                            Alias = property.Alias,
+                            Name = property.Name,
+                            Mandatory = property.Required,
+                            Description = property.Description
+                        });
+                    }
+                }
+            }
+
+            // Update allowed child types when explicitly provided
+            if (yaml.AllowedChildTypes.Any())
+            {
+                var childTypes = yaml.AllowedChildTypes
+                    .Select(alias => _contentTypeService.Get(alias))
+                    .Where(ct => ct != null)
+                    .ToList();
+
+                existing.AllowedContentTypes = childTypes
+                    .Select(ct => new ContentTypeSort(ct!.Key, 0, ct.Alias))
+                    .ToList();
             }
         }
     }

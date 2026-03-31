@@ -18,8 +18,18 @@ namespace Umbraco.Plugins.Yaml2Schema.Composers
             // Register all Creators
             builder.Services.AddScoped<DataTypeCreator>();
             builder.Services.AddScoped<DocumentTypeCreator>();
+            builder.Services.AddScoped<MediaTypeCreator>();
             builder.Services.AddScoped<TemplateCreator>();
             builder.Services.AddScoped<ContentCreator>();
+            builder.Services.AddScoped<MediaCreator>();
+            builder.Services.AddScoped<StaticAssetCreator>();
+            builder.Services.AddScoped<LanguageCreator>();
+            builder.Services.AddScoped<DictionaryCreator>();
+            builder.Services.AddScoped<MemberCreator>();
+            builder.Services.AddScoped<UserCreator>();
+
+            // IHttpClientFactory is needed by MediaCreator for URL-based file downloads
+            builder.Services.AddHttpClient();
 
             // Register the initialization handler for startup notification
             builder.AddNotificationAsyncHandler<UmbracoApplicationStartedNotification, YamlInitializationHandler>();

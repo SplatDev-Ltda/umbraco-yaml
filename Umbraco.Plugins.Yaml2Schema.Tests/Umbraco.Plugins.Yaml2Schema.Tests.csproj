@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <None Include="fixtures/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../UmbracoYaml.Web/config/umbraco.yaml" CopyToOutputDirectory="PreserveNewest" Link="fixtures/web-config.yaml" />
   </ItemGroup>
 
 </Project>

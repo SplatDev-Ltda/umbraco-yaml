@@ -31,6 +31,59 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             {
                 try
                 {
+                    // [UPDATE] — update matching content node if it exists, create if not
+                    if (yamlContent.Update)
+                    {
+                        var candidates = parentId.HasValue
+                            ? _contentService.GetChildren(parentId.Value).ToList()
+                            : _contentService.GetRootContent().ToList();
+
+                        var toUpdate = candidates.FirstOrDefault(c => c.Name == yamlContent.Name);
+                        if (toUpdate != null)
+                        {
+                            foreach (var kvp in yamlContent.Values)
+                            {
+                                if (toUpdate.Properties.Any(p => p.Alias == kvp.Key))
+                                    toUpdate.SetValue(kvp.Key, kvp.Value);
+                            }
+
+                            toUpdate.SortOrder = yamlContent.SortOrder;
+                            _contentService.Save(toUpdate, null, null);
+
+                            if (yamlContent.Published)
+                                _contentService.Publish(toUpdate, Array.Empty<string>(), Constants.Security.SuperUserId);
+
+                            _logger?.LogInformation("Content '{Name}' updated.", yamlContent.Name);
+
+                            if (yamlContent.Children.Any())
+                                CreateContent(yamlContent.Children, toUpdate.Id);
+
+                            continue;
+                        }
+                        // Not found — fall through to create
+                    }
+
+                    // [REMOVE] — delete matching content node if flagged
+                    if (yamlContent.Remove)
+                    {
+                        var candidates = parentId.HasValue
+                            ? _contentService.GetChildren(parentId.Value).ToList()
+                            : _contentService.GetRootContent().ToList();
+
+                        var toDelete = candidates.FirstOrDefault(c => c.Name == yamlContent.Name);
+                        if (toDelete != null)
+                        {
+                            _contentService.Delete(toDelete, Constants.Security.SuperUserId);
+                            _logger?.LogInformation("Content '{Name}' removed.", yamlContent.Name);
+                        }
+                        else
+                        {
+                            _logger?.LogWarning("Content '{Name}' not found for removal. Skipping.", yamlContent.Name);
+                        }
+                        // Deletion cascades in Umbraco — no need to recurse into children
+                        continue;
+                    }
+
                     var contentType = _contentTypeService.Get(yamlContent.Type);
                     if (contentType == null)
                     {

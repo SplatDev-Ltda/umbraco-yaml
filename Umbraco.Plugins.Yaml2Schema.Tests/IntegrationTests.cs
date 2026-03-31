@@ -56,18 +56,41 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             Assert.NotNull(result);
             Assert.NotNull(result.Umbraco);
 
-            // DataTypes verification
+            // DataTypes: [0] textString(update:true), [1] richText(remove:true), [2] textString, [3] richText
             Assert.NotNull(result.Umbraco.DataTypes);
-            Assert.Equal(2, result.Umbraco.DataTypes.Count);
+            Assert.Equal(4, result.Umbraco.DataTypes.Count);
             Assert.Equal("textString", result.Umbraco.DataTypes[0].Alias);
             Assert.Equal("Text String", result.Umbraco.DataTypes[0].Name);
             Assert.Equal("Umbraco.TextBox", result.Umbraco.DataTypes[0].Editor);
+            Assert.True(result.Umbraco.DataTypes[0].Update);
             Assert.NotNull(result.Umbraco.DataTypes[0].Config);
-            Assert.Contains("maxLength", result.Umbraco.DataTypes[0].Config.Keys);
 
             Assert.Equal("richText", result.Umbraco.DataTypes[1].Alias);
             Assert.Equal("Rich Text", result.Umbraco.DataTypes[1].Name);
-            Assert.Equal("Umbraco.RichText", result.Umbraco.DataTypes[1].Editor);
+            Assert.True(result.Umbraco.DataTypes[1].Remove);
+
+            // [2] is the original textString with config
+            Assert.Equal("textString", result.Umbraco.DataTypes[2].Alias);
+            Assert.Contains("maxLength", result.Umbraco.DataTypes[2].Config.Keys);
+
+            // Scripts and Stylesheets verification
+            Assert.NotNull(result.Umbraco.Scripts);
+            Assert.Equal(3, result.Umbraco.Scripts.Count);
+            Assert.Equal("siteJs", result.Umbraco.Scripts[0].Alias);
+            Assert.Equal("js/site.js", result.Umbraco.Scripts[0].Path);
+            Assert.False(result.Umbraco.Scripts[0].Remove);
+            Assert.False(result.Umbraco.Scripts[0].Update);
+            Assert.Equal("siteJsUpdate", result.Umbraco.Scripts[1].Alias);
+            Assert.True(result.Umbraco.Scripts[1].Update);
+            Assert.Equal("legacyJs", result.Umbraco.Scripts[2].Alias);
+            Assert.True(result.Umbraco.Scripts[2].Remove);
+
+            Assert.NotNull(result.Umbraco.Stylesheets);
+            Assert.Equal(2, result.Umbraco.Stylesheets.Count);
+            Assert.Equal("siteStyles", result.Umbraco.Stylesheets[0].Alias);
+            Assert.Equal("css/site.css", result.Umbraco.Stylesheets[0].Path);
+            Assert.Equal("oldStyles", result.Umbraco.Stylesheets[1].Alias);
+            Assert.True(result.Umbraco.Stylesheets[1].Remove);
 
             // DocumentTypes verification
             Assert.NotNull(result.Umbraco.DocumentTypes);
@@ -114,9 +137,60 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             Assert.Equal(0, content.SortOrder);
             Assert.NotNull(content.Values);
             Assert.Contains("title", content.Values.Keys);
-            Assert.Equal("Welcome to Umbraco", content.Values["title"]);
+            Assert.Equal("Welcome to Umbraco", content.Values["title"].ToString());
             Assert.NotNull(content.Children);
             Assert.Empty(content.Children);
+
+            // Template scripts/stylesheets injection
+            var template = result.Umbraco.Templates[0];
+            Assert.Single(template.Scripts);
+            Assert.Equal("js/site.js", template.Scripts[0]);
+            Assert.Single(template.Stylesheets);
+            Assert.Equal("css/site.css", template.Stylesheets[0]);
+
+            // Template with explicit Razor content
+            Assert.Equal(2, result.Umbraco.Templates.Count);
+            var customTemplate = result.Umbraco.Templates[1];
+            Assert.Equal("customPage", customTemplate.Alias);
+            Assert.False(string.IsNullOrWhiteSpace(customTemplate.RazorContent));
+            Assert.Contains("@inherits", customTemplate.RazorContent);
+
+            // Languages
+            Assert.NotNull(result.Umbraco.Languages);
+            Assert.Equal(2, result.Umbraco.Languages.Count);
+            Assert.Equal("en-US", result.Umbraco.Languages[0].IsoCode);
+            Assert.True(result.Umbraco.Languages[0].IsDefault);
+            Assert.Equal("es-ES", result.Umbraco.Languages[1].IsoCode);
+
+            // Dictionary items
+            Assert.NotNull(result.Umbraco.DictionaryItems);
+            Assert.Equal(2, result.Umbraco.DictionaryItems.Count);
+            Assert.Equal("general.hello", result.Umbraco.DictionaryItems[0].Key);
+            Assert.Equal("Hello", result.Umbraco.DictionaryItems[0].Translations["en-US"]);
+            Assert.Equal("Hola", result.Umbraco.DictionaryItems[0].Translations["es-ES"]);
+
+            // Media types
+            Assert.NotNull(result.Umbraco.MediaTypes);
+            Assert.Single(result.Umbraco.MediaTypes);
+            Assert.Equal("customImage", result.Umbraco.MediaTypes[0].Alias);
+
+            // Media items
+            Assert.NotNull(result.Umbraco.Media);
+            Assert.Single(result.Umbraco.Media);
+            Assert.Equal("Site Banner", result.Umbraco.Media[0].Name);
+            Assert.False(string.IsNullOrWhiteSpace(result.Umbraco.Media[0].Url));
+
+            // Members
+            Assert.NotNull(result.Umbraco.Members);
+            Assert.Single(result.Umbraco.Members);
+            Assert.Equal("test@example.com", result.Umbraco.Members[0].Email);
+            Assert.True(result.Umbraco.Members[0].IsApproved);
+
+            // Users
+            Assert.NotNull(result.Umbraco.Users);
+            Assert.Single(result.Umbraco.Users);
+            Assert.Equal("editor@example.com", result.Umbraco.Users[0].Email);
+            Assert.Contains("editor", result.Umbraco.Users[0].UserGroups);
         }
 
         /// <summary>
@@ -154,6 +228,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             mockDataTypeService
                 .Setup(x => x.GetByEditorAlias(It.IsAny<string>()))
                 .Returns(Enumerable.Empty<IDataType>());
+
+            // GetDataType: called for update:true (returns existing → skip) and remove:true (returns null → warn)
+            var mockExistingDT = new Mock<IDataType>();
+            mockDataTypeService
+                .SetupSequence(x => x.GetDataType(It.IsAny<string>()))
+                .Returns(mockExistingDT.Object)   // textString update:true → found → skip
+                .Returns((IDataType?)null);        // richText remove:true → not found → warn
 
             var mockContentType = new Mock<IContentType>();
             mockContentType.Setup(x => x.Id).Returns(1);
@@ -266,17 +347,19 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             // Act
             var result = parser.ParseYaml(_testFixturePath);
 
-            // Assert - All major sections exist
-            Assert.NotNull(result.Umbraco.DataTypes);
-            Assert.NotNull(result.Umbraco.DocumentTypes);
-            Assert.NotNull(result.Umbraco.Templates);
-            Assert.NotNull(result.Umbraco.Content);
-
-            // Assert - All sections are populated with correct count
+            // Assert - All major sections exist and are populated
             Assert.NotEmpty(result.Umbraco.DataTypes);
             Assert.NotEmpty(result.Umbraco.DocumentTypes);
             Assert.NotEmpty(result.Umbraco.Templates);
             Assert.NotEmpty(result.Umbraco.Content);
+            Assert.NotEmpty(result.Umbraco.Scripts);
+            Assert.NotEmpty(result.Umbraco.Stylesheets);
+            Assert.NotEmpty(result.Umbraco.Languages);
+            Assert.NotEmpty(result.Umbraco.DictionaryItems);
+            Assert.NotEmpty(result.Umbraco.MediaTypes);
+            Assert.NotEmpty(result.Umbraco.Media);
+            Assert.NotEmpty(result.Umbraco.Members);
+            Assert.NotEmpty(result.Umbraco.Users);
         }
 
         /// <summary>

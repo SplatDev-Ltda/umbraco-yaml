@@ -8,12 +8,12 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Yaml2Schema</PackageId>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
-    <Description>A declarative, Infrastructure-as-Code style plugin for Umbraco 17 that enables programmatic creation of DataTypes, DocumentTypes, Templates, and Content from a YAML configuration file. Define your entire Umbraco structure in YAML — the plugin builds it automatically on startup.</Description>
-    <PackageTags>umbraco yaml infrastructure-as-code cms content-management document-types data-types templates seeding umbraco-marketplace</PackageTags>
+    <Description>A declarative, Infrastructure-as-Code style plugin for Umbraco 17 that bootstraps your entire site from a YAML file: DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users. Supports create, update ([UPDATE]), and delete ([REMOVE]) operations on every entity type.</Description>
+    <PackageTags>umbraco yaml infrastructure-as-code cms content-management document-types data-types templates media languages dictionary members users seeding umbraco-marketplace</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
