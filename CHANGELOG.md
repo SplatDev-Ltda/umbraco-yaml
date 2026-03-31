@@ -9,6 +9,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-03-31
+
+### Added
+
+#### Template Assignment on Document Types (`allowedTemplates` / `defaultTemplate` fields)
+- `YamlDocumentType` now supports two new optional fields: `allowedTemplates` (list of template aliases) and `defaultTemplate` (single alias string).
+- `DocumentTypeCreator` gains `ITemplateService` injection and a new `LinkTemplatesToDocumentTypes` method that resolves template aliases and assigns `AllowedTemplates` / `SetDefaultTemplate` on the content type.
+- Template linking runs as a dedicated step in `YamlInitializationHandler` immediately **after** `CreateTemplates`, ensuring templates exist in the database before the link is attempted.
+- Unresolved template aliases are logged as warnings and skipped rather than throwing.
+
 ## [1.0.3] - 2026-03-30
 
 ### Added

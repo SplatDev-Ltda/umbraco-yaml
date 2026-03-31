@@ -14,17 +14,20 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
     {
         private readonly IContentTypeService _contentTypeService;
         private readonly IDataTypeService _dataTypeService;
+        private readonly ITemplateService _templateService;
         private readonly IShortStringHelper _shortStringHelper;
         private readonly ILogger<DocumentTypeCreator>? _logger;
 
         public DocumentTypeCreator(
             IContentTypeService contentTypeService,
             IDataTypeService dataTypeService,
+            ITemplateService templateService,
             IShortStringHelper shortStringHelper,
             ILogger<DocumentTypeCreator>? logger = null)
         {
             _contentTypeService = contentTypeService ?? throw new ArgumentNullException(nameof(contentTypeService));
             _dataTypeService = dataTypeService ?? throw new ArgumentNullException(nameof(dataTypeService));
+            _templateService = templateService ?? throw new ArgumentNullException(nameof(templateService));
             _shortStringHelper = shortStringHelper ?? throw new ArgumentNullException(nameof(shortStringHelper));
             _logger = logger;
         }
@@ -183,6 +186,60 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     );
                     throw;
                 }
+            }
+        }
+
+        public void LinkTemplatesToDocumentTypes(List<YamlDocumentType> documentTypes)
+        {
+            if (documentTypes == null) return;
+
+            foreach (var yamlDocType in documentTypes)
+            {
+                var hasAllowed  = yamlDocType.AllowedTemplates?.Count > 0;
+                var hasDefault  = !string.IsNullOrWhiteSpace(yamlDocType.DefaultTemplate);
+                if (!hasAllowed && !hasDefault) continue;
+
+                var contentType = _contentTypeService.Get(yamlDocType.Alias);
+                if (contentType == null)
+                {
+                    _logger?.LogWarning(
+                        "DocumentType '{Alias}' not found when linking templates. Skipping.",
+                        yamlDocType.Alias);
+                    continue;
+                }
+
+                // Collect all template aliases to resolve (allowed + default if not already listed)
+                var aliases = (yamlDocType.AllowedTemplates ?? new List<string>()).ToList();
+                if (hasDefault && !aliases.Contains(yamlDocType.DefaultTemplate!))
+                    aliases.Add(yamlDocType.DefaultTemplate!);
+
+                var resolvedTemplates = new List<ITemplate>();
+                foreach (var alias in aliases)
+                {
+                    var template = _templateService.GetAsync(alias).GetAwaiter().GetResult();
+                    if (template == null)
+                    {
+                        _logger?.LogWarning(
+                            "Template '{TemplateAlias}' not found when linking to DocumentType '{DocAlias}'. Skipping.",
+                            alias, yamlDocType.Alias);
+                        continue;
+                    }
+                    resolvedTemplates.Add(template);
+                }
+
+                contentType.AllowedTemplates = resolvedTemplates;
+
+                if (hasDefault)
+                {
+                    var defaultTemplate = resolvedTemplates.FirstOrDefault(t => t.Alias == yamlDocType.DefaultTemplate);
+                    if (defaultTemplate != null)
+                        contentType.SetDefaultTemplate(defaultTemplate);
+                }
+
+                _contentTypeService.Save(contentType);
+                _logger?.LogInformation(
+                    "Linked {Count} template(s) to DocumentType '{Alias}' (default: '{Default}').",
+                    resolvedTemplates.Count, yamlDocType.Alias, yamlDocType.DefaultTemplate ?? "(none)");
             }
         }
 

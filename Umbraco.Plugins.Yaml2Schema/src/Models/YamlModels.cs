@@ -90,6 +90,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
         [YamlMember(Alias = "tabs")]
         public List<YamlTab> Tabs { get; set; } = new();
 
+        [YamlMember(Alias = "allowedTemplates")]
+        public List<string> AllowedTemplates { get; set; } = new();
+
+        [YamlMember(Alias = "defaultTemplate")]
+        public string DefaultTemplate { get; set; }
+
         [YamlMember(Alias = "remove")]
         public bool Remove { get; set; } = false;
 

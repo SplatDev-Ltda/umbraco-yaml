@@ -160,6 +160,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                     _logger.LogInformation("YamlInitializationHandler: No Templates to create.");
                 }
 
+                // Link templates to document types (runs after both are created)
+                if (yamlRoot.Umbraco.DocumentTypes?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Linking templates to DocumentTypes.");
+                    _documentTypeCreator.LinkTemplatesToDocumentTypes(yamlRoot.Umbraco.DocumentTypes);
+                }
+
                 // Create Content
                 if (yamlRoot.Umbraco.Content?.Count > 0)
                 {
