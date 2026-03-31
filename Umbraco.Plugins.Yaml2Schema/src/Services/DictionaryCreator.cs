@@ -5,6 +5,8 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Plugins.Yaml2Schema.Models;
 
+#pragma warning disable CS0618 // ILocalizationService is deprecated in favour of IDictionaryItemService; still functional in Umbraco 17
+
 namespace Umbraco.Plugins.Yaml2Schema.Services
 {
     public class DictionaryCreator

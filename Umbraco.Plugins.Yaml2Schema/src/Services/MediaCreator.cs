@@ -52,7 +52,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     if (yamlMedia.Remove)
                     {
                         var candidates = parentId.HasValue
-                            ? _mediaService.GetChildren(parentId.Value).ToList()
+                            ? _mediaService.GetPagedChildren(parentId.Value, 0, int.MaxValue, out _).ToList()
                             : _mediaService.GetRootMedia().ToList();
 
                         var toDelete = candidates.FirstOrDefault(m => m.Name == yamlMedia.Name);
@@ -72,7 +72,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     if (yamlMedia.Update)
                     {
                         var candidates = parentId.HasValue
-                            ? _mediaService.GetChildren(parentId.Value).ToList()
+                            ? _mediaService.GetPagedChildren(parentId.Value, 0, int.MaxValue, out _).ToList()
                             : _mediaService.GetRootMedia().ToList();
 
                         var toUpdate = candidates.FirstOrDefault(m => m.Name == yamlMedia.Name);
@@ -91,7 +91,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
                     // Check if already exists
                     var existing = (parentId.HasValue
-                        ? _mediaService.GetChildren(parentId.Value)
+                        ? _mediaService.GetPagedChildren(parentId.Value, 0, int.MaxValue, out _)
                         : _mediaService.GetRootMedia()).FirstOrDefault(m => m.Name == yamlMedia.Name);
 
                     if (existing != null)

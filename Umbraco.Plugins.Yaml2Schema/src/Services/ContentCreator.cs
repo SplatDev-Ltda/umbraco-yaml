@@ -35,7 +35,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     if (yamlContent.Update)
                     {
                         var candidates = parentId.HasValue
-                            ? _contentService.GetChildren(parentId.Value).ToList()
+                            ? _contentService.GetPagedChildren(parentId.Value, 0, int.MaxValue, out _).ToList()
                             : _contentService.GetRootContent().ToList();
 
                         var toUpdate = candidates.FirstOrDefault(c => c.Name == yamlContent.Name);
@@ -67,7 +67,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     if (yamlContent.Remove)
                     {
                         var candidates = parentId.HasValue
-                            ? _contentService.GetChildren(parentId.Value).ToList()
+                            ? _contentService.GetPagedChildren(parentId.Value, 0, int.MaxValue, out _).ToList()
                             : _contentService.GetRootContent().ToList();
 
                         var toDelete = candidates.FirstOrDefault(c => c.Name == yamlContent.Name);

@@ -97,7 +97,9 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
                     if (!string.IsNullOrWhiteSpace(yamlMember.Password))
                     {
-                        _memberService.SavePassword(member, yamlMember.Password);
+                        _logger?.LogWarning(
+                            "Password for member '{Email}' cannot be set via IMemberService in Umbraco 17. Set it manually or via the identity provider.",
+                            yamlMember.Email);
                     }
 
                     _logger?.LogInformation("Member '{Email}' created.", yamlMember.Email);

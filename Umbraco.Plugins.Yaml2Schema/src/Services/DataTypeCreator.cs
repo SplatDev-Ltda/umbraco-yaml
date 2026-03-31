@@ -126,7 +126,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     // Apply config from YAML (supports Block List, Image Cropper, etc.)
                     if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
                     {
-                        dataType.Configuration = yamlDataType.Config;
+                        dataType.SetConfigurationData(yamlDataType.Config);
                     }
 
                     // Save the DataType

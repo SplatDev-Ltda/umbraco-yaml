@@ -12,11 +12,16 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
     public class UserCreator
     {
         private readonly IUserService _userService;
+        private readonly IUserGroupService _userGroupService;
         private readonly ILogger<UserCreator>? _logger;
 
-        public UserCreator(IUserService userService, ILogger<UserCreator>? logger = null)
+        public UserCreator(
+            IUserService userService,
+            IUserGroupService userGroupService,
+            ILogger<UserCreator>? logger = null)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _userGroupService = userGroupService ?? throw new ArgumentNullException(nameof(userGroupService));
             _logger = logger;
         }
 
@@ -81,19 +86,17 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     }
 
                     // Create
-                    var attempt = _userService.CreateUserWithIdentity(
+                    var user = _userService.CreateUserWithIdentity(
                         yamlUser.Username ?? yamlUser.Email,
-                        yamlUser.Email,
-                        string.Empty);
+                        yamlUser.Email);
 
-                    if (!attempt.Success)
+                    if (user == null)
                     {
-                        _logger?.LogWarning("Failed to create user '{Email}': {Result}", yamlUser.Email, attempt.Result);
+                        _logger?.LogWarning("Failed to create user '{Email}'.", yamlUser.Email);
                         processedEmails.Add(yamlUser.Email);
                         continue;
                     }
 
-                    var user = attempt.Result!;
                     user.Name = yamlUser.Name;
                     AssignGroups(user, yamlUser.UserGroups);
                     _userService.Save(user);
@@ -111,13 +114,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
         private void AssignGroups(IUser user, List<string> groupAliases)
         {
-            if (groupAliases == null || !groupAliases.Any())
+            if (groupAliases == null || !groupAliases.Any() || user.Key == Guid.Empty)
                 return;
 
-            var groups = _userService.GetUserGroupsByAlias(groupAliases.ToArray());
-            user.ClearGroups();
-            foreach (var group in groups)
-                user.AddGroup(group.ToReadOnlyGroup());
+            var groups = _userGroupService.GetAsync(groupAliases.ToArray()).GetAwaiter().GetResult();
+            var groupKeys = new HashSet<Guid>(groups.Select(g => g.Key));
+            var userKeys = new HashSet<Guid> { user.Key };
+            _userGroupService.UpdateUserGroupsOnUsersAsync(groupKeys, userKeys).GetAwaiter().GetResult();
         }
     }
 }
