@@ -53,7 +53,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // [UPDATE] — upsert by name: create if not found, skip if already present
+                    // [UPDATE] — skip if not found; update (no-op) if already present
                     if (yamlDataType.Update)
                     {
                         var existing = _dataTypeService.GetDataType(yamlDataType.Name);
@@ -62,10 +62,15 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                             _logger?.LogInformation(
                                 "DataType '{Name}' already exists. No structural update required.",
                                 yamlDataType.Name);
-                            processedAliases.Add(yamlDataType.Alias);
-                            continue;
                         }
-                        // Not found — fall through to create, bypassing the broad editor-alias check below
+                        else
+                        {
+                            _logger?.LogInformation(
+                                "DataType '{Name}' not found. Skipping update.",
+                                yamlDataType.Name);
+                        }
+                        processedAliases.Add(yamlDataType.Alias);
+                        continue;
                     }
 
                     // [REMOVE] — delete the DataType if flagged
@@ -81,7 +86,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning(
+                            _logger?.LogDebug(
                                 "DataType '{Name}' not found for removal. Skipping.",
                                 yamlDataType.Name);
                         }

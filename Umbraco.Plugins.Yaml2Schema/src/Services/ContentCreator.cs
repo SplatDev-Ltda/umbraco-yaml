@@ -31,7 +31,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             {
                 try
                 {
-                    // [UPDATE] — update matching content node if it exists, create if not
+                    // [UPDATE] — update if exists, skip if not found
                     if (yamlContent.Update)
                     {
                         var candidates = parentId.HasValue
@@ -57,10 +57,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
                             if (yamlContent.Children.Any())
                                 CreateContent(yamlContent.Children, toUpdate.Id);
-
-                            continue;
                         }
-                        // Not found — fall through to create
+                        else
+                        {
+                            _logger?.LogInformation("Content '{Name}' not found. Skipping update.", yamlContent.Name);
+                        }
+                        continue;
                     }
 
                     // [REMOVE] — delete matching content node if flagged
@@ -78,7 +80,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning("Content '{Name}' not found for removal. Skipping.", yamlContent.Name);
+                            _logger?.LogDebug("Content '{Name}' not found for removal. Skipping.", yamlContent.Name);
                         }
                         // Deletion cascades in Umbraco — no need to recurse into children
                         continue;

@@ -58,7 +58,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning("User '{Email}' not found for removal. Skipping.", yamlUser.Email);
+                            _logger?.LogDebug("User '{Email}' not found for removal. Skipping.", yamlUser.Email);
                         }
                         processedEmails.Add(yamlUser.Email);
                         continue;

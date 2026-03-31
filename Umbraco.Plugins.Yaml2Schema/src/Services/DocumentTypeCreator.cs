@@ -52,7 +52,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // [UPDATE] — update the DocumentType if it exists, create if not
+                    // [UPDATE] — update if exists, skip if not found
                     if (yamlDocType.Update)
                     {
                         var toUpdate = _contentTypeService.Get(yamlDocType.Alias);
@@ -63,10 +63,15 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                             _logger?.LogInformation(
                                 "DocumentType '{Name}' with alias '{Alias}' updated.",
                                 yamlDocType.Name, yamlDocType.Alias);
-                            processedAliases.Add(yamlDocType.Alias);
-                            continue;
                         }
-                        // Not found — fall through to create
+                        else
+                        {
+                            _logger?.LogInformation(
+                                "DocumentType with alias '{Alias}' not found. Skipping update.",
+                                yamlDocType.Alias);
+                        }
+                        processedAliases.Add(yamlDocType.Alias);
+                        continue;
                     }
 
                     // [REMOVE] — delete the DocumentType if flagged
@@ -82,7 +87,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning(
+                            _logger?.LogDebug(
                                 "DocumentType with alias '{Alias}' not found for removal. Skipping.",
                                 yamlDocType.Alias);
                         }

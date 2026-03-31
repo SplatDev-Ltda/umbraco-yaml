@@ -58,7 +58,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning("Dictionary item '{Key}' not found for removal. Skipping.", yamlItem.Key);
+                            _logger?.LogDebug("Dictionary item '{Key}' not found for removal. Skipping.", yamlItem.Key);
                         }
                         processedKeys.Add(yamlItem.Key);
                         continue;
@@ -69,6 +69,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     if (existing != null && !yamlItem.Update)
                     {
                         _logger?.LogInformation("Dictionary item '{Key}' already exists. Skipping.", yamlItem.Key);
+                        processedKeys.Add(yamlItem.Key);
+                        continue;
+                    }
+
+                    if (existing == null && yamlItem.Update)
+                    {
+                        _logger?.LogInformation("Dictionary item '{Key}' not found. Skipping update.", yamlItem.Key);
                         processedKeys.Add(yamlItem.Key);
                         continue;
                     }

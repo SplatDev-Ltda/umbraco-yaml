@@ -63,12 +63,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning("Media '{Name}' not found for removal. Skipping.", yamlMedia.Name);
+                            _logger?.LogDebug("Media '{Name}' not found for removal. Skipping.", yamlMedia.Name);
                         }
                         continue;
                     }
 
-                    // [UPDATE]
+                    // [UPDATE] — update if exists, skip if not found
                     if (yamlMedia.Update)
                     {
                         var candidates = parentId.HasValue
@@ -84,9 +84,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
                             if (yamlMedia.Children.Any())
                                 CreateMedia(yamlMedia.Children, toUpdate.Id);
-                            continue;
                         }
-                        // Not found — fall through to create
+                        else
+                        {
+                            _logger?.LogInformation("Media '{Name}' not found. Skipping update.", yamlMedia.Name);
+                        }
+                        continue;
                     }
 
                     // Check if already exists

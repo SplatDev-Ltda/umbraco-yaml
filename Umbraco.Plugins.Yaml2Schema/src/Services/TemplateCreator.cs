@@ -42,7 +42,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // [UPDATE] — regenerate template content if it exists, create if not
+                    // [UPDATE] — update if exists, skip if not found
                     if (yamlTemplate.Update)
                     {
                         var toUpdate = _templateService.GetAsync(yamlTemplate.Alias).GetAwaiter().GetResult();
@@ -55,10 +55,15 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                             _logger?.LogInformation(
                                 "Template '{Name}' with alias '{Alias}' updated.",
                                 yamlTemplate.Name, yamlTemplate.Alias);
-                            processedAliases.Add(yamlTemplate.Alias);
-                            continue;
                         }
-                        // Not found — fall through to create
+                        else
+                        {
+                            _logger?.LogInformation(
+                                "Template with alias '{Alias}' not found. Skipping update.",
+                                yamlTemplate.Alias);
+                        }
+                        processedAliases.Add(yamlTemplate.Alias);
+                        continue;
                     }
 
                     // [REMOVE] — delete the Template if flagged
@@ -74,7 +79,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning(
+                            _logger?.LogDebug(
                                 "Template with alias '{Alias}' not found for removal. Skipping.",
                                 yamlTemplate.Alias);
                         }

@@ -54,7 +54,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning("Language '{IsoCode}' not found for removal. Skipping.", yamlLang.IsoCode);
+                            _logger?.LogDebug("Language '{IsoCode}' not found for removal. Skipping.", yamlLang.IsoCode);
                         }
                         processedCodes.Add(yamlLang.IsoCode);
                         continue;

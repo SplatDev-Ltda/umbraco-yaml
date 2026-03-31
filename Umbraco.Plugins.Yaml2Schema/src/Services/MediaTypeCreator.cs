@@ -62,7 +62,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning("MediaType '{Alias}' not found for removal. Skipping.", yamlMediaType.Alias);
+                            _logger?.LogDebug("MediaType '{Alias}' not found for removal. Skipping.", yamlMediaType.Alias);
                         }
                         processedAliases.Add(yamlMediaType.Alias);
                         continue;

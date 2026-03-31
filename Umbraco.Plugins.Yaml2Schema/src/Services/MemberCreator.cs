@@ -53,7 +53,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         }
                         else
                         {
-                            _logger?.LogWarning("Member '{Email}' not found for removal. Skipping.", yamlMember.Email);
+                            _logger?.LogDebug("Member '{Email}' not found for removal. Skipping.", yamlMember.Email);
                         }
                         if (!string.IsNullOrWhiteSpace(yamlMember.Alias))
                             processedAliases.Add(yamlMember.Alias);
