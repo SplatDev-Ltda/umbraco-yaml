@@ -122,7 +122,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                 if (yamlRoot.Umbraco.DocumentTypes?.Count > 0)
                 {
                     _logger.LogInformation("YamlInitializationHandler: Creating {Count} DocumentTypes.", yamlRoot.Umbraco.DocumentTypes.Count);
-                    _documentTypeCreator.CreateDocumentTypes(yamlRoot.Umbraco.DocumentTypes);
+                    _documentTypeCreator.CreateDocumentTypes(yamlRoot.Umbraco.DocumentTypes, yamlRoot.Umbraco.DataTypes);
                     _logger.LogInformation("YamlInitializationHandler: Successfully created {Count} DocumentTypes.", yamlRoot.Umbraco.DocumentTypes.Count);
                 }
                 else

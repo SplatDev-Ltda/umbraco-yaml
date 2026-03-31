@@ -38,7 +38,7 @@ dataTypes:
 
   - alias: richText
     name: Rich Text
-    editorUiAlias: Umbraco.TinyMCE
+    editorUiAlias: Umbraco.RichText
 
   - alias: markdownText
     name: Markdown

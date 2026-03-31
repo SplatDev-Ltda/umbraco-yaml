@@ -32,12 +32,19 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             _logger = logger;
         }
 
-        public void CreateDocumentTypes(List<YamlDocumentType> documentTypes)
+        public void CreateDocumentTypes(List<YamlDocumentType> documentTypes, List<YamlDataType> dataTypes = null)
         {
             if (documentTypes == null)
             {
                 throw new ArgumentNullException(nameof(documentTypes));
             }
+
+            // Build alias -> name map so properties can reference DataTypes by YAML alias
+            var dataTypeNameByAlias = dataTypes?
+                .Where(d => !string.IsNullOrEmpty(d.Alias) && !string.IsNullOrEmpty(d.Name))
+                .GroupBy(d => d.Alias, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase)
+                ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             var processedAliases = new HashSet<string>();
 
@@ -61,7 +68,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         var toUpdate = _contentTypeService.Get(yamlDocType.Alias);
                         if (toUpdate != null)
                         {
-                            UpdateDocumentType(toUpdate, yamlDocType);
+                            UpdateDocumentType(toUpdate, yamlDocType, dataTypeNameByAlias);
                             _contentTypeService.Save(toUpdate);
                             _logger?.LogInformation(
                                 "DocumentType '{Name}' with alias '{Alias}' updated.",
@@ -127,7 +134,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
                         foreach (var property in tab.Properties)
                         {
-                            var dataType = _dataTypeService.GetDataType(property.DataType);
+                            var dtName = dataTypeNameByAlias.TryGetValue(property.DataType, out var mapped) ? mapped : property.DataType;
+                            var dataType = _dataTypeService.GetDataType(dtName);
                             if (dataType == null)
                             {
                                 _logger?.LogWarning(
@@ -243,7 +251,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             }
         }
 
-        private void UpdateDocumentType(IContentType existing, YamlDocumentType yaml)
+        private void UpdateDocumentType(IContentType existing, YamlDocumentType yaml, Dictionary<string, string> dataTypeNameByAlias)
         {
             existing.Name = yaml.Name;
             existing.Icon = yaml.Icon ?? "icon-document";
@@ -261,7 +269,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     var newTab = new PropertyGroup(false) { Name = tab.Name, Alias = tabAlias };
                     foreach (var property in tab.Properties)
                     {
-                        var dataType = _dataTypeService.GetDataType(property.DataType);
+                        var dtName = dataTypeNameByAlias.TryGetValue(property.DataType, out var mapped) ? mapped : property.DataType;
+                        var dataType = _dataTypeService.GetDataType(dtName);
                         if (dataType == null)
                         {
                             _logger?.LogWarning(
@@ -287,7 +296,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         if (existingTab.PropertyTypes?.Any(p => p.Alias == property.Alias) == true)
                             continue;
 
-                        var dataType = _dataTypeService.GetDataType(property.DataType);
+                        var dtName = dataTypeNameByAlias.TryGetValue(property.DataType, out var mapped) ? mapped : property.DataType;
+                        var dataType = _dataTypeService.GetDataType(dtName);
                         if (dataType == null)
                         {
                             _logger?.LogWarning(

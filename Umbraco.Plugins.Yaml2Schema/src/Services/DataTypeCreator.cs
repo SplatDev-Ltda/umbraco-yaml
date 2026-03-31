@@ -94,20 +94,16 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // Check if DataType already exists in the system (by editor alias)
-                    // Skipped when update:true — already resolved above by name lookup
-                    if (!yamlDataType.Update)
+                    // Check if a DataType with the same name already exists
+                    var existingByName = _dataTypeService.GetDataType(yamlDataType.Name);
+                    if (existingByName != null)
                     {
-                        var existingDataTypes = _dataTypeService.GetByEditorAlias(yamlDataType.Editor);
-                        if (existingDataTypes != null && existingDataTypes.Any())
-                        {
-                            _logger?.LogInformation(
-                                "DataType with editor alias '{EditorAlias}' already exists. Skipping.",
-                                yamlDataType.Editor
-                            );
-                            processedAliases.Add(yamlDataType.Alias);
-                            continue;
-                        }
+                        _logger?.LogInformation(
+                            "DataType '{Name}' already exists. Skipping.",
+                            yamlDataType.Name
+                        );
+                        processedAliases.Add(yamlDataType.Alias);
+                        continue;
                     }
 
                     // Look up the property editor by alias

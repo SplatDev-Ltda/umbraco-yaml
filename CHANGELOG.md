@@ -9,6 +9,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.7] - 2026-03-31
+
+### Fixed
+
+#### DataType alias-to-name resolution in `DocumentTypeCreator`
+- `CreateDocumentTypes` now accepts an optional `List<YamlDataType>` parameter and builds an alias→name lookup map from it.
+- Previously, `GetDataType(property.DataType)` was called with the YAML alias (e.g. `imagePicker`) but the DataType was stored in Umbraco under its display name (e.g. `Image Picker`), causing 100% property-skipping for any DataType whose alias differed from its name.
+- `UpdateDocumentType` receives the same map so the fix applies to both create and update paths.
+- The handler passes `yamlRoot.Umbraco.DataTypes` when calling `CreateDocumentTypes`.
+
+#### DataType existence check in `DataTypeCreator`
+- Replaced the `GetByEditorAlias` existence check with `GetDataType(name)`.
+- The old check skipped creating a custom DataType (e.g. `imagePicker`) if *any* Umbraco built-in DataType shared the same property editor alias (`Umbraco.MediaPicker3`), preventing custom configs from ever being applied.
+
 ## [1.0.6] - 2026-03-31
 
 ### Fixed
