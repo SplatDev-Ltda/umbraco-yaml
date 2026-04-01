@@ -178,7 +178,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 #### `[UPDATE]` flag
 - Any item can be flagged with `update: true` to upsert: update if already present, create if not.
-- **DataType UPDATE**: looks up by name (`GetDataType`); if found, logs and skips the broad editor-alias existence check, then continues to creation. Effectively a "create-if-missing" guard bypass.
+- **DataType UPDATE**: looks up by name (`GetDataType`); if found, re-derives `DatabaseType` from the editor and re-applies `config`, then saves. See v1.0.14 for the full implementation.
 - **DocumentType UPDATE**: applies an additive merge — name, icon, and `allowedAsRoot` are replaced; new tabs are added wholesale; new properties are merged into existing tabs; no existing property is ever removed to prevent data loss.
 - **Template UPDATE**: regenerates the template file content (including any injected script/stylesheet tags) using `ITemplateService.UpdateAsync`.
 - **Content UPDATE**: updates matching content node found by name under the same parent; sets property values, sort order, and published state; recurses into children.

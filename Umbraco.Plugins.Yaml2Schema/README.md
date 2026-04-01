@@ -64,9 +64,23 @@ Every item in every section supports two optional control flags:
 | Flag | Behaviour |
 |------|-----------|
 | `remove: true` | Delete the entity on startup. Logs a warning if not found. |
-| `update: true` | Update if found, create if not found (upsert). |
+| `update: true` | **Upsert**: update if found, create if not found. |
 
 Neither flag is set by default; omitting both means **create if not exists, skip otherwise**.
+
+**Per-entity UPDATE semantics:**
+
+| Entity | What gets updated |
+|--------|------------------|
+| `dataTypes` | `DatabaseType` re-derived from the editor; `config` re-applied. Use this to correct stale entries after upgrading the plugin. |
+| `documentTypes` / `mediaTypes` | Additive merge — top-level fields replaced; new tabs/properties added; existing properties never removed. |
+| `templates` | `content` field regenerated (or replaced with explicit Razor). |
+| `content` | Property values, sort order, and published state updated. |
+| `scripts` / `stylesheets` | File overwritten in `wwwroot`. |
+| `languages` | `isDefault` and `isMandatory` updated. |
+| `dictionaryItems` | Translation values upserted per language. |
+| `members` | Name, approval status, and properties updated. |
+| `users` | Name, username, and group assignments updated. |
 
 ---
 
@@ -98,10 +112,10 @@ dataTypes:
       blocks:
         - contentElementTypeKey: "00000000-0000-0000-0000-000000000000"
 
-  # [UPDATE] — upsert; bypasses the broad editor-alias existence check
+  # [UPDATE] — re-applies config and DatabaseType on every startup
   - alias: richText
     name: Rich Text
-    editorUiAlias: Umbraco.TinyMCE
+    editorUiAlias: Umbraco.RichText
     update: true
 
   # [REMOVE] — deletes this DataType
@@ -117,6 +131,10 @@ dataTypes:
 | `name` | Yes | Display name in the back-office |
 | `editorUiAlias` | Yes | Registered property editor alias |
 | `config` | No | Editor-specific configuration (key-value map) |
+
+> **`Umbraco.DropDown.Flexible` / `Umbraco.CheckBoxList`**: `config.items` must be a plain YAML string list — the plugin converts it to the `List<string>` format that `ValueListConfiguration` expects in Umbraco 17.
+>
+> **UPDATE behaviour**: `update: true` re-derives the `DatabaseType` from the editor and re-applies the `config`. Add it to any DataType whose database storage type or config may be stale (e.g. after a plugin upgrade).
 
 ---
 
