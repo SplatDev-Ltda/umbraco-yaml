@@ -9,6 +9,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.15] - 2026-04-01
+
+### Fixed
+
+#### Dropdown / CheckBoxList `items` stored as `List<string>` for Umbraco validator in `DataTypeCreator`
+- Root cause of all "Invalid data type configuration" errors for `Umbraco.DropDown.Flexible` and similar editors: Umbraco 17's `ValueListConfigurationEditor` performs a strict `is List<string>` check. YamlDotNet deserialises YAML string sequences as `List<object>`, so even though every element was a string, the type check failed and the DataType was saved with invalid config — causing `IDataTypeService.GetDataType` to return null for those types.
+- Consolidated the two previous helpers (`IsValueListConfig` / `NormalizeConfig`) into a single `ApplyConfig` method that detects a plain string list under `items` and converts it from `List<object>` to `List<string>` in-place before `SetConfigurationData` is called.
+- Applied to both the **create** and **update** paths.
+
 ## [1.0.14] - 2026-03-31
 
 ### Fixed

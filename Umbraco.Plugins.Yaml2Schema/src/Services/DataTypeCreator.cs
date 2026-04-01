@@ -77,8 +77,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                             // Re-apply config so stale or incorrectly-formatted config is fixed
                             if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
                             {
-                                if (!IsValueListConfig(yamlDataType.Config))
-                                    NormalizeConfig(yamlDataType.Config);
+                                ApplyConfig(yamlDataType.Config);
                                 existing.SetConfigurationData(yamlDataType.Config);
                             }
 
@@ -169,12 +168,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     // Apply config from YAML (supports Block List, Image Cropper, etc.)
                     if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
                     {
-                        // ValueListConfiguration.Items is List<string> in Umbraco 17.
-                        // Do NOT convert string items to {id,value} dicts — pass them as-is.
-                        // NormalizeConfig is only applied for editors whose item format differs.
-                        if (!IsValueListConfig(yamlDataType.Config))
-                            NormalizeConfig(yamlDataType.Config);
-
+                        ApplyConfig(yamlDataType.Config);
                         dataType.SetConfigurationData(yamlDataType.Config);
                     }
 
@@ -202,37 +196,29 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
         }
 
         /// <summary>
-        /// Returns true when config contains a plain string list under "items",
-        /// i.e. it is already in the format expected by ValueListConfiguration.Items (List&lt;string&gt;).
-        /// In that case NormalizeConfig must be skipped — converting strings to {id,value}
-        /// dicts would produce the wrong shape and cause validation errors.
+        /// Normalises the config dict in-place before passing to SetConfigurationData.
+        ///
+        /// ValueListConfiguration.Items (Umbraco.DropDown.Flexible, CheckBoxList, etc.) is
+        /// List&lt;string&gt; in Umbraco 17. YamlDotNet deserialises YAML string sequences as
+        /// List&lt;object&gt;. Umbraco's ValueListConfigurationEditor validator performs a strict
+        /// <c>is List&lt;string&gt;</c> check — List&lt;object&gt; is rejected even when every element
+        /// is a string. We must convert in-place so the correct concrete type is stored.
+        ///
+        /// For other editors that use an "items" list in {id, value} format the items are
+        /// already dicts (not plain strings), so the conversion is skipped and their structure
+        /// is left unchanged.
         /// </summary>
-        private static bool IsValueListConfig(Dictionary<string, object> config)
-        {
-            if (!config.TryGetValue("items", out var raw)) return false;
-            if (raw is not List<object> items) return false;
-            return items.Count == 0 || items[0] is string;
-        }
-
-        /// <summary>
-        /// Normalisation for non-ValueList editors that store an "items" list
-        /// (e.g. custom editors). Converts "- Foo\n- Bar" to [{ id, value }] format
-        /// so SetConfigurationData receives a serialisable structure.
-        /// </summary>
-        private static void NormalizeConfig(Dictionary<string, object> config)
+        private static void ApplyConfig(Dictionary<string, object> config)
         {
             if (!config.TryGetValue("items", out var raw)) return;
+            if (raw is not List<object> items) return;
+            if (items.Count == 0 || items[0] is not string) return;
 
-            if (raw is List<object> items && items.Count > 0 && items[0] is string)
-            {
-                config["items"] = items
-                    .Select((item, idx) => (object)new Dictionary<string, object>
-                    {
-                        ["id"]    = idx + 1,
-                        ["value"] = item?.ToString() ?? string.Empty
-                    })
-                    .ToList();
-            }
+            // Convert List<object> of plain strings → List<string> so Umbraco's
+            // ValueListConfigurationEditor validator accepts it.
+            config["items"] = items
+                .Select(item => item?.ToString() ?? string.Empty)
+                .ToList();
         }
     }
 }
