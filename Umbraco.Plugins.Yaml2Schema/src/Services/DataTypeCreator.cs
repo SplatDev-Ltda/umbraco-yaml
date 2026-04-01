@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -14,17 +15,20 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
     public class DataTypeCreator
     {
         private readonly IDataTypeService _dataTypeService;
+        private readonly IContentTypeService _contentTypeService;
         private readonly PropertyEditorCollection _propertyEditors;
         private readonly IConfigurationEditorJsonSerializer _configSerializer;
         private readonly ILogger<DataTypeCreator>? _logger;
 
         public DataTypeCreator(
             IDataTypeService dataTypeService,
+            IContentTypeService contentTypeService,
             PropertyEditorCollection propertyEditors,
             IConfigurationEditorJsonSerializer configSerializer,
             ILogger<DataTypeCreator>? logger = null)
         {
             _dataTypeService = dataTypeService ?? throw new ArgumentNullException(nameof(dataTypeService));
+            _contentTypeService = contentTypeService ?? throw new ArgumentNullException(nameof(contentTypeService));
             _propertyEditors = propertyEditors ?? throw new ArgumentNullException(nameof(propertyEditors));
             _configSerializer = configSerializer ?? throw new ArgumentNullException(nameof(configSerializer));
             _logger = logger;
@@ -247,6 +251,84 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Resolves <c>contentElementTypeAlias</c> entries inside Block List (and Block Grid) DataType
+        /// configs to their actual <c>contentElementTypeKey</c> GUIDs. Must be called after DocumentTypes
+        /// have been created so the element types exist and can be looked up by alias.
+        /// </summary>
+        public void LinkBlockListElementTypes(List<YamlDataType> dataTypes)
+        {
+            if (dataTypes == null) return;
+
+            foreach (var yamlDataType in dataTypes)
+            {
+                if (!string.Equals(yamlDataType.Editor, "Umbraco.BlockList", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(yamlDataType.Editor, "Umbraco.BlockGrid", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (yamlDataType.Config == null
+                    || !yamlDataType.Config.TryGetValue("blocks", out var rawBlocks)
+                    || rawBlocks is not List<object> blocks
+                    || blocks.Count == 0)
+                    continue;
+
+                bool changed = false;
+
+                for (int i = 0; i < blocks.Count; i++)
+                {
+                    // YamlDotNet deserialises nested mappings as Dictionary<object,object>
+                    // when the target field type is object. Normalise to string keys first.
+                    var blockDict = NormaliseDictKeys(blocks[i] as IDictionary);
+                    if (blockDict == null) continue;
+
+                    blocks[i] = blockDict; // store normalised version in-place
+
+                    if (!blockDict.TryGetValue("contentElementTypeAlias", out var rawAlias) || rawAlias == null)
+                        continue;
+
+                    var alias = rawAlias.ToString()!;
+                    var contentType = _contentTypeService.Get(alias);
+                    if (contentType == null)
+                    {
+                        _logger?.LogWarning(
+                            "Content element type '{Alias}' not found for BlockList DataType '{Name}'. Block kept without key.",
+                            alias, yamlDataType.Name);
+                        continue;
+                    }
+
+                    blockDict.Remove("contentElementTypeAlias");
+                    blockDict["contentElementTypeKey"] = contentType.Key.ToString();
+                    changed = true;
+
+                    _logger?.LogInformation(
+                        "Resolved contentElementTypeAlias '{Alias}' → '{Key}' for DataType '{Name}'.",
+                        alias, contentType.Key, yamlDataType.Name);
+                }
+
+                if (!changed) continue;
+
+                var existing = _dataTypeService.GetDataType(yamlDataType.Name);
+                if (existing is DataType dt)
+                {
+                    dt.SetConfigurationData(yamlDataType.Config);
+                    _dataTypeService.Save(dt, Constants.Security.SuperUserId);
+                    _logger?.LogInformation(
+                        "DataType '{Name}' saved with resolved Block List element type keys.",
+                        yamlDataType.Name);
+                }
+            }
+        }
+
+        /// <summary>Converts an IDictionary with object keys to a string-keyed Dictionary.</summary>
+        private static Dictionary<string, object>? NormaliseDictKeys(IDictionary? source)
+        {
+            if (source == null) return null;
+            var result = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            foreach (DictionaryEntry entry in source)
+                result[entry.Key?.ToString() ?? string.Empty] = entry.Value!;
+            return result;
         }
 
         /// <summary>

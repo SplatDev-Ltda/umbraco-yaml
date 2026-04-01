@@ -287,6 +287,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
         [YamlMember(Alias = "url")]
         public string? Url { get; set; }
 
+        /// <summary>
+        /// Optional folder path where this media item will be placed (e.g. "Images" or "Images/Partners").
+        /// Folders are created automatically if they do not exist.
+        /// </summary>
+        [YamlMember(Alias = "folder")]
+        public string? Folder { get; set; }
+
         [YamlMember(Alias = "properties")]
         public Dictionary<string, object> Properties { get; set; } = new();
 

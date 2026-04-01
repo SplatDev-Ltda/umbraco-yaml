@@ -180,6 +180,14 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                     _documentTypeCreator.LinkTemplatesToDocumentTypes(yamlRoot.Umbraco.DocumentTypes);
                 }
 
+                // Resolve Block List contentElementTypeAlias → contentElementTypeKey
+                // (must run after DocumentTypes so element types exist)
+                if (yamlRoot.Umbraco.DataTypes?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Linking Block List element types.");
+                    _dataTypeCreator.LinkBlockListElementTypes(yamlRoot.Umbraco.DataTypes);
+                }
+
                 // Create Content
                 if (yamlRoot.Umbraco.Content?.Count > 0)
                 {

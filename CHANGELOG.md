@@ -9,6 +9,39 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.18] - 2026-04-01
+
+### Added
+
+#### Block List support: `contentElementTypeAlias` resolution and `$type` content seeding
+
+- **DataType config**: Block List (and Block Grid) DataType configs may now use `contentElementTypeAlias` instead of `contentElementTypeKey` in the `blocks` array. The new `DataTypeCreator.LinkBlockListElementTypes()` pass runs after DocumentTypes are created and resolves each alias to the actual content element type GUID, then re-saves the DataType. This means you no longer need to hard-code GUIDs in your YAML.
+- **Content seeding**: Properties whose value is a YAML list of mappings with a `$type` key are automatically serialised to the Umbraco Block List JSON format. The `$type` value is the element document-type alias; all other keys become property values on the block.
+  ```yaml
+  properties:
+    pilares:
+      - $type: pilarElement
+        title: "Pilar 1"
+        text:  "Texto do pilar 1"
+      - $type: pilarElement
+        title: "Pilar 2"
+        text:  "Texto do pilar 2"
+  ```
+- **Generic complex-value serialisation**: Any content property stored as `Ntext` whose YAML value is a list or mapping (but without `$type`) is now serialised to a JSON string automatically. This handles tags, multi-url pickers, and other editors that store JSON.
+- New `LinkBlockListElementTypes()` step added to `YamlInitializationHandler` (runs after `LinkTemplatesToDocumentTypes`).
+
+#### Media folder support
+
+- Added `folder` field to `YamlMedia`. Accepts a simple name (`"Images"`) or a slash-separated path (`"Images/Partners"`). The folder hierarchy is created automatically if it does not exist; the media item is placed inside the deepest folder.
+  ```yaml
+  media:
+    - name: Logo Partner A
+      mediaType: Image
+      folder: "Images/Partners"
+      url: https://example.com/logo-a.png
+  ```
+- New `MediaCreator.EnsureFolder()` helper creates `Folder` media nodes recursively and is idempotent (skips existing folders).
+
 ## [1.0.17] - 2026-04-01
 
 ### Fixed

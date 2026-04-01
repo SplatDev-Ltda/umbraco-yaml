@@ -9,3 +9,9 @@
 + Add support for custom Media Properties
 + Add support for custom Document Types
 + Add support for custom Property Editors
+
+# Phase 3 ✅ (v1.0.18)
+ + [x] Instead of flat Pilar N - Title / Text properties, use Block List ($type convention in content seeding + contentElementTypeAlias resolution in DataType config)
+ + [x] Add media folder creation for organizing media (EnsureFolder helper)
+ + [x] Add folder field to each media item
+ + [x] Download medias from url and save in media folder into folder set in parameter

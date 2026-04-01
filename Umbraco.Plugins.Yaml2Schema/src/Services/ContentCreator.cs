@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Umbraco.Cms.Core;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Core.Models;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Models;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Plugins.Yaml2Schema.Models;
 
 namespace Umbraco.Plugins.Yaml2Schema.Services
@@ -129,28 +131,153 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             }
         }
         /// <summary>
-        /// YamlDotNet deserialises all scalar values to strings when the target type is object.
-        /// This converts "true"/"false" to 1/0 for Integer-typed properties (e.g. Umbraco.TrueFalse),
-        /// and coerces numeric strings for Decimal properties.
+        /// Converts YAML-deserialized values to the type expected by the Umbraco property editor:
+        /// <list type="bullet">
+        ///   <item>String "true"/"false" → 1/0 for Integer storage (e.g. Umbraco.TrueFalse).</item>
+        ///   <item>Numeric strings → int/decimal for Integer/Decimal storage.</item>
+        ///   <item>A list whose items are mappings with a <c>$type</c> key → Block List JSON string.</item>
+        ///   <item>Any other complex value (list or mapping) stored as Ntext → serialized to JSON string.</item>
+        /// </list>
         /// </summary>
-        private static object CoerceValue(object value, IProperty property)
+        private object CoerceValue(object value, IProperty property)
         {
-            if (value is not string strVal) return value;
-
-            return property.PropertyType.ValueStorageType switch
+            // ── Scalar string coercion ────────────────────────────────────────────────
+            if (value is string strVal)
             {
-                ValueStorageType.Integer => strVal.ToLowerInvariant() switch
+                return property.PropertyType.ValueStorageType switch
                 {
-                    "true"  => (object)1,
-                    "false" => (object)0,
-                    _       => int.TryParse(strVal, out var i) ? (object)i : value
-                },
-                ValueStorageType.Decimal => decimal.TryParse(strVal,
-                    System.Globalization.NumberStyles.Any,
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    out var d) ? (object)d : value,
+                    ValueStorageType.Integer => strVal.ToLowerInvariant() switch
+                    {
+                        "true"  => (object)1,
+                        "false" => (object)0,
+                        _       => int.TryParse(strVal, out var i) ? (object)i : value
+                    },
+                    ValueStorageType.Decimal => decimal.TryParse(
+                        strVal,
+                        System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        out var d) ? (object)d : value,
+                    _ => value
+                };
+            }
+
+            // ── Block List: list of mappings with $type key ───────────────────────────
+            // YAML:
+            //   myBlockProp:
+            //     - $type: myElementTypeAlias
+            //       title: "Block 1 title"
+            //       text:  "Block 1 text"
+            if (value is List<object> blockItems
+                && blockItems.Count > 0
+                && IsBlockListItems(blockItems)
+                && property.PropertyType.ValueStorageType == ValueStorageType.Ntext)
+            {
+                return BuildBlockListJson(blockItems);
+            }
+
+            // ── Generic complex value (list or mapping) stored as Ntext → JSON string ─
+            if (property.PropertyType.ValueStorageType == ValueStorageType.Ntext
+                && value is not string
+                && (value is IList || value is IDictionary))
+            {
+                return JsonSerializer.Serialize(NormaliseForJson(value));
+            }
+
+            return value;
+        }
+
+        // ── Block List helpers ────────────────────────────────────────────────────────
+
+        private static bool IsBlockListItems(List<object> list) =>
+            list.Any(item =>
+            {
+                if (item is IDictionary d)
+                {
+                    foreach (var key in d.Keys)
+                        if (key?.ToString() == "$type") return true;
+                }
+                return false;
+            });
+
+        /// <summary>
+        /// Builds the Umbraco Block List JSON value from a list of YAML block items.
+        /// Each item must be a mapping with a <c>$type</c> key whose value is the element
+        /// document-type alias. All other keys become property values on the block.
+        /// </summary>
+        private string BuildBlockListJson(List<object> items)
+        {
+            var layoutItems    = new List<Dictionary<string, object?>>();
+            var contentData    = new List<Dictionary<string, object?>>();
+
+            foreach (var raw in items)
+            {
+                var dict = NormaliseDictKeys(raw as IDictionary);
+                if (dict == null) continue;
+
+                if (!dict.TryGetValue("$type", out var rawAlias) || rawAlias == null)
+                    continue;
+
+                var alias = rawAlias.ToString()!;
+                var contentType = _contentTypeService.Get(alias);
+                if (contentType == null)
+                {
+                    _logger?.LogWarning("Block list element type '{Alias}' not found. Block skipped.", alias);
+                    continue;
+                }
+
+                var udi = $"umb://element/{Guid.NewGuid():N}";
+
+                layoutItems.Add(new Dictionary<string, object?> { ["contentUdi"] = udi });
+
+                var blockEntry = new Dictionary<string, object?>
+                {
+                    ["contentTypeKey"] = contentType.Key.ToString(),
+                    ["udi"]            = udi,
+                };
+
+                foreach (var kvp in dict)
+                {
+                    if (kvp.Key == "$type") continue;
+                    blockEntry[kvp.Key] = kvp.Value;
+                }
+
+                contentData.Add(blockEntry);
+            }
+
+            var blockListValue = new Dictionary<string, object>
+            {
+                ["layout"]      = new Dictionary<string, object> { ["Umbraco.BlockList"] = layoutItems },
+                ["contentData"] = contentData,
+                ["settingsData"] = new List<object>(),
+            };
+
+            return JsonSerializer.Serialize(blockListValue);
+        }
+
+        // ── Generic JSON helpers ──────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Recursively converts YamlDotNet's <c>Dictionary&lt;object,object&gt;</c> and nested
+        /// collections to JSON-serialisable equivalents with string keys.
+        /// </summary>
+        private static object NormaliseForJson(object value) =>
+            value switch
+            {
+                IDictionary dict => NormaliseDictKeys(dict)!
+                    .ToDictionary(kvp => kvp.Key, kvp => NormaliseForJson(kvp.Value!)),
+                IList list when value is not string => list.Cast<object?>()
+                    .Select(item => item == null ? (object?)null : NormaliseForJson(item))
+                    .ToList(),
                 _ => value
             };
+
+        private static Dictionary<string, object>? NormaliseDictKeys(IDictionary? source)
+        {
+            if (source == null) return null;
+            var result = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            foreach (DictionaryEntry entry in source)
+                result[entry.Key?.ToString() ?? string.Empty] = entry.Value!;
+            return result;
         }
     }
 }

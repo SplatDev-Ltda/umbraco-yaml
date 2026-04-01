@@ -92,9 +92,14 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
+                    // Resolve folder if specified (overrides parentId for this item only)
+                    var effectiveParentId = parentId;
+                    if (!string.IsNullOrWhiteSpace(yamlMedia.Folder))
+                        effectiveParentId = EnsureFolder(yamlMedia.Folder, parentId ?? -1);
+
                     // Check if already exists
-                    var existing = (parentId.HasValue
-                        ? _mediaService.GetPagedChildren(parentId.Value, 0, int.MaxValue, out _)
+                    var existing = (effectiveParentId.HasValue
+                        ? _mediaService.GetPagedChildren(effectiveParentId.Value, 0, int.MaxValue, out _)
                         : _mediaService.GetRootMedia()).FirstOrDefault(m => m.Name == yamlMedia.Name);
 
                     if (existing != null)
@@ -107,7 +112,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
                     var media = _mediaService.CreateMedia(
                         yamlMedia.Name,
-                        parentId ?? -1,
+                        effectiveParentId ?? -1,
                         yamlMedia.MediaType,
                         Constants.Security.SuperUserId);
 
@@ -139,6 +144,38 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                 if (media.Properties.Any(p => p.Alias == kvp.Key))
                     media.SetValue(kvp.Key, kvp.Value);
             }
+        }
+
+        /// <summary>
+        /// Resolves a folder path (e.g. "Images" or "Images/Partners") under <paramref name="rootParentId"/>,
+        /// creating any missing Folder media nodes along the way. Returns the ID of the deepest folder.
+        /// </summary>
+        private int EnsureFolder(string folderPath, int rootParentId)
+        {
+            var parts = folderPath.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var currentParentId = rootParentId;
+
+            foreach (var part in parts)
+            {
+                var children = currentParentId == -1
+                    ? _mediaService.GetRootMedia().ToList()
+                    : _mediaService.GetPagedChildren(currentParentId, 0, int.MaxValue, out _).ToList();
+
+                var folder = children.FirstOrDefault(m =>
+                    string.Equals(m.Name, part, StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(m.ContentType.Alias, "Folder", StringComparison.OrdinalIgnoreCase));
+
+                if (folder == null)
+                {
+                    folder = _mediaService.CreateMedia(part, currentParentId, "Folder", Constants.Security.SuperUserId);
+                    _mediaService.Save(folder, Constants.Security.SuperUserId);
+                    _logger?.LogInformation("Created media folder '{Name}' under parent {ParentId}.", part, currentParentId);
+                }
+
+                currentParentId = folder.Id;
+            }
+
+            return currentParentId;
         }
 
         private void TryAttachFileFromUrl(IMedia media, string url)

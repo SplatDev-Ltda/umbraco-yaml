@@ -204,7 +204,6 @@ documentTypes:
     icon: icon-home
     allowAsRoot: true
     allowedChildTypes:
-      - homePage
       - standardPage
       - aRisinPage
       - ecossistemaPage
@@ -218,6 +217,9 @@ documentTypes:
       - franquiasPage
       - contatoPage
     update: true
+    allowedTemplates:
+      - home
+    defaultTemplate: home
     tabs:
       - name: Site Settings
         properties:
@@ -271,6 +273,17 @@ documentTypes:
           - alias: ctaButtonUrl
             name: Header CTA Button URL
             dataType: urlPicker
+      - name: SEO
+        properties:
+          - alias: metaTitle
+            name: Meta Title
+            dataType: textStringShort
+          - alias: metaDescription
+            name: Meta Description
+            dataType: textStringShort
+          - alias: ogImage
+            name: OG Image
+            dataType: imagePicker
 
   # ── Base Page (shared fields) ──────────────
   - alias: basePage
@@ -477,7 +490,7 @@ documentTypes:
   # ── A RISIN Page ───────────────────────────
   - alias: aRisinPage
     name: A RISIN Page
-    icon: icon-document-2
+    icon: icon-book
     allowAsRoot: false
     allowedChildTypes: []
     update: true
@@ -767,11 +780,11 @@ documentTypes:
     icon: icon-nodes
     allowAsRoot: false
     allowedChildTypes:
+      - ecosystemWebsite
     update: true
     allowedTemplates:
       - ecossistema
     defaultTemplate: ecossistema
-      - ecosystemWebsite
     tabs:
       - name: Hero
         properties:
@@ -838,7 +851,7 @@ documentTypes:
   # ── Modelo de Negócio Page ─────────────────
   - alias: modeloNegocioPage
     name: Modelo de Negócio Page
-    icon: icon-bill-alt
+    icon: icon-directions-alt
     allowAsRoot: false
     allowedChildTypes: []
     update: true
@@ -949,9 +962,10 @@ documentTypes:
   # ── Governance Role Item ───────────────────
   - alias: governanceRole
     name: Governance Role
-    icon: icon-person
+    icon: icon-user
     allowAsRoot: false
     allowedChildTypes: []
+    update: true
     tabs:
       - name: Content
         properties:
@@ -1192,7 +1206,7 @@ documentTypes:
   # ── Regional Item ──────────────────────────
   - alias: regionalItem
     name: Regional Item
-    icon: icon-pin
+    icon: icon-pin-location
     allowAsRoot: false
     allowedChildTypes: []
     update: true
@@ -1314,7 +1328,7 @@ documentTypes:
   # ── Institutional Audience Block ───────────
   - alias: institutionalBlock
     name: Institutional Audience Block
-    icon: icon-document-line
+    icon: icon-people-alt
     allowAsRoot: false
     allowedChildTypes: []
     update: true
@@ -1352,7 +1366,7 @@ documentTypes:
   # ── Relações Institucionais Page ───────────
   - alias: relacoesInstitucionaisPage
     name: Relações Institucionais Page
-    icon: icon-groups
+    icon: icon-people
     allowAsRoot: false
     allowedChildTypes:
     update: true
@@ -1603,7 +1617,7 @@ documentTypes:
   # ── Franquias Page ─────────────────────────
   - alias: franquiasPage
     name: Franquias e Parcerias Page
-    icon: icon-network
+    icon: icon-network-alt
     allowAsRoot: false
     allowedChildTypes: []
     update: true
@@ -2114,7 +2128,7 @@ templates:
                   <h2 class="text-4xl font-bold tracking-tight mb-16">@(Model.Value<string>("partnersBlockTitle") ?? "Programa Parceiros RISIN")</h2>
                   @if (Model.HasValue("partnersBlockIntro"))
                   {
-                      <p class="text-on-surface-variant max-w-2xl mx-auto mb-12">@Model.Value<string>("partnersBlockIntro")</p>
+                      <p class="text-on-surface-variant max-w-2xl mx-auto mb-12">@Model@(Model.Value<string>("partnersBlockIntro"))</p>
                   }
                   <div class="flex flex-wrap justify-center gap-12 mb-16">
                       @{
@@ -2178,7 +2192,7 @@ templates:
                   <h2 class="text-6xl font-black tracking-tighter mb-12">@(Model.Value<string>("finalCtaTitle") ?? "RISIN. Estrutura. Governança. Escala.")</h2>
                   @if (Model.HasValue("finalCtaText"))
                   {
-                      <p class="text-xl text-on-surface-variant max-w-2xl mx-auto mb-12">@Model.Value<string>("finalCtaText")</p>
+                      <p class="text-xl text-on-surface-variant max-w-2xl mx-auto mb-12">@Model@(Model.Value<string>("finalCtaText"))</p>
                   }
                   <div class="flex flex-wrap justify-center gap-6">
                       <a href="@(Model.Value<string>("finalCtaButton1Url") ?? "/contato")" class="bg-primary text-white px-12 py-5 rounded-lg font-bold text-lg hover:scale-105 transition-all inline-block">
@@ -2538,7 +2552,7 @@ templates:
                               <h3 class="text-lg font-bold mb-1">@(portal.Value<string>("websiteName") ?? portal.Name)</h3>
                               @if (!string.IsNullOrWhiteSpace(portal.Value<string>("websiteCategory")))
                               {
-                                  <p class="text-xs text-primary font-medium mb-3">@portal.Value<string>("websiteCategory")</p>
+                                  <p class="text-xs text-primary font-medium mb-3">@(portal.Value<string>("websiteCategory"))</p>
                               }
                               <p class="text-sm text-on-surface-variant leading-relaxed mb-4">@(portal.Value<string>("websiteDescription") ?? "")</p>
                           </div>
@@ -2915,7 +2929,7 @@ templates:
                       <h2 class="text-4xl font-bold tracking-tight mt-2">@(Model.Value<string>("structureTitle") ?? "Hierarquia e Responsabilidades")</h2>
                       @if (Model.HasValue("structureDescription"))
                       {
-                          <p class="text-on-surface-variant mt-4 max-w-xl mx-auto">@Model.Value<string>("structureDescription")</p>
+                          <p class="text-on-surface-variant mt-4 max-w-xl mx-auto">@Model@(Model.Value<string>("structureDescription"))</p>
                       }
                   </div>
                   @if (govRoles.Any())
@@ -3098,14 +3112,14 @@ templates:
                       <div class="flex flex-wrap gap-4">
                           @if (Model.HasValue("estatutoSocialUrl"))
                           {
-                              <a href="@Model.Value<string>("estatutoSocialUrl")" class="flex items-center gap-2 px-6 py-3 bg-surface-container-low rounded-lg font-semibold text-sm hover:bg-surface-container transition-colors">
+                              <a href="@(Model.Value<string>("estatutoSocialUrl"))" class="flex items-center gap-2 px-6 py-3 bg-surface-container-low rounded-lg font-semibold text-sm hover:bg-surface-container transition-colors">
                                   <span class="material-symbols-outlined text-primary">download</span>
                                   @(Model.Value<string>("documentButton1Label") ?? "Estatuto Social")
                               </a>
                           }
                           else if (Model.HasValue("documentButton1Url"))
                           {
-                              <a href="@Model.Value<string>("documentButton1Url")" class="flex items-center gap-2 px-6 py-3 bg-surface-container-low rounded-lg font-semibold text-sm hover:bg-surface-container transition-colors">
+                              <a href="@(Model.Value<string>("documentButton1Url"))" class="flex items-center gap-2 px-6 py-3 bg-surface-container-low rounded-lg font-semibold text-sm hover:bg-surface-container transition-colors">
                                   <span class="material-symbols-outlined text-primary">download</span>
                                   @(Model.Value<string>("documentButton1Label") ?? "Estatuto Social")
                               </a>
@@ -3119,7 +3133,7 @@ templates:
                           }
                           @if (Model.HasValue("documentButton2Url"))
                           {
-                              <a href="@Model.Value<string>("documentButton2Url")" class="flex items-center gap-2 px-6 py-3 bg-surface-container-low rounded-lg font-semibold text-sm hover:bg-surface-container transition-colors">
+                              <a href="@(Model.Value<string>("documentButton2Url"))" class="flex items-center gap-2 px-6 py-3 bg-surface-container-low rounded-lg font-semibold text-sm hover:bg-surface-container transition-colors">
                                   <span class="material-symbols-outlined text-primary">download</span>
                                   @(Model.Value<string>("documentButton2Label") ?? "Código de Ética")
                               </a>
@@ -3133,7 +3147,7 @@ templates:
                           }
                           @if (Model.HasValue("documentButton3Url"))
                           {
-                              <a href="@Model.Value<string>("documentButton3Url")" class="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-primary-container transition-colors">
+                              <a href="@(Model.Value<string>("documentButton3Url"))" class="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-primary-container transition-colors">
                                   <span class="material-symbols-outlined">picture_as_pdf</span>
                                   @(Model.Value<string>("documentButton3Label") ?? "Relatório de Governança")
                               </a>
@@ -3230,7 +3244,7 @@ templates:
                                           @if (!imageOnRight)
                                           {
                                               <div class="hidden md:block relative">
-                                                  <img alt="@item.Value<string>("partnerName")" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" src="@item.Value<string>("partnerLogo")" />
+                                                  <img alt="@(item.Value<string>("partnerName"))" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" src="@(item.Value<string>("partnerLogo"))" />
                                               </div>
                                           }
                                           <div class="p-8">
@@ -3250,7 +3264,7 @@ templates:
                                           @if (imageOnRight)
                                           {
                                               <div class="hidden md:block relative">
-                                                  <img alt="@item.Value<string>("partnerName")" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" src="@item.Value<string>("partnerLogo")" />
+                                                  <img alt="@(item.Value<string>("partnerName"))" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" src="@(item.Value<string>("partnerLogo"))" />
                                               </div>
                                           }
                                       </div>
@@ -3743,8 +3757,8 @@ templates:
                                       </div>
                                       @if (block.HasValue("blockCtaLabel") && block.HasValue("blockCtaUrl"))
                                       {
-                                          <a href="@block.Value<string>("blockCtaUrl")" class="inline-flex items-center gap-2 mt-6 bg-white text-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-surface-container-lowest transition-colors">
-                                              @block.Value<string>("blockCtaLabel")
+                                          <a href="@(block.Value<string>("blockCtaUrl"))" class="inline-flex items-center gap-2 mt-6 bg-white text-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-surface-container-lowest transition-colors">
+                                              @(block.Value<string>("blockCtaLabel"))
                                           </a>
                                       }
                                   </div>
@@ -3756,7 +3770,7 @@ templates:
                                           @if (!imageOnRight)
                                           {
                                               <div class="hidden md:block relative">
-                                                  <img alt="@(block.Value<string>("blockTitle") ?? block.Name)" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" src="@block.Value<string>("blockImage")" />
+                                                  <img alt="@(block.Value<string>("blockTitle") ?? block.Name)" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" src="@(block.Value<string>("blockImage"))" />
                                               </div>
                                           }
                                           <div class="p-8">
@@ -3772,7 +3786,7 @@ templates:
                                           @if (imageOnRight)
                                           {
                                               <div class="hidden md:block relative">
-                                                  <img alt="@(block.Value<string>("blockTitle") ?? block.Name)" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" src="@block.Value<string>("blockImage")" />
+                                                  <img alt="@(block.Value<string>("blockTitle") ?? block.Name)" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" src="@(block.Value<string>("blockImage"))" />
                                               </div>
                                           }
                                       </div>
@@ -4010,7 +4024,7 @@ templates:
                                               <h3 class="font-bold text-lg">@item.Name</h3>
                                               @if (item.HasValue("policyCategory"))
                                               {
-                                                  <span class="text-xs text-primary font-semibold uppercase tracking-widest">@item.Value<string>("policyCategory")</span>
+                                                  <span class="text-xs text-primary font-semibold uppercase tracking-widest">@(item.Value<string>("policyCategory"))</span>
                                               }
                                           </div>
                                       </div>
@@ -4584,6 +4598,7 @@ content:
       copyrightText: "© 2026 RISIN – Rede de Informações e Serviços na Internet Ltda. Todos os direitos reservados."
       ctaButtonLabel: "Parcerias Estratégicas"
       ctaButtonUrl: "/parceiros"
+      heroTitle: "RISIN – Plataforma Empresarial Digital em Implantação Estruturada"
     children:
 
       # ── Home ────────────────────────────────
