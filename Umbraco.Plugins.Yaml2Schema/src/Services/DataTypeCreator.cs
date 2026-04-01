@@ -116,18 +116,21 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         if (existingIface is DataType existing)
                         {
                             // Re-derive storage type and UI alias from the editor so stale entries are corrected
-                            if (_propertyEditors.TryGet(yamlDataType.Editor, out var updEditor) && updEditor != null)
+                            var updEditor = ResolveEditor(yamlDataType.Editor, yamlDataType.ValueType);
+                            if (updEditor != null)
                             {
-                                existing.DatabaseType = updEditor.GetValueEditor().ValueType switch
-                                {
-                                    "TEXT"    => ValueStorageType.Ntext,
-                                    "INT"     => ValueStorageType.Integer,
-                                    "INTEGER" => ValueStorageType.Integer,
-                                    "BIGINT"  => ValueStorageType.Integer,
-                                    "DECIMAL" => ValueStorageType.Decimal,
-                                    "DATE"    => ValueStorageType.Date,
-                                    _         => ValueStorageType.Nvarchar
-                                };
+                                existing.DatabaseType = string.IsNullOrWhiteSpace(yamlDataType.ValueType)
+                                    ? updEditor.GetValueEditor().ValueType switch
+                                    {
+                                        "TEXT"    => ValueStorageType.Ntext,
+                                        "INT"     => ValueStorageType.Integer,
+                                        "INTEGER" => ValueStorageType.Integer,
+                                        "BIGINT"  => ValueStorageType.Integer,
+                                        "DECIMAL" => ValueStorageType.Decimal,
+                                        "DATE"    => ValueStorageType.Date,
+                                        _         => ValueStorageType.Nvarchar
+                                    }
+                                    : MapValueType(yamlDataType.ValueType);
                                 existing.EditorUiAlias = ResolveEditorUiAlias(yamlDataType.Editor);
                             }
 
@@ -193,28 +196,33 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // Look up the property editor by alias
-                    if (!_propertyEditors.TryGet(yamlDataType.Editor, out var editor) || editor == null)
+                    // Look up the property editor by alias; fall back to a built-in when
+                    // valueType is set (custom frontend-only editors have no server-side IDataEditor)
+                    var editor = ResolveEditor(yamlDataType.Editor, yamlDataType.ValueType);
+                    if (editor == null)
                     {
                         _logger?.LogWarning(
-                            "Property editor '{EditorAlias}' not found. Skipping DataType '{Alias}'.",
+                            "Property editor '{EditorAlias}' not found. Skipping DataType '{Alias}'. " +
+                            "For custom frontend-only editors add 'valueType: NVARCHAR' (or NTEXT/INT/etc.) to enable fallback creation.",
                             yamlDataType.Editor,
                             yamlDataType.Alias
                         );
                         continue;
                     }
 
-                    // Create new DataType
-                    var dbType = editor.GetValueEditor().ValueType switch
-                    {
-                        "TEXT"    => ValueStorageType.Ntext,
-                        "INT"     => ValueStorageType.Integer,
-                        "INTEGER" => ValueStorageType.Integer,
-                        "BIGINT"  => ValueStorageType.Integer,
-                        "DECIMAL" => ValueStorageType.Decimal,
-                        "DATE"    => ValueStorageType.Date,
-                        _         => ValueStorageType.Nvarchar
-                    };
+                    // Determine storage type: explicit valueType overrides editor's default
+                    var dbType = !string.IsNullOrWhiteSpace(yamlDataType.ValueType)
+                        ? MapValueType(yamlDataType.ValueType)
+                        : editor.GetValueEditor().ValueType switch
+                        {
+                            "TEXT"    => ValueStorageType.Ntext,
+                            "INT"     => ValueStorageType.Integer,
+                            "INTEGER" => ValueStorageType.Integer,
+                            "BIGINT"  => ValueStorageType.Integer,
+                            "DECIMAL" => ValueStorageType.Decimal,
+                            "DATE"    => ValueStorageType.Date,
+                            _         => ValueStorageType.Nvarchar
+                        };
 
                     var dataType = new DataType(editor, _configSerializer, -1)
                     {
@@ -252,6 +260,55 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                 }
             }
         }
+
+        /// <summary>
+        /// Tries to resolve a server-side <c>IDataEditor</c> for the given alias.
+        /// When the alias is not registered (custom frontend-only editor), falls back to a
+        /// built-in editor whose storage type matches <paramref name="valueType"/>.
+        /// Returns <c>null</c> if neither the primary alias nor the fallback can be found.
+        /// </summary>
+        private IDataEditor? ResolveEditor(string editorAlias, string? valueType)
+        {
+            if (_propertyEditors.TryGet(editorAlias, out var editor) && editor != null)
+                return editor;
+
+            if (string.IsNullOrWhiteSpace(valueType))
+                return null;
+
+            var fallbackAlias = GetFallbackEditorAlias(valueType);
+            _propertyEditors.TryGet(fallbackAlias, out var fallback);
+            if (fallback != null)
+                _logger?.LogInformation(
+                    "Editor '{EditorAlias}' not found server-side; using '{Fallback}' as storage fallback (valueType: {ValueType}).",
+                    editorAlias, fallbackAlias, valueType);
+            return fallback;
+        }
+
+        private static string GetFallbackEditorAlias(string valueType) =>
+            valueType.ToUpperInvariant() switch
+            {
+                "TEXT"    => "Umbraco.TextArea",
+                "NTEXT"   => "Umbraco.TextArea",
+                "INT"     => "Umbraco.Integer",
+                "INTEGER" => "Umbraco.Integer",
+                "BIGINT"  => "Umbraco.Integer",
+                "DECIMAL" => "Umbraco.Decimal",
+                "DATE"    => "Umbraco.DateTime",
+                _         => "Umbraco.TextBox"   // NVARCHAR and anything unknown
+            };
+
+        private static ValueStorageType MapValueType(string valueType) =>
+            valueType.ToUpperInvariant() switch
+            {
+                "TEXT"    => ValueStorageType.Ntext,
+                "NTEXT"   => ValueStorageType.Ntext,
+                "INT"     => ValueStorageType.Integer,
+                "INTEGER" => ValueStorageType.Integer,
+                "BIGINT"  => ValueStorageType.Integer,
+                "DECIMAL" => ValueStorageType.Decimal,
+                "DATE"    => ValueStorageType.Date,
+                _         => ValueStorageType.Nvarchar
+            };
 
         /// <summary>
         /// Resolves <c>contentElementTypeAlias</c> entries inside Block List (and Block Grid) DataType

@@ -47,6 +47,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
 
         [YamlMember(Alias = "users")]
         public List<YamlUser> Users { get; set; } = new();
+
+        [YamlMember(Alias = "packages")]
+        public List<YamlPackage> Packages { get; set; } = new();
+
+        [YamlMember(Alias = "propertyEditors")]
+        public List<YamlPropertyEditor> PropertyEditors { get; set; } = new();
     }
 
     public class YamlDataType
@@ -62,6 +68,14 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
 
         [YamlMember(Alias = "config")]
         public Dictionary<string, object> Config { get; set; } = new();
+
+        /// <summary>
+        /// Optional storage type override for custom (frontend-only) property editors that have
+        /// no server-side <c>IDataEditor</c> registration. Accepted values: NVARCHAR (default),
+        /// NTEXT, TEXT, INT, INTEGER, BIGINT, DECIMAL, DATE.
+        /// </summary>
+        [YamlMember(Alias = "valueType")]
+        public string? ValueType { get; set; }
 
         [YamlMember(Alias = "remove")]
         public bool Remove { get; set; } = false;
@@ -404,6 +418,94 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
         /// <summary>User group aliases to assign (e.g. "admin", "editor").</summary>
         [YamlMember(Alias = "userGroups")]
         public List<string> UserGroups { get; set; } = new();
+
+        [YamlMember(Alias = "remove")]
+        public bool Remove { get; set; } = false;
+
+        [YamlMember(Alias = "update")]
+        public bool Update { get; set; } = false;
+    }
+
+    // ── Package ───────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Declares a NuGet package that the site depends on. At startup the plugin checks whether
+    /// the package assembly is loaded in the current AppDomain and logs a warning (or error if
+    /// <c>required: true</c>) if it is missing.
+    /// </summary>
+    public class YamlPackage
+    {
+        /// <summary>NuGet package ID (e.g. "Our.Umbraco.Community.SomePlugin").</summary>
+        [YamlMember(Alias = "id")]
+        public string Id { get; set; }
+
+        /// <summary>Expected version string (informational, e.g. "2.0.0"). Logged if mismatch found.</summary>
+        [YamlMember(Alias = "version")]
+        public string? Version { get; set; }
+
+        /// <summary>When true, a missing assembly is logged as an error rather than a warning.</summary>
+        [YamlMember(Alias = "required")]
+        public bool Required { get; set; } = false;
+
+        /// <summary>
+        /// Override the assembly name to check when it differs from the NuGet package ID
+        /// (e.g. "Our.Umbraco.Community.SomePlugin.Core").
+        /// </summary>
+        [YamlMember(Alias = "assemblyName")]
+        public string? AssemblyName { get; set; }
+    }
+
+    // ── PropertyEditor ────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Defines a custom (frontend-only) Umbraco property editor. The plugin writes an
+    /// <c>App_Plugins/[folderName]/umbraco-package.json</c> manifest and, when
+    /// <c>jsContent</c> is provided, the corresponding JavaScript file.
+    /// </summary>
+    public class YamlPropertyEditor
+    {
+        /// <summary>
+        /// Schema alias used both as the <c>propertyEditorSchema</c> alias in the manifest
+        /// and as the editor alias in DataType definitions (e.g. "My.CustomTextEditor").
+        /// </summary>
+        [YamlMember(Alias = "alias")]
+        public string Alias { get; set; }
+
+        [YamlMember(Alias = "name")]
+        public string Name { get; set; }
+
+        /// <summary>Backoffice icon alias (e.g. "icon-code"). Defaults to "icon-code".</summary>
+        [YamlMember(Alias = "icon")]
+        public string? Icon { get; set; }
+
+        /// <summary>Backoffice group (e.g. "common", "lists"). Defaults to "common".</summary>
+        [YamlMember(Alias = "group")]
+        public string? Group { get; set; }
+
+        /// <summary>
+        /// UI component alias (e.g. "My.PropertyEditorUi.CustomEditor").
+        /// Auto-derived as <c>{Alias}.Ui</c> when not specified.
+        /// </summary>
+        [YamlMember(Alias = "uiAlias")]
+        public string? UiAlias { get; set; }
+
+        /// <summary>
+        /// App_Plugins sub-folder name. Auto-derived from <c>alias</c> (dots replaced with dashes,
+        /// lower-cased) when not specified.
+        /// </summary>
+        [YamlMember(Alias = "folderName")]
+        public string? FolderName { get; set; }
+
+        /// <summary>
+        /// URL path to the JavaScript file served from wwwroot
+        /// (e.g. "/App_Plugins/my-editor/index.js"). Auto-derived when not specified.
+        /// </summary>
+        [YamlMember(Alias = "jsPath")]
+        public string? JsPath { get; set; }
+
+        /// <summary>Inline JavaScript content written to the JS file (use YAML block scalar |).</summary>
+        [YamlMember(Alias = "jsContent")]
+        public string? JsContent { get; set; }
 
         [YamlMember(Alias = "remove")]
         public bool Remove { get; set; } = false;

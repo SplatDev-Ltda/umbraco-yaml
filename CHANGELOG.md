@@ -9,6 +9,53 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.19] - 2026-04-01
+
+### Added
+
+#### Package validation (`packages:`)
+
+Declare NuGet packages your site depends on. At startup the plugin checks whether each package's assembly is loaded in the current AppDomain and logs a warning (optional) or error (required) if it is missing. No installation is performed — add missing packages to your `.csproj` manually.
+
+```yaml
+packages:
+  - id: Our.Umbraco.Community.SomePlugin
+    version: "2.0.0"
+    required: true
+  - id: Another.Plugin
+    assemblyName: Another.Plugin.Core   # override when assembly name differs from package ID
+```
+
+#### Custom property editors (`propertyEditors:`)
+
+Define frontend-only (Umbraco 14+ Web Component) property editors entirely in YAML. The plugin writes an `App_Plugins/[folderName]/umbraco-package.json` manifest and, when `jsContent` is provided, the corresponding JavaScript file.
+
+```yaml
+propertyEditors:
+  - alias: My.CustomTextEditor
+    name: "My Custom Text Editor"
+    icon: icon-code
+    group: common
+    jsContent: |
+      customElements.define('my-custom-editor', class extends HTMLElement {
+        // ...
+      });
+```
+
+For DataType definitions referencing a custom editor, add `valueType` so the plugin can fall back to a compatible built-in server-side editor:
+
+```yaml
+dataTypes:
+  - alias: myCustomEditorDT
+    name: "My Custom Editor DT"
+    editorUiAlias: My.CustomTextEditor
+    valueType: NVARCHAR   # required for frontend-only editors
+```
+
+#### `valueType` field on DataType
+
+New optional field on `dataTypes` entries. Accepted values: `NVARCHAR` (default), `NTEXT`, `TEXT`, `INT`, `INTEGER`, `BIGINT`, `DECIMAL`, `DATE`. When set, this overrides the storage type derived from the server-side editor. Required when `editorUiAlias` points to a custom frontend-only editor (no server-side `IDataEditor` registration).
+
 ## [1.0.18] - 2026-04-01
 
 ### Added

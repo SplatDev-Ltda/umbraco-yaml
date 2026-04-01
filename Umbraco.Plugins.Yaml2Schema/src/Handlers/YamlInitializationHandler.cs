@@ -25,6 +25,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
         private readonly DictionaryCreator _dictionaryCreator;
         private readonly MemberCreator _memberCreator;
         private readonly UserCreator _userCreator;
+        private readonly PackageValidator _packageValidator;
+        private readonly PropertyEditorCreator _propertyEditorCreator;
         private readonly IRuntimeState _runtimeState;
         private readonly ILogger<YamlInitializationHandler> _logger;
         private readonly IConfiguration _configuration;
@@ -43,6 +45,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             DictionaryCreator dictionaryCreator,
             MemberCreator memberCreator,
             UserCreator userCreator,
+            PackageValidator packageValidator,
+            PropertyEditorCreator propertyEditorCreator,
             IRuntimeState runtimeState,
             ILogger<YamlInitializationHandler> logger,
             IConfiguration configuration,
@@ -60,6 +64,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             _dictionaryCreator = dictionaryCreator ?? throw new ArgumentNullException(nameof(dictionaryCreator));
             _memberCreator = memberCreator ?? throw new ArgumentNullException(nameof(memberCreator));
             _userCreator = userCreator ?? throw new ArgumentNullException(nameof(userCreator));
+            _packageValidator = packageValidator ?? throw new ArgumentNullException(nameof(packageValidator));
+            _propertyEditorCreator = propertyEditorCreator ?? throw new ArgumentNullException(nameof(propertyEditorCreator));
             _runtimeState = runtimeState ?? throw new ArgumentNullException(nameof(runtimeState));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -97,6 +103,20 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                 {
                     _logger.LogWarning("YamlInitializationHandler: YAML configuration is empty or invalid. No items to create.");
                     return;
+                }
+
+                // Validate declared NuGet packages (informational — no installation performed)
+                if (yamlRoot.Umbraco.Packages?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Validating {Count} package(s).", yamlRoot.Umbraco.Packages.Count);
+                    _packageValidator.ValidatePackages(yamlRoot.Umbraco.Packages);
+                }
+
+                // Create custom property editor manifests (before DataTypes so DataTypes can reference them)
+                if (yamlRoot.Umbraco.PropertyEditors?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} PropertyEditor(s).", yamlRoot.Umbraco.PropertyEditors.Count);
+                    _propertyEditorCreator.CreatePropertyEditors(yamlRoot.Umbraco.PropertyEditors);
                 }
 
                 // Create Languages first (other creators may reference culture codes)
