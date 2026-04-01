@@ -233,6 +233,17 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     resolvedTemplates.Add(template);
                 }
 
+                // Guard: only assign AllowedTemplates when at least one template was resolved.
+                // Assigning an empty list would clear ALL existing template assignments on the
+                // document type, which is destructive and almost never intentional.
+                if (resolvedTemplates.Count == 0)
+                {
+                    _logger?.LogWarning(
+                        "No templates could be resolved for DocumentType '{Alias}' — preserving existing template assignments.",
+                        yamlDocType.Alias);
+                    continue;
+                }
+
                 contentType.AllowedTemplates = resolvedTemplates;
 
                 if (hasDefault)

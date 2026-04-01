@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.17] - 2026-04-01
+
+### Fixed
+
+#### `DocumentTypeCreator.LinkTemplatesToDocumentTypes` no longer clears existing template assignments when resolution fails
+- Root cause of "all pages with sub-pages/children have lost the template assignment": when a template alias could not be resolved (e.g. due to a YAML scalar-continuation bug producing an invalid alias such as `"ecossistema - ecosystemWebsite"`), `resolvedTemplates` was empty. Assigning `contentType.AllowedTemplates = resolvedTemplates` (an empty list) then cleared every previously-assigned template from the document type and saved that destructive state.
+- Fix: if no templates could be resolved for a document type, a warning is logged and the method skips the save entirely, preserving the existing template assignments on the document type.
+
 ## [1.0.16] - 2026-03-31
 
 ### Fixed
