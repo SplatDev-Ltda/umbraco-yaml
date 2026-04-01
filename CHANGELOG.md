@@ -9,6 +9,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.16] - 2026-03-31
+
+### Fixed
+
+#### `DataTypeCreator` now sets `EditorUiAlias` so the Umbraco 17 backoffice can resolve the property editor UI
+- Root cause of "The configured property editor UI could not be found" backoffice errors: `DataType.EditorUiAlias` was never set explicitly, so it defaulted to the server-side `EditorAlias` (e.g. `Umbraco.TextBox`). Umbraco 17's new Vite backoffice looks up the property editor Web Component by `EditorUiAlias` and expects the new `Umb.PropertyEditorUi.*` format (e.g. `Umb.PropertyEditorUi.TextBox`), not the legacy `Umbraco.*` format.
+- Added a static lookup table (`_editorUiAliasMap`) mapping every built-in Umbraco 17.2.2 schema alias to its correct `Umb.PropertyEditorUi.*` UI alias, extracted directly from the Umbraco 17.2.2 backoffice manifests (`defaultPropertyEditorUiAlias` field). Covers 35 built-in editors including TextBox, TextArea, RichText (→Tiptap), Dropdown, CheckBoxList, Toggle, MediaPicker, BlockList, BlockGrid, and more.
+- Added `ResolveEditorUiAlias(string editorAlias)` helper — falls back to the raw alias for third-party editors not in the map.
+- `EditorUiAlias` is now set in both the **create** path and the **update** path (`update: true`), ensuring both newly-created and force-updated DataTypes have the correct UI alias.
+
 ## [1.0.15] - 2026-04-01
 
 ### Fixed

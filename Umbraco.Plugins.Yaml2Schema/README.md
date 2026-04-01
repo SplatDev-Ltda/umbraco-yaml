@@ -447,22 +447,33 @@ users:
 
 ## Common Editor Aliases
 
-| `editorUiAlias` | Type |
-|-----------------|------|
-| `Umbraco.TextBox` | Single-line text |
-| `Umbraco.TextArea` | Multi-line text |
-| `Umbraco.TinyMCE` | Rich HTML editor |
-| `Umbraco.MarkdownEditor` | Markdown |
-| `Umbraco.Integer` | Whole number |
-| `Umbraco.TrueFalse` | Boolean toggle |
-| `Umbraco.DateTime` | Date and time |
-| `Umbraco.MediaPicker3` | Media picker |
-| `Umbraco.ContentPicker` | Content picker |
-| `Umbraco.Tags` | Tag input |
-| `Umbraco.DropDown.Flexible` | Dropdown / multi-select (use `config.items` string list) |
-| `Umbraco.CheckBoxList` | Checkbox list (use `config.items` string list) |
-| `Umbraco.BlockList` | Block List editor |
-| `Umbraco.ImageCropper` | Image with crop config |
+Use the server-side schema alias in `editorUiAlias`. The plugin automatically resolves the correct Umbraco 17 backoffice UI component alias (`Umb.PropertyEditorUi.*`) so the property editor renders correctly.
+
+| `editorUiAlias` | Backoffice UI alias resolved | Type |
+|-----------------|------------------------------|------|
+| `Umbraco.TextBox` | `Umb.PropertyEditorUi.TextBox` | Single-line text |
+| `Umbraco.TextArea` | `Umb.PropertyEditorUi.TextArea` | Multi-line text |
+| `Umbraco.RichText` | `Umb.PropertyEditorUi.Tiptap` | Rich HTML editor (Tiptap) |
+| `Umbraco.MarkdownEditor` | `Umb.PropertyEditorUi.MarkdownEditor` | Markdown |
+| `Umbraco.Integer` | `Umb.PropertyEditorUi.Integer` | Whole number |
+| `Umbraco.Decimal` | `Umb.PropertyEditorUi.Decimal` | Decimal number |
+| `Umbraco.TrueFalse` | `Umb.PropertyEditorUi.Toggle` | Boolean toggle |
+| `Umbraco.DateTime` | `Umb.PropertyEditorUi.DatePicker` | Date and time |
+| `Umbraco.MediaPicker3` | `Umb.PropertyEditorUi.MediaPicker` | Media picker |
+| `Umbraco.ContentPicker` | `Umb.PropertyEditorUi.DocumentPicker` | Content picker |
+| `Umbraco.MultiNodeTreePicker` | `Umb.PropertyEditorUi.ContentPicker` | Multi-node tree picker |
+| `Umbraco.MultiUrlPicker` | `Umb.PropertyEditorUi.MultiUrlPicker` | Multi-URL picker |
+| `Umbraco.Tags` | `Umb.PropertyEditorUi.Tags` | Tag input |
+| `Umbraco.DropDown.Flexible` | `Umb.PropertyEditorUi.Dropdown` | Dropdown / multi-select (use `config.items` string list) |
+| `Umbraco.CheckBoxList` | `Umb.PropertyEditorUi.CheckBoxList` | Checkbox list (use `config.items` string list) |
+| `Umbraco.RadioButtonList` | `Umb.PropertyEditorUi.RadioButtonList` | Radio button list |
+| `Umbraco.BlockList` | `Umb.PropertyEditorUi.BlockList` | Block List editor |
+| `Umbraco.BlockGrid` | `Umb.PropertyEditorUi.BlockGrid` | Block Grid editor |
+| `Umbraco.ImageCropper` | `Umb.PropertyEditorUi.ImageCropper` | Image with crop config |
+| `Umbraco.EmailAddress` | `Umb.PropertyEditorUi.EmailAddress` | Email address |
+| `Umbraco.Label` | `Umb.PropertyEditorUi.Label` | Read-only label |
+| `Umbraco.UploadField` | `Umb.PropertyEditorUi.UploadField` | File upload |
+| `Umbraco.ColorPicker` | `Umb.PropertyEditorUi.ColorPicker` | Color picker |
 
 ---
 

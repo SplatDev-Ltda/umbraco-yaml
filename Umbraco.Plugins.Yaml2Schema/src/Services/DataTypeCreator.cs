@@ -30,6 +30,58 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Maps the server-side property editor schema alias (e.g. <c>Umbraco.TextBox</c>) to the
+        /// Umbraco 14+ backoffice Web-Component UI alias (e.g. <c>Umb.PropertyEditorUi.TextBox</c>).
+        ///
+        /// Extracted directly from the Umbraco 17.2.2 backoffice static asset manifests
+        /// (<c>defaultPropertyEditorUiAlias</c> field of each <c>propertyEditorSchema</c> manifest).
+        /// Fall-back: if the alias is not in the map (e.g. a third-party editor) we reuse the
+        /// schema alias so that the DataType is still saved rather than throwing.
+        /// </summary>
+        private static readonly Dictionary<string, string> _editorUiAliasMap =
+            new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Umbraco.BlockGrid",              "Umb.PropertyEditorUi.BlockGrid" },
+            { "Umbraco.BlockList",              "Umb.PropertyEditorUi.BlockList" },
+            { "Umbraco.CheckBoxList",           "Umb.PropertyEditorUi.CheckBoxList" },
+            { "Umbraco.ColorPicker",            "Umb.PropertyEditorUi.ColorPicker" },
+            { "Umbraco.ColorPicker.EyeDropper", "Umb.PropertyEditorUi.EyeDropper" },
+            { "Umbraco.ContentPicker",          "Umb.PropertyEditorUi.DocumentPicker" },
+            { "Umbraco.DateOnly",               "Umb.PropertyEditorUi.DateOnlyPicker" },
+            { "Umbraco.DateTime",               "Umb.PropertyEditorUi.DatePicker" },
+            { "Umbraco.DateTimeUnspecified",    "Umb.PropertyEditorUi.DateTimePicker" },
+            { "Umbraco.DateTimeWithTimeZone",   "Umb.PropertyEditorUi.DateTimeWithTimeZonePicker" },
+            { "Umbraco.Decimal",                "Umb.PropertyEditorUi.Decimal" },
+            { "Umbraco.DropDown.Flexible",      "Umb.PropertyEditorUi.Dropdown" },
+            { "Umbraco.EmailAddress",           "Umb.PropertyEditorUi.EmailAddress" },
+            { "Umbraco.ImageCropper",           "Umb.PropertyEditorUi.ImageCropper" },
+            { "Umbraco.Integer",                "Umb.PropertyEditorUi.Integer" },
+            { "Umbraco.Label",                  "Umb.PropertyEditorUi.Label" },
+            { "Umbraco.ListView",               "Umb.PropertyEditorUi.Collection" },
+            { "Umbraco.MarkdownEditor",         "Umb.PropertyEditorUi.MarkdownEditor" },
+            { "Umbraco.MediaPicker3",           "Umb.PropertyEditorUi.MediaPicker" },
+            { "Umbraco.MemberGroupPicker",      "Umb.PropertyEditorUi.MemberGroupPicker" },
+            { "Umbraco.MemberPicker",           "Umb.PropertyEditorUi.MemberPicker" },
+            { "Umbraco.MultiNodeTreePicker",    "Umb.PropertyEditorUi.ContentPicker" },
+            { "Umbraco.MultiUrlPicker",         "Umb.PropertyEditorUi.MultiUrlPicker" },
+            { "Umbraco.MultipleTextstring",     "Umb.PropertyEditorUi.MultipleTextString" },
+            { "Umbraco.RadioButtonList",        "Umb.PropertyEditorUi.RadioButtonList" },
+            { "Umbraco.RichText",               "Umb.PropertyEditorUi.Tiptap" },
+            { "Umbraco.SingleBlock",            "Umb.PropertyEditorUi.BlockSingle" },
+            { "Umbraco.Slider",                 "Umb.PropertyEditorUi.Slider" },
+            { "Umbraco.Tags",                   "Umb.PropertyEditorUi.Tags" },
+            { "Umbraco.TextArea",               "Umb.PropertyEditorUi.TextArea" },
+            { "Umbraco.TextBox",                "Umb.PropertyEditorUi.TextBox" },
+            { "Umbraco.TimeOnly",               "Umb.PropertyEditorUi.TimeOnlyPicker" },
+            { "Umbraco.TrueFalse",              "Umb.PropertyEditorUi.Toggle" },
+            { "Umbraco.UploadField",            "Umb.PropertyEditorUi.UploadField" },
+            { "Umbraco.UserPicker",             "Umb.PropertyEditorUi.UserPicker" },
+        };
+
+        private static string ResolveEditorUiAlias(string editorAlias) =>
+            _editorUiAliasMap.TryGetValue(editorAlias, out var uiAlias) ? uiAlias : editorAlias;
+
         public void CreateDataTypes(List<YamlDataType> dataTypes)
         {
             if (dataTypes == null)
@@ -59,7 +111,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         var existingIface = _dataTypeService.GetDataType(yamlDataType.Name);
                         if (existingIface is DataType existing)
                         {
-                            // Re-derive storage type from the editor so stale entries are corrected
+                            // Re-derive storage type and UI alias from the editor so stale entries are corrected
                             if (_propertyEditors.TryGet(yamlDataType.Editor, out var updEditor) && updEditor != null)
                             {
                                 existing.DatabaseType = updEditor.GetValueEditor().ValueType switch
@@ -72,6 +124,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                                     "DATE"    => ValueStorageType.Date,
                                     _         => ValueStorageType.Nvarchar
                                 };
+                                existing.EditorUiAlias = ResolveEditorUiAlias(yamlDataType.Editor);
                             }
 
                             // Re-apply config so stale or incorrectly-formatted config is fixed
@@ -162,7 +215,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     var dataType = new DataType(editor, _configSerializer, -1)
                     {
                         Name = yamlDataType.Name,
-                        DatabaseType = dbType
+                        DatabaseType = dbType,
+                        EditorUiAlias = ResolveEditorUiAlias(yamlDataType.Editor)
                     };
 
                     // Apply config from YAML (supports Block List, Image Cropper, etc.)
