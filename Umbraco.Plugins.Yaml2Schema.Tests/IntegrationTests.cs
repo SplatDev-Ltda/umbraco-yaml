@@ -92,9 +92,9 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             Assert.Equal("oldStyles", result.Umbraco.Stylesheets[1].Alias);
             Assert.True(result.Umbraco.Stylesheets[1].Remove);
 
-            // DocumentTypes verification
+            // DocumentTypes verification (page + article[remove])
             Assert.NotNull(result.Umbraco.DocumentTypes);
-            Assert.Single(result.Umbraco.DocumentTypes);
+            Assert.Equal(2, result.Umbraco.DocumentTypes.Count);
             var docType = result.Umbraco.DocumentTypes[0];
             Assert.Equal("page", docType.Alias);
             Assert.Equal("Page", docType.Name);
@@ -117,9 +117,9 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             Assert.True(property.Required);
             Assert.Equal("The page title", property.Description);
 
-            // Templates verification
+            // Templates verification (masterPage + customPage)
             Assert.NotNull(result.Umbraco.Templates);
-            Assert.Single(result.Umbraco.Templates);
+            Assert.Equal(2, result.Umbraco.Templates.Count);
             var template = result.Umbraco.Templates[0];
             Assert.Equal("masterPage", template.Alias);
             Assert.Equal("Master Page", template.Name);
@@ -142,7 +142,6 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             Assert.Empty(content.Children);
 
             // Template scripts/stylesheets injection
-            var template = result.Umbraco.Templates[0];
             Assert.Single(template.Scripts);
             Assert.Equal("js/site.js", template.Scripts[0]);
             Assert.Single(template.Stylesheets);
@@ -212,6 +211,9 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             var mockConfigEditorObj = new Mock<IConfigurationEditor>();
             mockConfigEditorObj.Setup(x => x.DefaultConfiguration).Returns(new Dictionary<string, object>());
             mockEditor.Setup(x => x.GetConfigurationEditor()).Returns(mockConfigEditorObj.Object);
+            var mockValueEditorObj = new Mock<IDataValueEditor>();
+            mockValueEditorObj.Setup(x => x.ValueType).Returns("STRING");
+            mockEditor.Setup(x => x.GetValueEditor()).Returns(mockValueEditorObj.Object);
             var dataEditorCollection = new DataEditorCollection(() => Enumerable.Empty<IDataEditor>());
             var mockPropertyEditors = new Mock<PropertyEditorCollection>(dataEditorCollection);
             IDataEditor outEditor = mockEditor.Object;
@@ -229,21 +231,30 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
                 .Setup(x => x.GetByEditorAlias(It.IsAny<string>()))
                 .Returns(Enumerable.Empty<IDataType>());
 
-            // GetDataType: called for update:true (returns existing → skip) and remove:true (returns null → warn)
-            var mockExistingDT = new Mock<IDataType>();
+            // GetDataType: return null for all calls so update:true falls through to create.
+            // Both the update and remove entries then proceed through the normal create flow,
+            // but duplicates ([2] textString, [3] richText) are skipped by alias dedup logic.
             mockDataTypeService
-                .SetupSequence(x => x.GetDataType(It.IsAny<string>()))
-                .Returns(mockExistingDT.Object)   // textString update:true → found → skip
-                .Returns((IDataType?)null);        // richText remove:true → not found → warn
+                .Setup(x => x.GetDataType(It.IsAny<string>()))
+                .Returns((IDataType?)null);
 
             var mockContentType = new Mock<IContentType>();
             mockContentType.Setup(x => x.Id).Returns(1);
             mockContentType.Setup(x => x.Key).Returns(Guid.NewGuid());
             mockContentType.Setup(x => x.Alias).Returns("page");
-            // Call order: 1) existence check → null (allow creation), 2) allowed child type lookup → mock, 3) content creator type lookup → mock
+            // DocumentTypeCreator "page" (update:true, not found):
+            //   Call 1: Get("page") update check  → null
+            //   Call 2: Get("page") existence check (create path) → null (allow creation)
+            //   Call 3: Get("page") for AllowedChildTypes["page"] → mock
+            // DocumentTypeCreator "article" (remove:true):
+            //   Call 4: Get("article") → mock → Delete
+            // ContentCreator "home" (type: "page"):
+            //   Call 5: Get("page") → mock
             mockContentTypeService
                 .SetupSequence(x => x.Get(It.IsAny<string>()))
                 .Returns((IContentType?)null)
+                .Returns((IContentType?)null)
+                .Returns(mockContentType.Object)
                 .Returns(mockContentType.Object)
                 .Returns(mockContentType.Object);
 
@@ -258,8 +269,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
                 .Setup(x => x.Create(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
                 .Returns(mockContent.Object);
 
-            var dataTypeCreator = new DataTypeCreator(mockDataTypeService.Object, mockPropertyEditors.Object, mockConfigSerializer.Object, mockLogger.Object);
-            var docTypeCreator = new DocumentTypeCreator(mockContentTypeService.Object, mockDataTypeService.Object, mockShortStringHelper.Object, mockDocLogger.Object);
+            var dataTypeCreator = new DataTypeCreator(mockDataTypeService.Object, mockContentTypeService.Object, mockPropertyEditors.Object, mockConfigSerializer.Object, mockLogger.Object);
+            var docTypeCreator = new DocumentTypeCreator(mockContentTypeService.Object, mockDataTypeService.Object, mockTemplateService.Object, mockShortStringHelper.Object, mockDocLogger.Object);
             var templateCreator = new TemplateCreator(mockTemplateService.Object, mockTplLogger.Object);
             var contentCreator = new ContentCreator(mockContentService.Object, mockContentTypeService.Object);
 
@@ -269,11 +280,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             templateCreator.CreateTemplates(result.Umbraco.Templates);
             contentCreator.CreateContent(result.Umbraco.Content);
 
-            // Assert - DataTypes created
+            // Assert - DataTypes: textString (update:true, not found → create) gets saved.
+            // richText (remove:true, not found → skip). [2] textString and [3] richText skipped as duplicate aliases.
             mockDataTypeService.Verify(
                 x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()),
-                Times.Exactly(2),
-                "Should create 2 data types"
+                Times.Once,
+                "Should create 1 data type (textString update:true falls through to create)"
             );
 
             // Assert - DocumentTypes created
@@ -283,11 +295,11 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
                 "Should create 1 document type"
             );
 
-            // Assert - Templates created
+            // Assert - Templates created (masterPage + customPage, both new)
             mockTemplateService.Verify(
                 x => x.CreateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid?>()),
-                Times.Once,
-                "Should create 1 template"
+                Times.Exactly(2),
+                "Should create 2 templates"
             );
 
             // Assert - Content created

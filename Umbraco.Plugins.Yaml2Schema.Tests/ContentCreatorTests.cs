@@ -109,31 +109,25 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
         }
 
         [Fact]
-        public void CreateContent_ShouldCreateWhenUpdateTargetMissing()
+        public void CreateContent_ShouldSkipWhenUpdateTargetMissing()
         {
-            var (mockContentService, mockContentTypeService, creator) = Build();
+            // ContentCreator.update:true means "update if found, skip if not found" — it does NOT create.
+            var (mockContentService, _, creator) = Build();
 
             mockContentService.Setup(x => x.GetRootContent()).Returns(Array.Empty<IContent>());
-
-            var contentType = new Mock<IContentType>();
-            contentType.Setup(x => x.Alias).Returns("page");
-            mockContentTypeService.Setup(x => x.Get("page")).Returns(contentType.Object);
-
-            var mockContent = new Mock<IContent>();
-            mockContent.Setup(x => x.Properties).Returns(new PropertyCollection());
-            mockContentService
-                .Setup(x => x.Create(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
-                .Returns(mockContent.Object);
 
             creator.CreateContent(new List<YamlContent>
             {
                 new YamlContent { Alias = "home", Name = "Home", Type = "page", Update = true, Values = new() }
             });
 
-            // update:true but not found → fall through to create
+            // Not found + update:true → skip (no Save, no Create)
             mockContentService.Verify(x =>
                 x.Save(It.IsAny<IContent>(), It.IsAny<int?>(), It.IsAny<ContentScheduleCollection>()),
-                Times.Once);
+                Times.Never);
+            mockContentService.Verify(x =>
+                x.Create(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()),
+                Times.Never);
         }
     }
 }

@@ -16,12 +16,14 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
     {
         private readonly Mock<IContentTypeService> _mockDocTypeService;
         private readonly Mock<IDataTypeService> _mockDataTypeService;
+        private readonly Mock<ITemplateService> _mockTemplateService;
         private readonly DocumentTypeCreator _creator;
 
         public DocumentTypeCreatorTests()
         {
             _mockDocTypeService = new Mock<IContentTypeService>();
             _mockDataTypeService = new Mock<IDataTypeService>();
+            _mockTemplateService = new Mock<ITemplateService>();
 
             var shortStringHelper = new Mock<IShortStringHelper>();
             shortStringHelper
@@ -31,6 +33,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             _creator = new DocumentTypeCreator(
                 _mockDocTypeService.Object,
                 _mockDataTypeService.Object,
+                _mockTemplateService.Object,
                 shortStringHelper.Object);
         }
 

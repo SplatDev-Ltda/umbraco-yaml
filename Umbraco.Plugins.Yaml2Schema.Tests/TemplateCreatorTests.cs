@@ -97,10 +97,6 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
                 .Setup(x => x.GetAsync("oldPage"))
                 .ReturnsAsync(existingTemplate.Object);
 
-            _mockTemplateService
-                .Setup(x => x.DeleteAsync(It.IsAny<Guid>(), It.IsAny<Guid>()))
-                .Returns(Task.CompletedTask);
-
             _templateCreator.CreateTemplates(new List<YamlTemplate>
             {
                 new YamlTemplate { Alias = "oldPage", Name = "Old Page", Remove = true }
@@ -140,10 +136,6 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             _mockTemplateService
                 .Setup(x => x.GetAsync("masterPage"))
                 .ReturnsAsync(existingTemplate.Object);
-
-            _mockTemplateService
-                .Setup(x => x.UpdateAsync(It.IsAny<ITemplate>(), It.IsAny<Guid>()))
-                .Returns(Task.CompletedTask);
 
             _templateCreator.CreateTemplates(new List<YamlTemplate>
             {

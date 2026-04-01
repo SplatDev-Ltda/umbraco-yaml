@@ -10,13 +10,13 @@ using Umbraco.Cms.Core.Services;
 using Microsoft.Extensions.Logging;
 using Umbraco.Plugins.Yaml2Schema.Services;
 using Umbraco.Plugins.Yaml2Schema.Models;
-using Umbraco.Cms.Core.Configuration.Models;
 
 namespace Umbraco.Plugins.Yaml2Schema.Tests
 {
     public class DataTypeCreatorTests
     {
         private readonly Mock<IDataTypeService> _mockDataTypeService;
+        private readonly Mock<IContentTypeService> _mockContentTypeService;
         private readonly Mock<PropertyEditorCollection> _mockPropertyEditors;
         private readonly Mock<IConfigurationEditorJsonSerializer> _mockConfigSerializer;
         private readonly Mock<ILogger<DataTypeCreator>> _mockLogger;
@@ -26,6 +26,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
         public DataTypeCreatorTests()
         {
             _mockDataTypeService = new Mock<IDataTypeService>();
+            _mockContentTypeService = new Mock<IContentTypeService>();
             var dataEditorCollection = new DataEditorCollection(() => Enumerable.Empty<IDataEditor>());
             _mockPropertyEditors = new Mock<PropertyEditorCollection>(dataEditorCollection);
             _mockConfigSerializer = new Mock<IConfigurationEditorJsonSerializer>();
@@ -33,11 +34,14 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
 
             _mockEditor = new Mock<IDataEditor>();
             _mockEditor.Setup(x => x.Alias).Returns("Umbraco.TextBox");
+            var mockValueEditor = new Mock<IDataValueEditor>();
+            mockValueEditor.Setup(x => x.ValueType).Returns("STRING");
+            _mockEditor.Setup(x => x.GetValueEditor()).Returns(mockValueEditor.Object);
             var mockConfigEditor = new Mock<IConfigurationEditor>();
             mockConfigEditor.Setup(x => x.DefaultConfiguration).Returns(new Dictionary<string, object>());
             _mockEditor.Setup(x => x.GetConfigurationEditor()).Returns(mockConfigEditor.Object);
 
-            // Setup TryGet to return the mock editor
+            // Setup TryGet to return the mock editor for any alias
             IDataEditor outEditor = _mockEditor.Object;
             _mockPropertyEditors
                 .Setup(x => x.TryGet(It.IsAny<string>(), out outEditor))
@@ -45,48 +49,33 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
 
             _dataTypeCreator = new DataTypeCreator(
                 _mockDataTypeService.Object,
+                _mockContentTypeService.Object,
                 _mockPropertyEditors.Object,
                 _mockConfigSerializer.Object,
                 _mockLogger.Object);
         }
 
+        // ── CREATE ────────────────────────────────────────────────────────────
+
         [Fact]
         public void CreateDataTypes_ShouldCreateDataTypesFromYaml()
         {
-            // Arrange
             var dataTypes = new List<YamlDataType>
             {
-                new YamlDataType
-                {
-                    Alias = "customTextString",
-                    Name = "Custom Text String",
-                    Editor = "Umbraco.TextBox",
-                    Config = new Dictionary<string, object>()
-                },
-                new YamlDataType
-                {
-                    Alias = "customRichText",
-                    Name = "Custom Rich Text",
-                    Editor = "Umbraco.RichText",
-                    Config = new Dictionary<string, object>()
-                }
+                new YamlDataType { Alias = "customTextString", Name = "Custom Text String", Editor = "Umbraco.TextBox", Config = new() },
+                new YamlDataType { Alias = "customRichText",   Name = "Custom Rich Text",   Editor = "Umbraco.RichText", Config = new() }
             };
 
-            // Mock: GetByEditorAlias returns empty (not found)
             _mockDataTypeService
                 .Setup(x => x.GetByEditorAlias(It.IsAny<string>()))
                 .Returns(Enumerable.Empty<IDataType>());
 
-            // Act
             _dataTypeCreator.CreateDataTypes(dataTypes);
 
-            // Assert
-            // Verify that Save was called twice (once for each DataType)
             _mockDataTypeService.Verify(
                 x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()),
                 Times.Exactly(2),
-                "Save should have been called twice for two new DataTypes"
-            );
+                "Save should be called once for each new DataType");
         }
 
         [Fact]
@@ -107,8 +96,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             _mockDataTypeService.Verify(
                 x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()),
                 Times.Once,
-                "Save should have been called only once - second duplicate should be skipped"
-            );
+                "Second duplicate alias should be skipped");
+        }
+
+        [Fact]
+        public void CreateDataTypes_ShouldThrowOnNullList()
+        {
+            Assert.Throws<ArgumentNullException>(() => _dataTypeCreator.CreateDataTypes(null!));
         }
 
         // ── REMOVE ────────────────────────────────────────────────────────────
@@ -124,13 +118,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
                 new YamlDataType { Alias = "oldType", Name = "Old Type", Editor = "Umbraco.TextBox", Remove = true }
             });
 
-            _mockDataTypeService.Verify(
-                x => x.Delete(existing.Object, It.IsAny<int>()),
-                Times.Once);
-
-            _mockDataTypeService.Verify(
-                x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()),
-                Times.Never);
+            _mockDataTypeService.Verify(x => x.Delete(existing.Object, It.IsAny<int>()), Times.Once);
+            _mockDataTypeService.Verify(x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
@@ -160,14 +149,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
                 new YamlDataType { Alias = "myType", Name = "My Type", Editor = "Umbraco.TextBox", Update = true }
             });
 
-            // Already exists → skip, no Save
+            // Existing found → skip (no Save)
             _mockDataTypeService.Verify(x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
         public void CreateDataTypes_ShouldCreateWhenUpdateAndNotExists()
         {
-            // update:true but name not found → fall through to create
             _mockDataTypeService.Setup(x => x.GetDataType(It.IsAny<string>())).Returns((IDataType?)null);
             _mockDataTypeService
                 .Setup(x => x.GetByEditorAlias(It.IsAny<string>()))
@@ -181,10 +169,246 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             _mockDataTypeService.Verify(x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()), Times.Once);
         }
 
+        // ── valueType fallback ────────────────────────────────────────────────
+
         [Fact]
-        public void CreateDataTypes_ShouldThrowOnNullList()
+        public void CreateDataTypes_ShouldFallBackToTextAreaForNtextValueType()
         {
-            Assert.Throws<ArgumentNullException>(() => _dataTypeCreator.CreateDataTypes(null!));
+            // When primary editor is not found, set up fallback to succeed for Umbraco.TextArea
+            var fallbackEditor = new Mock<IDataEditor>();
+            fallbackEditor.Setup(x => x.Alias).Returns("Umbraco.TextArea");
+            var fallbackValueEditor = new Mock<IDataValueEditor>();
+            fallbackValueEditor.Setup(x => x.ValueType).Returns("NTEXT");
+            fallbackEditor.Setup(x => x.GetValueEditor()).Returns(fallbackValueEditor.Object);
+            var fallbackConfigEditor = new Mock<IConfigurationEditor>();
+            fallbackConfigEditor.Setup(x => x.DefaultConfiguration).Returns(new Dictionary<string, object>());
+            fallbackEditor.Setup(x => x.GetConfigurationEditor()).Returns(fallbackConfigEditor.Object);
+
+            // Primary editor NOT found, fallback IS found
+            var dataEditorCollection = new DataEditorCollection(() => Enumerable.Empty<IDataEditor>());
+            var mockPE = new Mock<PropertyEditorCollection>(dataEditorCollection);
+
+            IDataEditor? primaryOut = null;
+            mockPE.Setup(x => x.TryGet("My.CustomEditor", out primaryOut)).Returns(false);
+
+            IDataEditor fallbackOut = fallbackEditor.Object;
+            mockPE.Setup(x => x.TryGet("Umbraco.TextArea", out fallbackOut)).Returns(true);
+
+            _mockDataTypeService
+                .Setup(x => x.GetByEditorAlias(It.IsAny<string>()))
+                .Returns(Enumerable.Empty<IDataType>());
+
+            var creator = new DataTypeCreator(
+                _mockDataTypeService.Object,
+                _mockContentTypeService.Object,
+                mockPE.Object,
+                _mockConfigSerializer.Object,
+                _mockLogger.Object);
+
+            var ex = Record.Exception(() => creator.CreateDataTypes(new List<YamlDataType>
+            {
+                new YamlDataType
+                {
+                    Alias = "customEditor",
+                    Name = "Custom Frontend Editor",
+                    Editor = "My.CustomEditor",
+                    ValueType = "NTEXT"
+                }
+            }));
+
+            Assert.Null(ex);
+
+            // DataType should be saved (via fallback editor)
+            _mockDataTypeService.Verify(x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()), Times.Once);
+        }
+
+        [Fact]
+        public void CreateDataTypes_ShouldSkipWhenEditorNotFoundAndNoValueType()
+        {
+            // Neither primary nor fallback found (no valueType provided)
+            var dataEditorCollection = new DataEditorCollection(() => Enumerable.Empty<IDataEditor>());
+            var mockPE = new Mock<PropertyEditorCollection>(dataEditorCollection);
+
+            IDataEditor? noOut = null;
+            mockPE.Setup(x => x.TryGet(It.IsAny<string>(), out noOut)).Returns(false);
+
+            _mockDataTypeService
+                .Setup(x => x.GetByEditorAlias(It.IsAny<string>()))
+                .Returns(Enumerable.Empty<IDataType>());
+
+            var creator = new DataTypeCreator(
+                _mockDataTypeService.Object,
+                _mockContentTypeService.Object,
+                mockPE.Object,
+                _mockConfigSerializer.Object,
+                _mockLogger.Object);
+
+            creator.CreateDataTypes(new List<YamlDataType>
+            {
+                new YamlDataType
+                {
+                    Alias = "unknown",
+                    Name = "Unknown Editor",
+                    Editor = "Totally.Unknown.Editor"
+                    // No ValueType
+                }
+            });
+
+            // Should skip — no Save
+            _mockDataTypeService.Verify(x => x.Save(It.IsAny<IDataType>(), It.IsAny<int>()), Times.Never);
+        }
+
+        // ── LinkBlockListElementTypes ──────────────────────────────────────────
+
+        [Fact]
+        public void LinkBlockListElementTypes_ShouldNotThrowOnNullList()
+        {
+            var ex = Record.Exception(() => _dataTypeCreator.LinkBlockListElementTypes(null!));
+            Assert.Null(ex);
+        }
+
+        [Fact]
+        public void LinkBlockListElementTypes_ShouldSkipNonBlockListDataTypes()
+        {
+            _dataTypeCreator.LinkBlockListElementTypes(new List<YamlDataType>
+            {
+                new YamlDataType { Alias = "textString", Name = "Text String", Editor = "Umbraco.TextBox" }
+            });
+
+            // IContentTypeService.Get should never be called for non-block-list types
+            _mockContentTypeService.Verify(x => x.Get(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void LinkBlockListElementTypes_ShouldSkipBlockListWithNoConfig()
+        {
+            _dataTypeCreator.LinkBlockListElementTypes(new List<YamlDataType>
+            {
+                new YamlDataType { Alias = "myList", Name = "My List", Editor = "Umbraco.BlockList", Config = null }
+            });
+
+            _mockContentTypeService.Verify(x => x.Get(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void LinkBlockListElementTypes_ShouldSkipBlockListWithNoBlocks()
+        {
+            _dataTypeCreator.LinkBlockListElementTypes(new List<YamlDataType>
+            {
+                new YamlDataType
+                {
+                    Alias = "myList",
+                    Name = "My List",
+                    Editor = "Umbraco.BlockList",
+                    Config = new Dictionary<string, object>
+                    {
+                        ["blocks"] = new List<object>()
+                    }
+                }
+            });
+
+            _mockContentTypeService.Verify(x => x.Get(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public void LinkBlockListElementTypes_ShouldResolveAliasToKey()
+        {
+            var mockContentType = new Mock<IContentType>();
+            mockContentType.Setup(x => x.Key).Returns(Guid.Parse("11111111-1111-1111-1111-111111111111"));
+
+            _mockContentTypeService.Setup(x => x.Get("myElement")).Returns(mockContentType.Object);
+
+            // Simulate what the DataType would look like after YAML parsing
+            // YamlDotNet uses Dictionary<object,object> for nested mappings
+            var blockDict = new System.Collections.Hashtable
+            {
+                ["contentElementTypeAlias"] = "myElement"
+            };
+
+            var mockDataType = new Mock<DataType>(It.IsAny<IDataEditor>(), It.IsAny<IConfigurationEditorJsonSerializer>());
+            _mockDataTypeService.Setup(x => x.GetDataType("My Block List")).Returns((IDataType?)null);
+
+            _dataTypeCreator.LinkBlockListElementTypes(new List<YamlDataType>
+            {
+                new YamlDataType
+                {
+                    Alias = "myList",
+                    Name = "My Block List",
+                    Editor = "Umbraco.BlockList",
+                    Config = new Dictionary<string, object>
+                    {
+                        ["blocks"] = new List<object> { blockDict }
+                    }
+                }
+            });
+
+            // Content type lookup should be called for the alias
+            _mockContentTypeService.Verify(x => x.Get("myElement"), Times.Once);
+        }
+
+        [Fact]
+        public void LinkBlockListElementTypes_ShouldWarnWhenElementTypeNotFound()
+        {
+            _mockContentTypeService.Setup(x => x.Get(It.IsAny<string>())).Returns((IContentType?)null);
+
+            var blockDict = new Dictionary<string, object>
+            {
+                ["contentElementTypeAlias"] = "missingElement"
+            };
+
+            _dataTypeCreator.LinkBlockListElementTypes(new List<YamlDataType>
+            {
+                new YamlDataType
+                {
+                    Alias = "myList",
+                    Name = "My Block List",
+                    Editor = "Umbraco.BlockList",
+                    Config = new Dictionary<string, object>
+                    {
+                        ["blocks"] = new List<object> { blockDict }
+                    }
+                }
+            });
+
+            // Should log a warning for the missing element type
+            _mockLogger.Verify(
+                x => x.Log(
+                    LogLevel.Warning,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("missingElement")),
+                    null,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+        }
+
+        [Fact]
+        public void LinkBlockListElementTypes_ShouldAlsoProcessBlockGridDataTypes()
+        {
+            var mockContentType = new Mock<IContentType>();
+            mockContentType.Setup(x => x.Key).Returns(Guid.NewGuid());
+            _mockContentTypeService.Setup(x => x.Get("gridElement")).Returns(mockContentType.Object);
+            _mockDataTypeService.Setup(x => x.GetDataType(It.IsAny<string>())).Returns((IDataType?)null);
+
+            var blockDict = new Dictionary<string, object>
+            {
+                ["contentElementTypeAlias"] = "gridElement"
+            };
+
+            _dataTypeCreator.LinkBlockListElementTypes(new List<YamlDataType>
+            {
+                new YamlDataType
+                {
+                    Alias = "myGrid",
+                    Name = "My Grid",
+                    Editor = "Umbraco.BlockGrid",
+                    Config = new Dictionary<string, object>
+                    {
+                        ["blocks"] = new List<object> { blockDict }
+                    }
+                }
+            });
+
+            _mockContentTypeService.Verify(x => x.Get("gridElement"), Times.Once);
         }
     }
 }

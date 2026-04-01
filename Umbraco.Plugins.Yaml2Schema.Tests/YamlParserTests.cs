@@ -34,7 +34,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             Assert.Equal(3, result.Umbraco.Scripts.Count);
             Assert.Equal(2, result.Umbraco.Stylesheets.Count);
 
-            Assert.Single(result.Umbraco.DocumentTypes);
+            // 2 document types: page (update:true) + article (remove:true)
+            Assert.Equal(2, result.Umbraco.DocumentTypes.Count);
             Assert.Equal("page", result.Umbraco.DocumentTypes[0].Alias);
             Assert.Single(result.Umbraco.DocumentTypes[0].Tabs);
 

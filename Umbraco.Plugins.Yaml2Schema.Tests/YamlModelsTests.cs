@@ -243,5 +243,188 @@ umbraco:
             Assert.True(root.Umbraco.Content[0].Remove);
             Assert.True(root.Umbraco.Content[1].Update);
         }
+
+        // ── YamlDataType.valueType ─────────────────────────────────────────────
+
+        [Fact]
+        public void YamlDataType_ShouldDeserializeValueType()
+        {
+            var yaml = @"
+umbraco:
+  dataTypes:
+    - alias: customEditor
+      name: Custom Frontend Editor
+      editorUiAlias: My.CustomEditor
+      valueType: NTEXT
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.Equal("NTEXT", root.Umbraco.DataTypes[0].ValueType);
+        }
+
+        [Fact]
+        public void YamlDataType_ValueTypeShouldBeNullByDefault()
+        {
+            var yaml = @"
+umbraco:
+  dataTypes:
+    - alias: textBox
+      name: Text Box
+      editorUiAlias: Umbraco.TextBox
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.Null(root.Umbraco.DataTypes[0].ValueType);
+        }
+
+        // ── YamlMedia.folder ──────────────────────────────────────────────────
+
+        [Fact]
+        public void YamlMedia_ShouldDeserializeFolder()
+        {
+            var yaml = @"
+umbraco:
+  media:
+    - name: Brand Logo
+      mediaType: Image
+      url: https://example.com/logo.png
+      folder: Images/Brands
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.Equal("Images/Brands", root.Umbraco.Media[0].Folder);
+        }
+
+        [Fact]
+        public void YamlMedia_FolderShouldBeNullByDefault()
+        {
+            var yaml = @"
+umbraco:
+  media:
+    - name: Photo
+      mediaType: Image
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.Null(root.Umbraco.Media[0].Folder);
+        }
+
+        // ── YamlPackage ───────────────────────────────────────────────────────
+
+        [Fact]
+        public void YamlPackage_ShouldDeserializeAllFields()
+        {
+            var yaml = @"
+umbraco:
+  packages:
+    - id: Examine
+      version: 4.0.0
+      required: true
+      assemblyName: Examine
+    - id: SomeOptional.Package
+      required: false
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.Equal(2, root.Umbraco.Packages.Count);
+
+            var first = root.Umbraco.Packages[0];
+            Assert.Equal("Examine", first.Id);
+            Assert.Equal("4.0.0", first.Version);
+            Assert.True(first.Required);
+            Assert.Equal("Examine", first.AssemblyName);
+
+            var second = root.Umbraco.Packages[1];
+            Assert.Equal("SomeOptional.Package", second.Id);
+            Assert.False(second.Required);
+        }
+
+        [Fact]
+        public void YamlPackage_RequiredShouldDefaultToFalse()
+        {
+            var yaml = @"
+umbraco:
+  packages:
+    - id: SomePackage
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.False(root.Umbraco.Packages[0].Required);
+        }
+
+        // ── YamlPropertyEditor ────────────────────────────────────────────────
+
+        [Fact]
+        public void YamlPropertyEditor_ShouldDeserializeAllFields()
+        {
+            var yaml = @"
+umbraco:
+  propertyEditors:
+    - alias: Acme.Rating
+      name: Star Rating
+      icon: icon-star
+      group: special
+      uiAlias: Acme.Rating.Ui
+      folderName: acme-rating
+      jsPath: /App_Plugins/acme-rating/index.js
+      jsContent: |
+        customElements.define('acme-rating', class extends HTMLElement {});
+      update: true
+    - alias: Acme.Old
+      name: Old Editor
+      remove: true
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.Equal(2, root.Umbraco.PropertyEditors.Count);
+
+            var first = root.Umbraco.PropertyEditors[0];
+            Assert.Equal("Acme.Rating", first.Alias);
+            Assert.Equal("Star Rating", first.Name);
+            Assert.Equal("icon-star", first.Icon);
+            Assert.Equal("special", first.Group);
+            Assert.Equal("Acme.Rating.Ui", first.UiAlias);
+            Assert.Equal("acme-rating", first.FolderName);
+            Assert.Equal("/App_Plugins/acme-rating/index.js", first.JsPath);
+            Assert.False(string.IsNullOrWhiteSpace(first.JsContent));
+            Assert.True(first.Update);
+            Assert.False(first.Remove);
+
+            var second = root.Umbraco.PropertyEditors[1];
+            Assert.True(second.Remove);
+            Assert.False(second.Update);
+        }
+
+        [Fact]
+        public void YamlPropertyEditor_FlagsShouldDefaultToFalse()
+        {
+            var yaml = @"
+umbraco:
+  propertyEditors:
+    - alias: My.Editor
+      name: My Editor
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.False(root.Umbraco.PropertyEditors[0].Remove);
+            Assert.False(root.Umbraco.PropertyEditors[0].Update);
+        }
+
+        // ── UmbracoConfig default collections ─────────────────────────────────
+
+        [Fact]
+        public void UmbracoConfig_PackagesAndPropertyEditorsShouldDefaultToEmptyList()
+        {
+            var yaml = @"
+umbraco:
+  dataTypes: []
+";
+            var root = BuildDeserializer().Deserialize<YamlRoot>(yaml);
+
+            Assert.NotNull(root.Umbraco.Packages);
+            Assert.Empty(root.Umbraco.Packages);
+            Assert.NotNull(root.Umbraco.PropertyEditors);
+            Assert.Empty(root.Umbraco.PropertyEditors);
+        }
     }
 }
