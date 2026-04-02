@@ -121,7 +121,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         Name = yamlDocType.Name,
                         Alias = yamlDocType.Alias,
                         Icon = yamlDocType.Icon ?? "icon-document",
-                        AllowedAsRoot = yamlDocType.AllowAsRoot
+                        AllowedAsRoot = yamlDocType.AllowAsRoot,
+                        IsElement = yamlDocType.IsElement
                     };
 
                     // Add tabs and properties
@@ -265,6 +266,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             existing.Name = yaml.Name;
             existing.Icon = yaml.Icon ?? "icon-document";
             existing.AllowedAsRoot = yaml.AllowAsRoot;
+            existing.IsElement = yaml.IsElement;
 
             // Merge tabs and properties — additive only, existing properties are never removed
             foreach (var tab in yaml.Tabs ?? [])

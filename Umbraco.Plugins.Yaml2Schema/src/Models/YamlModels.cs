@@ -95,6 +95,9 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
         [YamlMember(Alias = "icon")]
         public string Icon { get; set; }
 
+        [YamlMember(Alias = "isElement")]
+        public bool IsElement { get; set; } = false;
+
         [YamlMember(Alias = "allowAsRoot")]
         public bool AllowAsRoot { get; set; } = true;
 

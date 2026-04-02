@@ -105,12 +105,13 @@ dataTypes:
         - Published
         - Archived
 
-  - alias: blockList
-    name: Block List
+  - alias: myBlockList
+    name: My Block List
     editorUiAlias: Umbraco.BlockList
+    valueType: NTEXT          # required — forces Ntext storage so block JSON is saved correctly
     config:
       blocks:
-        - contentElementTypeKey: "00000000-0000-0000-0000-000000000000"
+        - contentElementTypeAlias: myElement   # resolved to contentElementTypeKey GUID automatically
 
   # [UPDATE] — re-applies config and DatabaseType on every startup
   - alias: richText
@@ -125,14 +126,17 @@ dataTypes:
     remove: true
 ```
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `alias` | Yes | Unique identifier |
-| `name` | Yes | Display name in the back-office |
-| `editorUiAlias` | Yes | Registered property editor alias |
-| `config` | No | Editor-specific configuration (key-value map) |
+| Field | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `alias` | Yes | — | Unique identifier |
+| `name` | Yes | — | Display name in the back-office |
+| `editorUiAlias` | Yes | — | Registered property editor alias |
+| `valueType` | No | derived from editor | Override storage type: `NTEXT`, `NVARCHAR`, `INT`, `DECIMAL`, `DATE` |
+| `config` | No | — | Editor-specific configuration (key-value map) |
 
 > **`Umbraco.DropDown.Flexible` / `Umbraco.CheckBoxList`**: `config.items` must be a plain YAML string list — the plugin converts it to the `List<string>` format that `ValueListConfiguration` expects in Umbraco 17.
+>
+> **`Umbraco.BlockList` / `Umbraco.BlockGrid`**: Use `contentElementTypeAlias` (not `contentElementTypeKey`) in the `blocks` config — the plugin resolves it to the element type's GUID automatically after DocumentTypes are created. Always set `valueType: NTEXT` so the block JSON is stored in the correct `Ntext` database column (see [Block List recipe](#block-list-recipe) below).
 >
 > **UPDATE behaviour**: `update: true` re-derives the `DatabaseType` from the editor and re-applies the `config`. Add it to any DataType whose database storage type or config may be stale (e.g. after a plugin upgrade).
 
@@ -169,6 +173,7 @@ documentTypes:
 | `alias` | Yes | — | Unique identifier |
 | `name` | Yes | — | Display name |
 | `icon` | No | `icon-document` | Umbraco icon CSS class |
+| `isElement` | No | `false` | Mark as an element type (required for Block List / Block Grid blocks) |
 | `allowAsRoot` | No | `true` | Allow creation at the content tree root |
 | `allowedChildTypes` | No | `[]` | DocumentType aliases permitted as children |
 | `tabs` | No | `[]` | Property tabs, each with `name` and `properties` |
@@ -474,6 +479,66 @@ Use the server-side schema alias in `editorUiAlias`. The plugin automatically re
 | `Umbraco.Label` | `Umb.PropertyEditorUi.Label` | Read-only label |
 | `Umbraco.UploadField` | `Umb.PropertyEditorUi.UploadField` | File upload |
 | `Umbraco.ColorPicker` | `Umb.PropertyEditorUi.ColorPicker` | Color picker |
+
+---
+
+## Block List Recipe
+
+To use `Umbraco.BlockList` end-to-end — including seeding content — follow this pattern:
+
+**1. Define the element type** with `isElement: true`:
+
+```yaml
+documentTypes:
+  - alias: cardElement
+    name: Card
+    icon: icon-item
+    isElement: true
+    tabs:
+      - name: Content
+        properties:
+          - alias: title
+            name: Title
+            dataType: textString
+          - alias: text
+            name: Text
+            dataType: textArea
+```
+
+**2. Define the Block List data type** with `valueType: NTEXT` and `contentElementTypeAlias`:
+
+```yaml
+dataTypes:
+  - alias: cardBlockList
+    name: Card Block List
+    editorUiAlias: Umbraco.BlockList
+    valueType: NTEXT
+    config:
+      blocks:
+        - contentElementTypeAlias: cardElement
+```
+
+The plugin resolves `contentElementTypeAlias` → GUID after all DocumentTypes are created. `valueType: NTEXT` is required so the block JSON is persisted correctly.
+
+**3. Seed content** using `$type`:
+
+```yaml
+content:
+  - alias: home
+    name: Home
+    documentType: homePage
+    isPublished: true
+    properties:
+      cards:
+        - $type: cardElement
+          title: "First Card"
+          text: "Description for the first card."
+        - $type: cardElement
+          title: "Second Card"
+          text: "Description for the second card."
+```
+
+Each list item's `$type` value is the element type alias. All other keys map to property aliases on that element type.
 
 ---
 
