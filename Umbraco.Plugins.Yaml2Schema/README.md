@@ -55,7 +55,9 @@ The path is relative to the application content root. Absolute paths are also ac
 
 All top-level sections are optional. Processing order:
 
-`languages` → `dataTypes` → `documentTypes` → `mediaTypes` → `scripts` → `stylesheets` → `templates` → `content` → `media` → `dictionaryItems` → `members` → `users`
+`languages` → `dataTypes` → `documentTypes` → `mediaTypes` → `scripts` → `stylesheets` → `templates` → **`media`** → **`content`** → `dictionaryItems` → `members` → `users`
+
+> **Media is seeded before Content** so that `Umbraco.MediaPicker3` property values that reference media by name resolve correctly.
 
 ### Flags (`remove` / `update`)
 
@@ -75,7 +77,8 @@ Neither flag is set by default; omitting both means **create if not exists, skip
 | `dataTypes` | `DatabaseType` re-derived from the editor; `config` re-applied. Use this to correct stale entries after upgrading the plugin. |
 | `documentTypes` / `mediaTypes` | Additive merge — top-level fields replaced; new tabs/properties added; existing properties never removed. |
 | `templates` | `content` field regenerated (or replaced with explicit Razor). |
-| `content` | Property values, sort order, and published state updated. |
+| `content` | Property values, sort order, and published state updated. Missing template backfilled from document type default. |
+| `media` | Properties updated. If a `url` field is present the file is re-downloaded and attached. |
 | `scripts` / `stylesheets` | File overwritten in `wwwroot`. |
 | `languages` | `isDefault` and `isMandatory` updated. |
 | `dictionaryItems` | Translation values upserted per language. |
@@ -138,6 +141,8 @@ dataTypes:
 >
 > **`Umbraco.BlockList` / `Umbraco.BlockGrid`**: Use `contentElementTypeAlias` (not `contentElementTypeKey`) in the `blocks` config — the plugin resolves it to the element type's GUID automatically after DocumentTypes are created. Always set `valueType: NTEXT` so the block JSON is stored in the correct `Ntext` database column (see [Block List recipe](#block-list-recipe) below).
 >
+> **Built-in data types**: You can reference Umbraco's built-in data types directly by their back-office name (e.g. `dataType: "Richtext Editor"`) without defining them in the `dataTypes` section. The plugin looks up the data type by name at assignment time.
+>
 > **UPDATE behaviour**: `update: true` re-derives the `DatabaseType` from the editor and re-applies the `config`. Add it to any DataType whose database storage type or config may be stale (e.g. after a plugin upgrade).
 
 ---
@@ -165,7 +170,7 @@ documentTypes:
             description: The main heading shown on the page
           - alias: body
             name: Body
-            dataType: richText
+            dataType: "Richtext Editor"   # built-in data type referenced by name
 ```
 
 | Field | Required | Default | Description |
@@ -184,7 +189,7 @@ documentTypes:
 |-------|----------|---------|-------------|
 | `alias` | Yes | — | Unique within the DocumentType |
 | `name` | Yes | — | Editor-facing label |
-| `dataType` | Yes | — | Alias of a DataType defined in `dataTypes` |
+| `dataType` | Yes | — | Alias of a DataType defined in `dataTypes`, or the built-in data type name |
 | `required` | No | `false` | Mandatory field for editors |
 | `description` | No | — | Help text shown below the field |
 
@@ -285,44 +290,9 @@ stylesheets:
 
 ---
 
-### `content`
-
-Seed content nodes, nested to any depth.
-
-```yaml
-content:
-  - alias: home
-    name: Home
-    documentType: page
-    isPublished: true
-    sortOrder: 0
-    properties:
-      title: "Welcome"
-      body: "<p>Hello world.</p>"
-    children:
-      - alias: about
-        name: About Us
-        documentType: page
-        isPublished: true
-        properties:
-          title: "About Us"
-```
-
-| Field | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `alias` | Yes | — | Unique node identifier |
-| `name` | Yes | — | Name shown in content tree |
-| `documentType` | Yes | — | DocumentType alias |
-| `isPublished` | No | `false` | Publish on creation |
-| `sortOrder` | No | `0` | Position among siblings |
-| `properties` | No | `{}` | Property alias → value pairs |
-| `children` | No | `[]` | Nested child content nodes |
-
----
-
 ### `media`
 
-Create media nodes. Optionally download a file from a URL and attach it.
+Create media nodes. Optionally download a file from a URL and attach it. **Media is seeded before Content** so that image picker seed values that reference media by name resolve correctly.
 
 ```yaml
 media:
@@ -359,104 +329,150 @@ media:
 | `properties` | No | Additional property alias → value pairs |
 | `children` | No | Nested child media nodes |
 
----
-
-### `languages`
-
-Register Umbraco languages. Languages are created before all other entities.
-
-```yaml
-languages:
-  - isoCode: en-US
-    cultureName: English (United States)
-    isDefault: true
-    isMandatory: true
-  - isoCode: fr-FR
-    cultureName: French (France)
-```
-
-| Field | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `isoCode` | Yes | — | BCP-47 culture code (e.g. `en-US`) |
-| `cultureName` | No | Auto from .NET | Display name; defaults to the .NET culture display name |
-| `isDefault` | No | `false` | Set as the default language |
-| `isMandatory` | No | `false` | Require translation before publishing |
+> **Image storage**: When `mediaType` is `Image` and a `url` is provided, the downloaded file is stored using the `ImageCropper` JSON format (`{"src":"...","focalPoint":{"left":0.5,"top":0.5},"crops":[]}`). Other media types (`File`, `Video`) store a plain file path.
+>
+> **`update: true` re-downloads**: When a media item is updated via `update: true`, if a `url` is present the file is downloaded again and re-attached. Useful when refreshing placeholder images.
+>
+> **Do not use `update: true` for initial seeding**: Items with `update: true` are skipped if they don't exist yet. Omit the flag for initial media creation — the create path is already idempotent (skips existing items).
 
 ---
 
-### `dictionaryItems`
+### `content`
 
-Seed Umbraco dictionary keys with per-language translations.
-
-```yaml
-dictionaryItems:
-  - key: general.hello
-    translations:
-      en-US: Hello
-      fr-FR: Bonjour
-  - key: nav.home
-    translations:
-      en-US: Home
-      fr-FR: Accueil
-    update: true
-```
-
-| Field | Required | Description |
-|-------|----------|-------------|
-| `key` | Yes | Dictionary key (dot-notation recommended) |
-| `translations` | No | ISO code → translated string map |
-
----
-
-### `members`
-
-Create Umbraco member accounts.
+Seed content nodes, nested to any depth.
 
 ```yaml
-members:
-  - alias: testMember
-    name: Test Member
-    email: test@example.com
-    username: testmember
-    password: "S3cure!Pass"
-    memberType: Member
-    isApproved: true
+content:
+  - alias: home
+    name: Home
+    documentType: page
+    isPublished: true
+    sortOrder: 0
     properties:
-      comments: Welcome note
+      title: "Welcome"
+      body: "<p>Hello world.</p>"
+      heroImage: "Site Banner"      # Umbraco.MediaPicker3 — resolved by media name
+    children:
+      - alias: about
+        name: About Us
+        documentType: page
+        isPublished: true
+        properties:
+          title: "About Us"
 ```
 
 | Field | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `email` | Yes | — | Unique identifier for lookup/dedup |
-| `name` | Yes | — | Display name |
-| `username` | No | email | Login username |
-| `password` | No | — | Initial password |
-| `memberType` | No | `Member` | Member Type alias |
-| `isApproved` | No | `true` | Whether the member can log in |
-| `properties` | No | `{}` | Member property values |
+| `alias` | Yes | — | Unique node identifier |
+| `name` | Yes | — | Name shown in content tree |
+| `documentType` | Yes | — | DocumentType alias |
+| `isPublished` | No | `false` | Publish on creation |
+| `sortOrder` | No | `0` | Position among siblings |
+| `properties` | No | `{}` | Property alias → value pairs (see [Property Value Coercion](#property-value-coercion)) |
+| `children` | No | `[]` | Nested child content nodes |
+
+> **Template assignment**: The document type's default template is explicitly set on every new content node. Content created without a template (e.g. from an older plugin version) will have it backfilled on the next `[UPDATE]` pass.
 
 ---
 
-### `users`
+## Property Value Coercion
 
-Create Umbraco backoffice users.
+The plugin automatically converts YAML seed values to the storage format each property editor expects. The following conversions are applied:
+
+### `Umbraco.MultiUrlPicker` — plain URL string
+
+A plain string is wrapped in the JSON array format the editor stores:
 
 ```yaml
-users:
-  - alias: editorUser
-    name: Editor User
-    email: editor@example.com
-    username: editoruser
-    userGroups:
-      - editor
+properties:
+  pageLink: "/about"
+  # stored as: [{"name":"","url":"/about","target":"","udi":null,"queryString":""}]
 ```
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `email` | Yes | Unique identifier for lookup/dedup |
-| `name` | Yes | Display name |
-| `username` | No | Login username (defaults to email) |
-| `userGroups` | No | List of user group aliases to assign |
+### `Umbraco.MultiUrlPicker` — mapping with title
+
+Supply a YAML mapping to set the link's display name alongside the URL:
+
+```yaml
+properties:
+  pageLink:
+    url: "/about"
+    title: "Learn more about us"
+    target: "_blank"   # optional
+  # stored as: [{"name":"Learn more about us","url":"/about","target":"_blank","udi":null,"queryString":""}]
+```
+
+> **Single URL Picker**: use `Umbraco.MultiUrlPicker` with `config.maxNumberOfItems: 1` to restrict the picker to one URL entry.
+
+### `Umbraco.MultipleTextstring` — list of strings
+
+Supply a YAML sequence; items are joined with `\n` as the editor stores:
+
+```yaml
+properties:
+  tags:
+    - "First item"
+    - "Second item"
+    - "Third item"
+```
+
+### `Umbraco.DropDown.Flexible` — single value
+
+Supply a plain string matching one of the configured items. The plugin wraps it in the JSON array the editor stores:
+
+```yaml
+properties:
+  status: "Published"
+  # stored as: ["Published"]
+```
+
+### `Umbraco.MediaPicker3` — media name
+
+Supply the **name** of an existing media item. The plugin looks it up by name (case-insensitive) and generates the correct picker JSON reference:
+
+```yaml
+properties:
+  heroImage: "Site Banner"
+  # stored as: [{"key":"<guid>","mediaKey":"<media-item-guid>","crops":[],"focalPoint":null}]
+```
+
+> Media must exist before content is seeded. Because the plugin seeds `media` before `content`, this works correctly in a single YAML file as long as the media item is defined in the `media:` section.
+
+### `Umbraco.TrueFalse` — boolean string
+
+`"true"` / `"false"` strings are converted to `1` / `0` for Integer storage:
+
+```yaml
+properties:
+  isActive: "true"   # stored as 1
+```
+
+### Block List — list of mappings with `$type`
+
+Each list item must have a `$type` key containing the element type alias. All other keys become property values on the block:
+
+```yaml
+properties:
+  cards:
+    - $type: cardElement
+      title: "First Card"
+      text: "Description."
+    - $type: cardElement
+      title: "Second Card"
+      text: "Another description."
+```
+
+### Single Block — mapping with `$type`
+
+A single mapping (not a list) with a `$type` key:
+
+```yaml
+properties:
+  hero:
+    $type: heroElement
+    title: "Welcome"
+    subtitle: "Platform overview"
+```
 
 ---
 
@@ -474,25 +490,23 @@ Use the server-side schema alias in `editorUiAlias`. The plugin automatically re
 | `Umbraco.Decimal` | `Umb.PropertyEditorUi.Decimal` | Decimal number |
 | `Umbraco.TrueFalse` | `Umb.PropertyEditorUi.Toggle` | Boolean toggle |
 | `Umbraco.DateTime` | `Umb.PropertyEditorUi.DatePicker` | Date and time |
-| `Umbraco.MediaPicker3` | `Umb.PropertyEditorUi.MediaPicker` | Media picker |
+| `Umbraco.MediaPicker3` | `Umb.PropertyEditorUi.MediaPicker` | Media picker — seed with media item name |
 | `Umbraco.ContentPicker` | `Umb.PropertyEditorUi.DocumentPicker` | Content picker |
 | `Umbraco.MultiNodeTreePicker` | `Umb.PropertyEditorUi.ContentPicker` | Multi-node tree picker |
-| `Umbraco.MultiUrlPicker` | `Umb.PropertyEditorUi.MultiUrlPicker` | Multi-URL picker |
+| `Umbraco.MultiUrlPicker` | `Umb.PropertyEditorUi.MultiUrlPicker` | Multi-URL picker — seed with plain URL or `{url, title}` mapping |
 | `Umbraco.Tags` | `Umb.PropertyEditorUi.Tags` | Tag input |
-| `Umbraco.DropDown.Flexible` | `Umb.PropertyEditorUi.Dropdown` | Dropdown / multi-select (use `config.items` string list) |
+| `Umbraco.DropDown.Flexible` | `Umb.PropertyEditorUi.Dropdown` | Dropdown — seed with plain string; auto-wrapped to `["value"]` |
 | `Umbraco.CheckBoxList` | `Umb.PropertyEditorUi.CheckBoxList` | Checkbox list (use `config.items` string list) |
 | `Umbraco.RadioButtonList` | `Umb.PropertyEditorUi.RadioButtonList` | Radio button list |
-| `Umbraco.BlockList` | `Umb.PropertyEditorUi.BlockList` | Block List editor |
+| `Umbraco.BlockList` | `Umb.PropertyEditorUi.BlockList` | Block List editor — seed with `$type` list |
 | `Umbraco.BlockGrid` | `Umb.PropertyEditorUi.BlockGrid` | Block Grid editor |
 | `Umbraco.ImageCropper` | `Umb.PropertyEditorUi.ImageCropper` | Image with crop config |
 | `Umbraco.EmailAddress` | `Umb.PropertyEditorUi.EmailAddress` | Email address |
 | `Umbraco.Label` | `Umb.PropertyEditorUi.Label` | Read-only label |
 | `Umbraco.UploadField` | `Umb.PropertyEditorUi.UploadField` | File upload |
 | `Umbraco.ColorPicker` | `Umb.PropertyEditorUi.ColorPicker` | Color picker |
-| `Umbraco.MultipleTextstring` | `Umb.PropertyEditorUi.MultipleTextString` | Repeatable text strings |
-| `Umbraco.SingleBlock` | `Umb.PropertyEditorUi.BlockSingle` | Single block (one element type) |
-
-> **Single URL Picker**: use `Umbraco.MultiUrlPicker` with `config.maxNumberOfItems: 1` to restrict the picker to one URL entry.
+| `Umbraco.MultipleTextstring` | `Umb.PropertyEditorUi.MultipleTextString` | Repeatable text strings — seed with YAML sequence |
+| `Umbraco.SingleBlock` | `Umb.PropertyEditorUi.BlockSingle` | Single block — seed with `$type` mapping |
 
 ---
 
@@ -593,8 +607,8 @@ Each list item's `$type` value is the element type alias. All other keys map to 
 | `DocumentTypeCreator` | Creates/updates/removes DocumentTypes and their tabbed properties |
 | `MediaTypeCreator` | Creates/updates/removes Media Types |
 | `TemplateCreator` | Creates/updates/removes Razor templates |
-| `ContentCreator` | Recursively creates/updates/removes content nodes |
-| `MediaCreator` | Creates/updates/removes media nodes; downloads files from URLs |
+| `ContentCreator` | Recursively creates/updates/removes content nodes; coerces property values |
+| `MediaCreator` | Creates/updates/removes media nodes; downloads and attaches files from URLs |
 | `StaticAssetCreator` | Writes/deletes JS and CSS files under `wwwroot` |
 | `LanguageCreator` | Creates/updates/removes Umbraco languages |
 | `DictionaryCreator` | Creates/updates/removes dictionary items with translations |
@@ -606,7 +620,9 @@ Each list item's `$type` value is the element type alias. All other keys map to 
 ## Behaviour
 
 - **Idempotent**: Items already present are skipped — safe across restarts
-- **Ordered**: Languages first, then DataTypes, DocumentTypes, MediaTypes, Scripts/Stylesheets, Templates, Content, Media, DictionaryItems, Members, Users
+- **Ordered**: Languages → DataTypes → DocumentTypes → MediaTypes → Scripts/Stylesheets → Templates → **Media** → **Content** → DictionaryItems → Members → Users
+- **Media before Content**: Ensures `Umbraco.MediaPicker3` name lookups resolve correctly during content seeding
+- **Template assignment**: New content nodes receive the document type's default template explicitly; missing templates are backfilled on `[UPDATE]`
 - **Logged**: All activity and warnings go to the standard Umbraco log
 - **Forgiving**: Missing references log a warning and continue without throwing
 - **Additive updates**: DocumentType/MediaType `[UPDATE]` never removes existing properties — only adds new ones
