@@ -348,11 +348,11 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     cfg["contentElementTypeKey"] = contentType.Key.ToString();
                     yamlDataType.Config = cfg;
 
-                    var existing = _dataTypeService.GetDataType(yamlDataType.Name);
-                    if (existing is DataType dt)
+                    var sbExisting = _dataTypeService.GetDataType(yamlDataType.Name);
+                    if (sbExisting is DataType sbDt)
                     {
-                        dt.SetConfigurationData(yamlDataType.Config);
-                        _dataTypeService.Save(dt, Constants.Security.SuperUserId);
+                        sbDt.SetConfigurationData(yamlDataType.Config);
+                        _dataTypeService.Save(sbDt, Constants.Security.SuperUserId);
                     }
 
                     _logger?.LogInformation(
