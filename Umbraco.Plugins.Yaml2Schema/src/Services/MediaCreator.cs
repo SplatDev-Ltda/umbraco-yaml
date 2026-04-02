@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.IO;
@@ -78,6 +79,9 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         var toUpdate = candidates.FirstOrDefault(m => m.Name == yamlMedia.Name);
                         if (toUpdate != null)
                         {
+                            if (!string.IsNullOrWhiteSpace(yamlMedia.Url))
+                                TryAttachFileFromUrl(toUpdate, yamlMedia.Url);
+
                             SetProperties(toUpdate, yamlMedia);
                             _mediaService.Save(toUpdate, Constants.Security.SuperUserId);
                             _logger?.LogInformation("Media '{Name}' updated.", yamlMedia.Name);
@@ -190,17 +194,30 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                 if (string.IsNullOrWhiteSpace(fileName))
                     fileName = "file";
 
-                // Store under a media-key-based folder so each media item has its own directory,
-                // matching Umbraco's expected path convention: {mediaKey}/{filename}
+                // Store under a media-key-based folder matching Umbraco's convention: {mediaKey:N}/{filename}
                 var filePath = $"{media.Key:N}/{fileName}";
 
                 using var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
                 _mediaFileManager.FileSystem.AddFile(filePath, stream, overrideIfExists: true);
 
-                // GetUrl returns the public-facing URL (e.g. /media/abc123/file.jpg)
-                // which is what Umbraco stores in the umbracoFile property
                 var fileUrl = _mediaFileManager.FileSystem.GetUrl(filePath);
-                media.SetValue(Constants.Conventions.Media.File, fileUrl);
+
+                // The Image media type uses the ImageCropper editor which expects JSON.
+                // Other types (File, Video) use the UploadField editor which stores a plain path.
+                if (string.Equals(media.ContentType.Alias, Constants.Conventions.MediaTypes.Image, StringComparison.OrdinalIgnoreCase))
+                {
+                    var json = System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        src        = fileUrl,
+                        focalPoint = new { left = 0.5, top = 0.5 },
+                        crops      = Array.Empty<object>()
+                    });
+                    media.SetValue(Constants.Conventions.Media.File, json);
+                }
+                else
+                {
+                    media.SetValue(Constants.Conventions.Media.File, fileUrl);
+                }
 
                 _logger?.LogInformation("Attached file '{FileName}' from URL to media '{Name}'.", fileName, media.Name);
             }

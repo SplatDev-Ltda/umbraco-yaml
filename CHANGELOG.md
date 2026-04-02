@@ -9,6 +9,20 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.26] - 2026-04-02
+
+### Fixed
+
+#### Media image files now stored in ImageCropper JSON format
+
+- Root cause: `TryAttachFileFromUrl` called `media.SetValue(umbracoFile, url)` with a plain URL string. The `Image` media type uses `Umbraco.ImageCropper` which expects a JSON object `{"src":"...","focalPoint":{"left":0.5,"top":0.5},"crops":[]}`. Saving a plain URL meant the backoffice showed no image.
+- Fix: `TryAttachFileFromUrl` now detects `Image` media type (via `media.ContentType.Alias`) and serializes the ImageCropper JSON. All other types (`File`, `Video`, etc.) continue to store a plain URL path.
+
+#### `[UPDATE]` media items now re-download their file from `url`
+
+- The `[UPDATE]` path for media called only `SetProperties` and never `TryAttachFileFromUrl`, so media items with a `url` field were always saved without a file when updated.
+- Fix: `TryAttachFileFromUrl` is now called in the UPDATE path whenever a `url` is provided.
+
 ## [1.0.25] - 2026-04-02
 
 ### Fixed
