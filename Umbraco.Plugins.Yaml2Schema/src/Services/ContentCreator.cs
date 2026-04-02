@@ -220,6 +220,18 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     return BuildSingleBlockJson(normSingle);
             }
 
+            // ── MultipleTextstring: list of strings joined with newline ───────────────
+            // Umbraco.MultipleTextstring stores its value as \n-delimited plain text, not JSON.
+            // YAML:
+            //   myProp:
+            //     - "First item"
+            //     - "Second item"
+            if (value is List<object> textItems
+                && property.PropertyType.PropertyEditorAlias == "Umbraco.MultipleTextstring")
+            {
+                return string.Join("\n", textItems.Select(i => i?.ToString() ?? ""));
+            }
+
             // ── Block List: list of mappings with $type key ───────────────────────────
             // YAML:
             //   myBlockProp:

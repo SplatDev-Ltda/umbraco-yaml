@@ -9,6 +9,25 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.25] - 2026-04-02
+
+### Fixed
+
+#### `Umbraco.MultipleTextstring` list values now stored as newline-delimited text
+
+- Root cause of "all items collapsed into one entry" when seeding a `multipleTextString` property with a YAML list: `Umbraco.MultipleTextstring` stores its value as `\n`-separated plain text, not as JSON. The generic `NormaliseForJson` + `JsonSerializer.Serialize` fallback produced a JSON array, which Umbraco read back as a single string.
+- Fix: `CoerceValue` now detects `Umbraco.MultipleTextstring` properties with a `List<object>` value and joins the items with `\n` before saving.
+
+```yaml
+properties:
+  revenueSources:
+    - "Recurring business revenue (rent, fees, commissions)."
+    - "Regional and national advertising (sponsorship plans)."
+    - "Integrated digital services (cooperatives, guides, media)."
+```
+
+---
+
 ## [1.0.24] - 2026-04-02
 
 ### Added
