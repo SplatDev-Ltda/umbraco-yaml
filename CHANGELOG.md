@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.29] - 2026-04-02
+
+### Fixed
+
+#### Media is now seeded before Content
+
+The initialization order was: Content → Media. Any content property using `Umbraco.MediaPicker3` with a media name string (e.g. `heroImage: "My Image"`) would silently fail because the media item did not exist yet when `CoerceValue` ran its lookup. New order: **Media → Content**.
+
 ## [1.0.28] - 2026-04-02
 
 ### Fixed

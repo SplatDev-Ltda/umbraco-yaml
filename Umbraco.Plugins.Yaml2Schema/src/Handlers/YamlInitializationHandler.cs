@@ -208,6 +208,18 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                     _dataTypeCreator.LinkBlockListElementTypes(yamlRoot.Umbraco.DataTypes);
                 }
 
+                // Create Media (must run before Content so MediaPicker3 seeds can resolve media by name)
+                if (yamlRoot.Umbraco.Media?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Media items.", yamlRoot.Umbraco.Media.Count);
+                    _mediaCreator.CreateMedia(yamlRoot.Umbraco.Media);
+                    _logger.LogInformation("YamlInitializationHandler: Successfully created {Count} Media items.", yamlRoot.Umbraco.Media.Count);
+                }
+                else
+                {
+                    _logger.LogInformation("YamlInitializationHandler: No Media items to create.");
+                }
+
                 // Create Content
                 if (yamlRoot.Umbraco.Content?.Count > 0)
                 {
@@ -218,13 +230,6 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                 else
                 {
                     _logger.LogInformation("YamlInitializationHandler: No Content items to create.");
-                }
-
-                // Create Media
-                if (yamlRoot.Umbraco.Media?.Count > 0)
-                {
-                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} Media items.", yamlRoot.Umbraco.Media.Count);
-                    _mediaCreator.CreateMedia(yamlRoot.Umbraco.Media);
                 }
 
                 // Create Dictionary Items
