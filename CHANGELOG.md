@@ -9,6 +9,25 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.27] - 2026-04-02
+
+### Added
+
+#### `Umbraco.MediaPicker3` property — resolve media by name from YAML
+
+Properties using `Umbraco.MediaPicker3` can now be seeded with a media item name string. The plugin looks up the media item by name (case-insensitive) and generates the correct `[{"key":"...","mediaKey":"...","crops":[],"focalPoint":null}]` JSON reference automatically.
+
+```yaml
+properties:
+  heroImage: "RISIN – Home Hero"   # name of an Umbraco media item
+```
+
+### Fixed
+
+#### `Umbraco.DropDown.Flexible` — plain string seeded value no longer causes `JsonException`
+
+`FlexibleDropdownPropertyValueConverter` expects values stored as a JSON array `["selectedValue"]`. Seeding a plain string such as `"Commerce"` caused a runtime `JsonException: 'C' is an invalid start of a value`. Fix: `CoerceValue` now wraps plain string values in a JSON array for `Umbraco.DropDown.Flexible` properties before saving.
+
 ## [1.0.26] - 2026-04-02
 
 ### Fixed

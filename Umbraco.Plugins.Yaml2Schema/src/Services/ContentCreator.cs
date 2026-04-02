@@ -15,15 +15,18 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
     {
         private readonly IContentService _contentService;
         private readonly IContentTypeService _contentTypeService;
+        private readonly IMediaService _mediaService;
         private readonly ILogger<ContentCreator>? _logger;
 
         public ContentCreator(
             IContentService contentService,
             IContentTypeService contentTypeService,
+            IMediaService mediaService,
             ILogger<ContentCreator>? logger = null)
         {
             _contentService = contentService ?? throw new ArgumentNullException(nameof(contentService));
             _contentTypeService = contentTypeService ?? throw new ArgumentNullException(nameof(contentTypeService));
+            _mediaService = mediaService ?? throw new ArgumentNullException(nameof(mediaService));
             _logger = logger;
         }
 
@@ -166,6 +169,40 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     };
                     return JsonSerializer.Serialize(new[] { link });
                 }
+            }
+
+            // ── Flexible Dropdown: plain string → JSON array ─────────────────────────
+            // Umbraco.DropDown.Flexible stores its value as a JSON array ["selectedValue"].
+            // Seeding a plain string like "Commerce" must be wrapped to avoid a JsonException
+            // on read ("'C' is an invalid start of a value").
+            if (value is string dropVal
+                && property.PropertyType.PropertyEditorAlias == "Umbraco.DropDown.Flexible"
+                && !dropVal.TrimStart().StartsWith('['))
+            {
+                return JsonSerializer.Serialize(new[] { dropVal });
+            }
+
+            // ── MediaPicker3: media name string → JSON reference ─────────────────────
+            // YAML:
+            //   heroImage: "RISIN – Home Hero"   # looks up media by name, creates picker JSON
+            if (value is string mediaName
+                && property.PropertyType.PropertyEditorAlias == "Umbraco.MediaPicker3")
+            {
+                var media = _mediaService.GetPagedDescendants(-1, 0, int.MaxValue, out _)
+                    .FirstOrDefault(m => string.Equals(m.Name, mediaName, StringComparison.OrdinalIgnoreCase));
+                if (media != null)
+                {
+                    var pickerEntry = new Dictionary<string, object?>
+                    {
+                        ["key"]        = Guid.NewGuid().ToString(),
+                        ["mediaKey"]   = media.Key.ToString(),
+                        ["crops"]      = Array.Empty<object>(),
+                        ["focalPoint"] = null
+                    };
+                    return JsonSerializer.Serialize(new[] { pickerEntry });
+                }
+                _logger?.LogWarning("Media item '{Name}' not found for MediaPicker3 property '{Alias}'. Leaving value as-is.", mediaName, property.Alias);
+                return value;
             }
 
             // ── Scalar string coercion ────────────────────────────────────────────────
