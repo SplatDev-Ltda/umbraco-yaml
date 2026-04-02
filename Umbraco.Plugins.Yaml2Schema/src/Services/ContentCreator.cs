@@ -141,6 +141,33 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
         /// </summary>
         private object CoerceValue(object value, IProperty property)
         {
+            // ── MultiUrlPicker: mapping with url + optional title/name ───────────────
+            // YAML:
+            //   myUrlProp:
+            //     url: "/parceiros"
+            //     title: "Visit Partners"   # saved as the link name
+            //     target: "_blank"          # optional
+            if (value is IDictionary urlDict
+                && property.PropertyType.PropertyEditorAlias == "Umbraco.MultiUrlPicker")
+            {
+                var d = NormaliseDictKeys(urlDict);
+                if (d != null && d.TryGetValue("url", out var rawUrl) && rawUrl != null)
+                {
+                    d.TryGetValue("title", out var rawTitle);
+                    d.TryGetValue("name", out var rawName);
+                    d.TryGetValue("target", out var rawTarget);
+                    var link = new Dictionary<string, object?>
+                    {
+                        ["name"]        = (rawTitle ?? rawName)?.ToString() ?? "",
+                        ["target"]      = rawTarget?.ToString() ?? "",
+                        ["udi"]         = null,
+                        ["url"]         = rawUrl.ToString()!,
+                        ["queryString"] = ""
+                    };
+                    return JsonSerializer.Serialize(new[] { link });
+                }
+            }
+
             // ── Scalar string coercion ────────────────────────────────────────────────
             if (value is string strVal)
             {

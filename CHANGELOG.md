@@ -9,6 +9,28 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.24] - 2026-04-02
+
+### Added
+
+#### `Umbraco.MultiUrlPicker` mapping syntax — set link title from YAML
+
+URL picker seed values can now be supplied as a YAML mapping with `url`, `title` (or `name`), and optional `target` fields. The `title` value is saved as the link's display name inside the MultiUrlPicker JSON:
+
+```yaml
+properties:
+  heroPrimaryCtaUrl:
+    url: "/parceiros"
+    title: "Join as a Partner"
+    target: "_blank"   # optional
+```
+
+Produces: `[{"name":"Join as a Partner","target":"_blank","udi":null,"url":"/parceiros","queryString":""}]`
+
+Both `title` and `name` are accepted as the display-name key (`title` takes precedence). Plain string values (`url: "/path"`) continue to work as before.
+
+---
+
 ## [1.0.23] - 2026-04-02
 
 ### Fixed
