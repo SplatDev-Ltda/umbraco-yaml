@@ -330,6 +330,15 @@ media:
     name: Site Banner
     mediaType: Image
     url: https://example.com/banner.jpg
+  - alias: partnerLogos
+    name: Partner Logos
+    mediaType: Folder
+    children:
+      - alias: logoA
+        name: Logo Partner A
+        mediaType: Image
+        folder: "Images/Partners"   # placed inside this subfolder; created automatically
+        url: https://example.com/logo-a.png
   - alias: docs
     name: Documents
     mediaType: Folder
@@ -345,6 +354,7 @@ media:
 | `alias` | Yes | Unique identifier |
 | `name` | Yes | Name in the media tree |
 | `mediaType` | Yes | Media Type alias (e.g. `Image`, `File`, `Folder`) |
+| `folder` | No | Subfolder path (e.g. `"Images"` or `"Images/Partners"`); created automatically if absent |
 | `url` | No | URL to download and attach as the file property |
 | `properties` | No | Additional property alias → value pairs |
 | `children` | No | Nested child media nodes |
@@ -479,6 +489,10 @@ Use the server-side schema alias in `editorUiAlias`. The plugin automatically re
 | `Umbraco.Label` | `Umb.PropertyEditorUi.Label` | Read-only label |
 | `Umbraco.UploadField` | `Umb.PropertyEditorUi.UploadField` | File upload |
 | `Umbraco.ColorPicker` | `Umb.PropertyEditorUi.ColorPicker` | Color picker |
+| `Umbraco.MultipleTextstring` | `Umb.PropertyEditorUi.MultipleTextString` | Repeatable text strings |
+| `Umbraco.SingleBlock` | `Umb.PropertyEditorUi.BlockSingle` | Single block (one element type) |
+
+> **Single URL Picker**: use `Umbraco.MultiUrlPicker` with `config.maxNumberOfItems: 1` to restrict the picker to one URL entry.
 
 ---
 

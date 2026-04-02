@@ -9,6 +9,77 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.22] - 2026-04-02
+
+### Added
+
+#### `Umbraco.SingleBlock` support
+
+- **DataType config**: `DataTypeCreator.LinkBlockListElementTypes` now handles `Umbraco.SingleBlock` data types. For Single Block, `contentElementTypeAlias` sits at the top level of the config (not inside a `blocks` list). The alias is resolved to the element type's GUID and the DataType is re-saved — no more hard-coded GUIDs required.
+- **Content seeding**: `ContentCreator.CoerceValue` now detects a YAML mapping with a `$type` key as a Single Block value and serialises it to the correct Umbraco Single Block JSON format. The `layout` key uses an object (`Umbraco.SingleBlock: { contentUdi: ... }`) rather than an array, matching the Umbraco Single Block storage contract.
+
+```yaml
+dataTypes:
+  - alias: presidentBlock
+    name: President Block
+    editorUiAlias: Umbraco.SingleBlock
+    valueType: NTEXT
+    config:
+      contentElementTypeAlias: corpPositionElement
+
+content:
+  - alias: home
+    documentType: homePage
+    properties:
+      president:
+        $type: corpPositionElement
+        title: "Presidency"
+        text:  "Strategic vision and institutional representation."
+```
+
+### Fixed
+
+#### Media file downloads now store files under the correct path
+
+- `MediaCreator.TryAttachFileFromUrl` previously stored downloaded files at the filesystem root with no path prefix (`AddFile(fileName, ...)`) and set the `umbracoFile` property to the bare filename, resulting in broken media references.
+- Fix: files are now stored under a media-key-based subfolder (`{mediaKey:N}/{fileName}`), matching Umbraco's expected path convention. `FileSystem.GetUrl(filePath)` is used to derive the public-facing URL stored in the property.
+
+---
+
+## [1.0.21] - 2026-04-02
+
+### Added
+
+#### `isElement` field on Document Types
+
+- `YamlDocumentType` model gains an `isElement` boolean field (default `false`).
+- `DocumentTypeCreator` applies `IsElement` on both the **create** path (new `ContentType` constructor) and the **update** path (`UpdateDocumentType`).
+- Element types are required for Block List, Block Grid, and Single Block blocks. Previously, element types had to be flagged via a manual post-startup fixup; they can now be declared directly in YAML:
+
+```yaml
+documentTypes:
+  - alias: cardElement
+    name: Card
+    icon: icon-item
+    isElement: true
+    tabs:
+      - name: Content
+        properties:
+          - alias: title
+            name: Title
+            dataType: textString
+```
+
+---
+
+## [1.0.20] - 2026-04-01
+
+### Changed
+
+- Internal maintenance release — version bump to align with dependency updates. No functional changes.
+
+---
+
 ## [1.0.19] - 2026-04-01
 
 ### Added
