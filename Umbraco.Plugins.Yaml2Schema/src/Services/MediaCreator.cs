@@ -190,17 +190,23 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                 if (string.IsNullOrWhiteSpace(fileName))
                     fileName = "file";
 
-                using var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
-                var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+                // Store under a media-key-based folder so each media item has its own directory,
+                // matching Umbraco's expected path convention: {mediaKey}/{filename}
+                var filePath = $"{media.Key:N}/{fileName}";
 
-                _mediaFileManager.FileSystem.AddFile(fileName, stream, overrideIfExists: true);
-                media.SetValue(Constants.Conventions.Media.File, fileName);
+                using var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+                _mediaFileManager.FileSystem.AddFile(filePath, stream, overrideIfExists: true);
+
+                // GetUrl returns the public-facing URL (e.g. /media/abc123/file.jpg)
+                // which is what Umbraco stores in the umbracoFile property
+                var fileUrl = _mediaFileManager.FileSystem.GetUrl(filePath);
+                media.SetValue(Constants.Conventions.Media.File, fileUrl);
 
                 _logger?.LogInformation("Attached file '{FileName}' from URL to media '{Name}'.", fileName, media.Name);
             }
             catch (Exception ex)
             {
-                _logger?.LogWarning(ex, "Failed to download file from URL '{Url}' for media '{Name}'. Continuing without file.", url, media.Name);
+                _logger?.LogWarning(ex, "Failed to download file from '{Url}' for media '{Name}'. Continuing without file.", url, media.Name);
             }
         }
     }

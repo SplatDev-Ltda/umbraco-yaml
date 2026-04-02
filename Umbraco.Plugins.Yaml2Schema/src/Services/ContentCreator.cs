@@ -161,6 +161,20 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                 };
             }
 
+            // ── Single Block: a mapping with $type key ────────────────────────────────
+            // YAML:
+            //   myBlockProp:
+            //     $type: myElementTypeAlias
+            //     title: "Block title"
+            //     text:  "Block text"
+            if (value is IDictionary singleBlockDict
+                && property.PropertyType.ValueStorageType == ValueStorageType.Ntext)
+            {
+                var normSingle = NormaliseDictKeys(singleBlockDict);
+                if (normSingle != null && normSingle.ContainsKey("$type"))
+                    return BuildSingleBlockJson(normSingle);
+            }
+
             // ── Block List: list of mappings with $type key ───────────────────────────
             // YAML:
             //   myBlockProp:
@@ -252,6 +266,50 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             };
 
             return JsonSerializer.Serialize(blockListValue);
+        }
+
+        /// <summary>
+        /// Builds the Umbraco Single Block JSON value from a YAML mapping with a <c>$type</c> key.
+        /// The layout uses an object (not an array) keyed by <c>Umbraco.SingleBlock</c>.
+        /// </summary>
+        private string BuildSingleBlockJson(Dictionary<string, object> item)
+        {
+            if (!item.TryGetValue("$type", out var rawAlias) || rawAlias == null)
+                return JsonSerializer.Serialize(NormaliseForJson(item));
+
+            var alias = rawAlias.ToString()!;
+            var contentType = _contentTypeService.Get(alias);
+            if (contentType == null)
+            {
+                _logger?.LogWarning("Single block element type '{Alias}' not found. Block skipped.", alias);
+                return JsonSerializer.Serialize(NormaliseForJson(item));
+            }
+
+            var udi = $"umb://element/{Guid.NewGuid():N}";
+
+            var blockEntry = new Dictionary<string, object?>
+            {
+                ["contentTypeKey"] = contentType.Key.ToString(),
+                ["udi"]            = udi,
+            };
+
+            foreach (var kvp in item)
+            {
+                if (kvp.Key == "$type") continue;
+                blockEntry[kvp.Key] = kvp.Value;
+            }
+
+            var singleBlockValue = new Dictionary<string, object>
+            {
+                ["layout"]       = new Dictionary<string, object>
+                {
+                    ["Umbraco.SingleBlock"] = new Dictionary<string, object?> { ["contentUdi"] = udi }
+                },
+                ["contentData"]  = new List<Dictionary<string, object?>> { blockEntry },
+                ["settingsData"] = new List<object>(),
+            };
+
+            return JsonSerializer.Serialize(singleBlockValue);
         }
 
         // ── Generic JSON helpers ──────────────────────────────────────────────────────

@@ -321,6 +321,46 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
 
             foreach (var yamlDataType in dataTypes)
             {
+                // ── Single Block ─────────────────────────────────────────────────────────
+                // Config is flat: contentElementTypeAlias at the top level (not in a blocks list)
+                if (string.Equals(yamlDataType.Editor, "Umbraco.SingleBlock", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (yamlDataType.Config == null) continue;
+
+                    var cfg = NormaliseDictKeys(yamlDataType.Config as System.Collections.IDictionary)
+                              ?? yamlDataType.Config
+                                  .ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
+
+                    if (!cfg.TryGetValue("contentElementTypeAlias", out var rawAlias) || rawAlias == null)
+                        continue;
+
+                    var alias = rawAlias.ToString()!;
+                    var contentType = _contentTypeService.Get(alias);
+                    if (contentType == null)
+                    {
+                        _logger?.LogWarning(
+                            "Single Block element type '{Alias}' not found for DataType '{Name}'.",
+                            alias, yamlDataType.Name);
+                        continue;
+                    }
+
+                    cfg.Remove("contentElementTypeAlias");
+                    cfg["contentElementTypeKey"] = contentType.Key.ToString();
+                    yamlDataType.Config = cfg;
+
+                    var existing = _dataTypeService.GetDataType(yamlDataType.Name);
+                    if (existing is DataType dt)
+                    {
+                        dt.SetConfigurationData(yamlDataType.Config);
+                        _dataTypeService.Save(dt, Constants.Security.SuperUserId);
+                    }
+
+                    _logger?.LogInformation(
+                        "Resolved contentElementTypeAlias '{Alias}' → '{Key}' for Single Block DataType '{Name}'.",
+                        alias, contentType.Key, yamlDataType.Name);
+                    continue;
+                }
+
                 if (!string.Equals(yamlDataType.Editor, "Umbraco.BlockList", StringComparison.OrdinalIgnoreCase)
                     && !string.Equals(yamlDataType.Editor, "Umbraco.BlockGrid", StringComparison.OrdinalIgnoreCase))
                     continue;

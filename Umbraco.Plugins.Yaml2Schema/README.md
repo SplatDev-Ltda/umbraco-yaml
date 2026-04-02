@@ -482,6 +482,32 @@ Use the server-side schema alias in `editorUiAlias`. The plugin automatically re
 
 ---
 
+## Single Block Recipe
+
+`Umbraco.SingleBlock` stores exactly one block (not a list). Define it the same way as Block List but with a flat config:
+
+```yaml
+dataTypes:
+  - alias: heroBlock
+    name: Hero Block
+    editorUiAlias: Umbraco.SingleBlock
+    valueType: NTEXT
+    config:
+      contentElementTypeAlias: heroElement   # resolved to GUID automatically
+```
+
+Seed a Single Block with a plain YAML mapping (not a list):
+
+```yaml
+properties:
+  heroBlock:
+    $type: heroElement
+    title: "Welcome"
+    subtitle: "Platform overview"
+```
+
+---
+
 ## Block List Recipe
 
 To use `Umbraco.BlockList` end-to-end — including seeding content — follow this pattern:
