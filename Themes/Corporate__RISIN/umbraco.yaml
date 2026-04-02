@@ -180,9 +180,10 @@ dataTypes:
 
   - alias: urlPicker
     name: URL Picker
-    editorUiAlias: Umbraco.TextBox
+    editorUiAlias: Umbraco.MultiUrlPicker
+    update: true
     config:
-      maxLength: 2048
+      maxNumberOfItems: 1
 
   - alias: integerField
     name: Integer
@@ -192,11 +193,137 @@ dataTypes:
     name: Sort Order
     editorUiAlias: Umbraco.Integer
 
+  - alias: pilarBlockList
+    name: Pilar Block List
+    editorUiAlias: Umbraco.BlockList
+    valueType: NTEXT
+    update: true
+    config:
+      blocks:
+        - contentElementTypeAlias: pilarElement
+
+  - alias: multipleTextString
+    name: Multiple Text String
+    editorUiAlias: Umbraco.MultipleTextstring
+
+  - alias: dateTimePicker
+    name: Date Time Picker
+    editorUiAlias: Umbraco.DateTime
+
+  - alias: timelineBlockList
+    name: Timeline Block List
+    editorUiAlias: Umbraco.BlockList
+    valueType: NTEXT
+    config:
+      blocks:
+        - contentElementTypeAlias: timelineItemElement
+
+  - alias: corpPositionBlockList
+    name: Corporate Position Block List
+    editorUiAlias: Umbraco.BlockList
+    valueType: NTEXT
+    config:
+      blocks:
+        - contentElementTypeAlias: corpPositionElement
+
+  - alias: clikashopBlockList
+    name: Clikashop Block List
+    editorUiAlias: Umbraco.BlockList
+    valueType: NTEXT
+    config:
+      blocks:
+        - contentElementTypeAlias: clikashopItemElement
+
+  - alias: docButtonBlockList
+    name: Document Button Block List
+    editorUiAlias: Umbraco.BlockList
+    valueType: NTEXT
+    config:
+      blocks:
+        - contentElementTypeAlias: docButtonElement
+
 
 # ─────────────────────────────────────────────
 # DOCUMENT TYPES
 # ─────────────────────────────────────────────
 documentTypes:
+
+  # ── Element Types ─────────────────────────
+  - alias: timelineItemElement
+    name: Timeline Item
+    icon: icon-time
+    isElement: true
+    tabs:
+      - name: Content
+        properties:
+          - alias: year
+            name: Year
+            dataType: textString
+          - alias: title
+            name: Title
+            dataType: textString
+          - alias: text
+            name: Text
+            dataType: textArea
+
+  - alias: corpPositionElement
+    name: Corporate Position
+    icon: icon-user
+    isElement: true
+    tabs:
+      - name: Content
+        properties:
+          - alias: title
+            name: Title
+            dataType: textString
+          - alias: text
+            name: Text
+            dataType: textArea
+
+  - alias: clikashopItemElement
+    name: Clikashop Item
+    icon: icon-item
+    isElement: true
+    tabs:
+      - name: Content
+        properties:
+          - alias: title
+            name: Title
+            dataType: textString
+          - alias: content
+            name: Content
+            dataType: richText
+          - alias: image
+            name: Image
+            dataType: imagePicker
+
+  - alias: docButtonElement
+    name: Document Button
+    icon: icon-document
+    isElement: true
+    tabs:
+      - name: Content
+        properties:
+          - alias: label
+            name: Label
+            dataType: textString
+          - alias: url
+            name: URL
+            dataType: textString
+
+  - alias: pilarElement
+    name: Pilar
+    icon: icon-item
+    isElement: true
+    tabs:
+      - name: Content
+        properties:
+          - alias: title
+            name: Title
+            dataType: textString
+          - alias: text
+            name: Text
+            dataType: textArea
 
   # ── Site Root ─────────────────────────────
   - alias: siteRoot
@@ -357,34 +484,10 @@ documentTypes:
           - alias: macroDescription
             name: Description
             dataType: textArea
-          - alias: macroPilar1Title
-            name: Pilar 1 – Title
-            dataType: textString
-            description: "Ex: 2 Regionais Modelo"
-          - alias: macroPilar1Text
-            name: Pilar 1 – Text
-            dataType: textArea
-          - alias: macroPilar2Title
-            name: Pilar 2 – Title
-            dataType: textString
-            description: "Ex: 5.000 Vagas Empresariais"
-          - alias: macroPilar2Text
-            name: Pilar 2 – Text
-            dataType: textArea
-          - alias: macroPilar3Title
-            name: Pilar 3 – Title
-            dataType: textString
-            description: "Ex: Plataforma Integrada"
-          - alias: macroPilar3Text
-            name: Pilar 3 – Text
-            dataType: textArea
-          - alias: macroPilar4Title
-            name: Pilar 4 – Title
-            dataType: textString
-            description: "Ex: Governança em Implantação"
-          - alias: macroPilar4Text
-            name: Pilar 4 – Text
-            dataType: textArea
+          - alias: macroPilars
+            name: Pilars
+            dataType: pilarBlockList
+            description: "Block list of pilars (title + text). Ex: 2 Regionais Modelo"
       - name: Ecosystem Block
         properties:
           - alias: ecosystemBlockTitle
@@ -402,7 +505,7 @@ documentTypes:
             description: "Ex: Modelo Econômico Estruturado"
           - alias: economicModelBullets
             name: Revenue Bullets
-            dataType: richText
+            dataType: multipleTextString
             description: Bullet list of revenue sources
           - alias: economicModelHighlight
             name: Highlight Statement
@@ -537,106 +640,24 @@ documentTypes:
             dataType: richText
           - alias: structuredProjectKeyTerms
             name: Key Terms (bullets)
-            dataType: richText
+            dataType: multipleTextString
             description: Implantação estruturada, Governança progressiva, etc.
       - name: Platform Pillars
         properties:
-          - alias: pilar1Title
-            name: Pilar 1 – Title
-            dataType: textString
-            description: "Ex: Integração Total"
-          - alias: pilar1Text
-            name: Pilar 1 – Text
-            dataType: textArea
-          - alias: pilar2Title
-            name: Pilar 2 – Title
-            dataType: textString
-            description: "Ex: Governança Estruturada"
-          - alias: pilar2Text
-            name: Pilar 2 – Text
-            dataType: textArea
-          - alias: pilar3Title
-            name: Pilar 3 – Title
-            dataType: textString
-            description: "Ex: Capilaridade Regional"
-          - alias: pilar3Text
-            name: Pilar 3 – Text
-            dataType: textArea
-          - alias: pilar4Title
-            name: Pilar 4 – Title
-            dataType: textString
-            description: "Ex: Compliance e LGPD"
-          - alias: pilar4Text
-            name: Pilar 4 – Text
-            dataType: textArea
-          - alias: pilar5Title
-            name: Pilar 5 – Title
-            dataType: textString
-            description: "Ex: Cooperativismo Digital"
-          - alias: pilar5Text
-            name: Pilar 5 – Text
-            dataType: textArea
+          - alias: pilars
+            name: Pilars
+            dataType: pilarBlockList
+            description: "Block list of pilars (title + text). Ex: Integração Total"
       - name: Timeline
         properties:
           - alias: timelineTitle
             name: Section Title
             dataType: textString
             description: "Ex: Nossa História"
-          - alias: timelineItem1Year
-            name: Item 1 – Year / Label
-            dataType: textString
-            description: "Ex: Anos 90"
-          - alias: timelineItem1Title
-            name: Item 1 – Title
-            dataType: textString
-            description: "Ex: Origem da Ideia"
-          - alias: timelineItem1Text
-            name: Item 1 – Text
-            dataType: textArea
-          - alias: timelineItem2Year
-            name: Item 2 – Year / Label
-            dataType: textString
-            description: "Ex: 1995"
-          - alias: timelineItem2Title
-            name: Item 2 – Title
-            dataType: textString
-            description: "Ex: Registro de PI"
-          - alias: timelineItem2Text
-            name: Item 2 – Text
-            dataType: textArea
-          - alias: timelineItem3Year
-            name: Item 3 – Year / Label
-            dataType: textString
-            description: "Ex: 2013"
-          - alias: timelineItem3Title
-            name: Item 3 – Title
-            dataType: textString
-            description: "Ex: Legalização RISIN"
-          - alias: timelineItem3Text
-            name: Item 3 – Text
-            dataType: textArea
-          - alias: timelineItem4Year
-            name: Item 4 – Year / Label
-            dataType: textString
-            description: "Ex: 2023–2024"
-          - alias: timelineItem4Title
-            name: Item 4 – Title
-            dataType: textString
-            description: "Ex: Portal Estruturado"
-          - alias: timelineItem4Text
-            name: Item 4 – Text
-            dataType: textArea
-          - alias: timelineItem5Year
-            name: Item 5 – Year / Label
-            dataType: textString
-            description: "Ex: 2025–2026"
-          - alias: timelineItem5Title
-            name: Item 5 – Title
-            dataType: textString
-            description: "Ex: Implantação Estruturada"
-          - alias: timelineItem5Text
-            name: Item 5 – Text
-            dataType: textArea
+          - alias: timeline
+            name: Timeline
+            dataType: timelineBlockList
+            description: "Timeline items with year, title and text"
       - name: Mission Vision Values
         properties:
           - alias: mvvTitle
@@ -664,48 +685,15 @@ documentTypes:
       - name: Corporate Structure
         properties:
           - alias: corpStructureTitle
-            name: Section Title
+            name: Corporate Structure Title
             dataType: textString
-            description: "Ex: 5 Diretorias Especializadas"
           - alias: corpStructureDescription
-            name: Section Description
+            name: Corporate Structure Description
             dataType: textArea
-          - alias: presidenciaTitle
-            name: Presidência – Title
-            dataType: textString
-          - alias: presidenciaText
-            name: Presidência – Text
-            dataType: textArea
-          - alias: dirTiTitle
-            name: Diretoria TI – Title
-            dataType: textString
-          - alias: dirTiText
-            name: Diretoria TI – Text
-            dataType: textArea
-          - alias: dirFinanceiraTitle
-            name: Diretoria Financeira – Title
-            dataType: textString
-          - alias: dirFinanceiraText
-            name: Diretoria Financeira – Text
-            dataType: textArea
-          - alias: dirMarketingTitle
-            name: Diretoria Marketing – Title
-            dataType: textString
-          - alias: dirMarketingText
-            name: Diretoria Marketing – Text
-            dataType: textArea
-          - alias: dirComercialTitle
-            name: Diretoria Comercial – Title
-            dataType: textString
-          - alias: dirComercialText
-            name: Diretoria Comercial – Text
-            dataType: textArea
-          - alias: conselhoTitle
-            name: Conselho Consultivo – Title
-            dataType: textString
-          - alias: conselhoText
-            name: Conselho Consultivo – Text
-            dataType: textArea
+          - alias: corpPositions
+            name: Positions
+            dataType: corpPositionBlockList
+            description: "Board positions (title + text for each role)"
       - name: SEO
         properties:
           - alias: metaTitle
@@ -815,15 +803,10 @@ documentTypes:
             name: Left Column Content
             dataType: richText
             description: 3 sectors, 478 regionais, population groupings
-          - alias: clikashopSpotlightTitle
-            name: Clikashop Spotlight – Title
-            dataType: textString
-          - alias: clikashopSpotlightContent
-            name: Clikashop Spotlight – Content
-            dataType: richText
-          - alias: clikashopSpotlightImage
-            name: Clikashop Spotlight – Image
-            dataType: imagePicker
+          - alias: clikashopSpotlight
+            name: Clikashop Spotlight
+            dataType: clikashopBlockList
+            description: "Spotlight items with title, content and image"
           - alias: gEmpresasSpotlightTitle
             name: G-Empresas Spotlight – Title
             dataType: textString
@@ -1039,7 +1022,7 @@ documentTypes:
             dataType: textString
           - alias: agreementCommitments
             name: Commitments (bullets)
-            dataType: richText
+            dataType: multipleTextString
       - name: Compliance
         properties:
           - alias: complianceTitle
@@ -1053,28 +1036,10 @@ documentTypes:
           - alias: documentButtonsTitle
             name: Documents Section Title
             dataType: textString
-          - alias: documentButton1Label
-            name: Document 1 Label
-            dataType: textString
-          - alias: documentButton1Url
-            name: Document 1 URL
-            dataType: urlPicker
-          - alias: documentButton2Label
-            name: Document 2 Label
-            dataType: textString
-          - alias: documentButton2Url
-            name: Document 2 URL
-            dataType: urlPicker
-          - alias: documentButton3Label
-            name: Document 3 Label
-            dataType: textString
-          - alias: documentButton3Url
-            name: Document 3 URL
-            dataType: urlPicker
-          - alias: estatutoSocialUrl
-            name: Estatuto Social URL
-            dataType: urlPicker
-            description: Download link for Estatuto Social document
+          - alias: documents
+            name: Documents
+            dataType: docButtonBlockList
+            description: "Document buttons (label + URL)"
       - name: SEO
         properties:
           - alias: metaTitle
@@ -1238,7 +1203,7 @@ documentTypes:
             description: "Ex: 800 mil – 2,5 milhões"
           - alias: launchDate
             name: Expected Launch Date
-            dataType: textString
+            dataType: dateTimePicker
           - alias: sortOrder
             name: Sort Order
             dataType: sortOrderField
@@ -1267,7 +1232,7 @@ documentTypes:
             dataType: textArea
           - alias: heroStatNumber
             name: Hero Stat Number
-            dataType: textString
+            dataType: integerField
             description: "Ex: 478 (displayed large in the hero)"
           - alias: heroImage
             name: Hero Image / Map
@@ -1312,7 +1277,7 @@ documentTypes:
             description: "Ex: Quero ser Operador Regional"
           - alias: ctaUrl
             name: CTA Button URL
-            dataType: textString
+            dataType: urlPicker
       - name: SEO
         properties:
           - alias: metaTitle
@@ -1547,36 +1512,18 @@ documentTypes:
             name: Section Title
             dataType: textString
             description: "Ex: Benefícios para Lojistas"
-          - alias: benefit1
-            name: Benefit 1
-            dataType: textString
-          - alias: benefit2
-            name: Benefit 2
-            dataType: textString
-          - alias: benefit3
-            name: Benefit 3
-            dataType: textString
-          - alias: benefit4
-            name: Benefit 4
-            dataType: textString
+          - alias: benefits
+            name: Benefits
+            dataType: multipleTextString
       - name: How It Works
         properties:
           - alias: howItWorksTitle
             name: Section Title
             dataType: textString
             description: "Ex: Como funciona na prática"
-          - alias: step1
-            name: Step 1
-            dataType: textString
-          - alias: step2
-            name: Step 2
-            dataType: textString
-          - alias: step3
-            name: Step 3
-            dataType: textString
-          - alias: step4
-            name: Step 4
-            dataType: textString
+          - alias: steps
+            name: Steps
+            dataType: multipleTextString
       - name: Requirements
         properties:
           - alias: requirementsTitle
@@ -4616,24 +4563,27 @@ content:
           heroSecondaryCtaUrl: "/parceiros"
           macroTitle: "Visão Macro do Projeto"
           macroDescription: "Projeto concebido para nascer estruturado, evoluir para grupo empresarial digital, com foco em escala, governança e modelo regional."
-          macroPilar1Title: "2 Regionais Modelo"
-          macroPilar1Text: "Primeiras unidades para validar operação, processos e franquias."
-          macroPilar2Title: "5.000 Vagas Empresariais"
-          macroPilar2Text: "Lojas projetadas nos 3 setores da economia, com título de Parceiro Fundador."
-          macroPilar3Title: "Plataforma Integrada"
-          macroPilar3Text: "08 websites conectados em uma arquitetura tecnológica única."
-          macroPilar4Title: "Governança em Implantação"
-          macroPilar4Text: "Presidência, diretorias e conselho consultivo desenhados desde a base."
+          macroPilars:
+            - $type: pilarElement
+              title: "2 Regionais Modelo"
+              text: "Primeiras unidades para validar operação, processos e franquias."
+            - $type: pilarElement
+              title: "5.000 Vagas Empresariais"
+              text: "Lojas projetadas nos 3 setores da economia, com título de Parceiro Fundador."
+            - $type: pilarElement
+              title: "Plataforma Integrada"
+              text: "08 websites conectados em uma arquitetura tecnológica única."
+            - $type: pilarElement
+              title: "Governança em Implantação"
+              text: "Presidência, diretorias e conselho consultivo desenhados desde a base."
           ecosystemBlockTitle: "Ecossistema RISIN – Plataformas Integradas"
           ecosystemBlockSubtitle: "08 websites operando em plataforma única, com métricas centralizadas e inteligência comercial."
           economicModelTitle: "Modelo Econômico Estruturado"
-          economicModelBullets: |
-            <ul>
-              <li>Receita recorrente empresarial (aluguéis, condomínios, comissões).</li>
-              <li>Publicidade regional e nacional (planos de patrocínio).</li>
-              <li>Serviços digitais integrados (cooperativas, guias, mídia, TV, agência).</li>
-              <li>Eventos corporativos setoriais e regionais.</li>
-            </ul>
+          economicModelBullets:
+            - "Receita recorrente empresarial (aluguéis, condomínios, comissões)."
+            - "Publicidade regional e nacional (planos de patrocínio)."
+            - "Serviços digitais integrados (cooperativas, guias, mídia, TV, agência)."
+            - "Eventos corporativos setoriais e regionais."
           economicModelHighlight: "Modelo projetado para sustentabilidade, escalabilidade e previsibilidade financeira."
           govBlockTitle: "Governança desde a Implantação"
           govBlockDescription: "RISIN nasce com presidência executiva, diretorias, conselho consultivo em formação e políticas de compliance."
@@ -4680,29 +4630,33 @@ content:
           structuredProjectContent: |
             <p>Projeto concebido para nascer estruturado como grupo empresarial digital — não como um "site isolado". O foco está em solidez, governança, modelo regional e contratos claros com empresas e parceiros.</p>
             <p>Posicionamento como plataforma tecnológica premium moderna: seriedade + inovação.</p>
-          structuredProjectKeyTerms: |
-            <ul>
-              <li>Implantação estruturada</li>
-              <li>Governança progressiva</li>
-              <li>Arquitetura preparada para expansão</li>
-              <li>Receita recorrente projetada</li>
-            </ul>
+          structuredProjectKeyTerms:
+            - "Implantação estruturada"
+            - "Governança progressiva"
+            - "Arquitetura preparada para expansão"
+            - "Receita recorrente projetada"
           timelineTitle: "Nossa História"
-          timelineItem1Year: "Anos 90"
-          timelineItem1Title: "Origem da Ideia"
-          timelineItem1Text: "Estudos de central de compras, cooperativas e tecnologias para conectar empresas regionalmente."
-          timelineItem2Year: "1995"
-          timelineItem2Title: "Registro de PI"
-          timelineItem2Text: "Sistema de compras e logística registrado no INPI."
-          timelineItem3Year: "2013"
-          timelineItem3Title: "Legalização RISIN"
-          timelineItem3Text: "Empresa constituída como Ltda. em Niterói/RJ, com CNPJ e estrutura societária formal."
-          timelineItem4Year: "2023–2024"
-          timelineItem4Title: "Portal Estruturado"
-          timelineItem4Text: "Portal RISIN com 9 websites e modelo regional/franquias desenhado e validado."
-          timelineItem5Year: "2025–2026"
-          timelineItem5Title: "Implantação Estruturada"
-          timelineItem5Text: "Fase atual: entrada de nova diretoria, expansão para regionais modelo SP e RJ, estruturação de governança e parcerias."
+          timeline:
+            - $type: timelineItemElement
+              year: "2004"
+              title: "Fundação e Origem"
+              text: "Criação dos primeiros projetos e domínios que compõem a Rede do Portal RISIN."
+            - $type: timelineItemElement
+              year: "2020"
+              title: "Reestruturação Digital"
+              text: "Modernização da plataforma tecnológica e início do modelo de franquias digitais."
+            - $type: timelineItemElement
+              year: "2024"
+              title: "Implantação Estruturada"
+              text: "Lançamento do modelo de negócio com 8 portais integrados e governança corporativa."
+            - $type: timelineItemElement
+              year: "2025"
+              title: "Expansão Regional"
+              text: "Abertura das primeiras 2 regionais modelo e início da comercialização de vagas empresariais."
+            - $type: timelineItemElement
+              year: "2026"
+              title: "Escala Nacional"
+              text: "Meta de 100 regionais ativas e 5.000 vagas empresariais comercializadas."
           mvvTitle: "Missão, Visão e Valores"
           missionTitle: "Missão"
           missionText: "<p>Prestação de serviços, tecnologia, transparência, desenvolvimento econômico e social por meio de um ecossistema empresarial digital integrado.</p>"
@@ -4719,28 +4673,41 @@ content:
             </ul>
           corpStructureTitle: "5 Diretorias Especializadas"
           corpStructureDescription: "A RISIN opera com uma estrutura executiva completa, cada diretoria responsável por uma área estratégica da plataforma."
-          pilar1Title: "Integração Total"
-          pilar1Text: "Todos os portais comunicam entre si, criando uma experiência unificada para empresas e consumidores."
-          pilar2Title: "Governança Estruturada"
-          pilar2Text: "Presidência, diretoria executiva e conselho consultivo com papéis e responsabilidades bem definidos."
-          pilar3Title: "Capilaridade Regional"
-          pilar3Text: "Modelo replicável para 478 regionais em todos os 27 estados do Brasil."
-          pilar4Title: "Compliance e LGPD"
-          pilar4Text: "Conformidade regulatória plena e proteção de dados em toda a plataforma, desde a implantação."
-          pilar5Title: "Cooperativismo Digital"
-          pilar5Text: "Poder coletivo de compras, negociações e visibilidade para todos os membros do ecossistema."
-          presidenciaTitle: "Presidência Executiva"
-          presidenciaText: "Fundador conduzindo a visão e o projeto de longo prazo."
-          dirTiTitle: "Diretoria Geral de TI"
-          dirTiText: "CTO e Arquiteto de Soluções responsável pela plataforma tecnológica integrada."
-          dirFinanceiraTitle: "Diretoria Administrativo-Financeira"
-          dirFinanceiraText: "CFO/CAO gerenciando finanças, operações e compliance administrativo."
-          dirMarketingTitle: "Diretoria de SEO/Marketing"
-          dirMarketingText: "Estratégia digital, publicidade e posicionamento de marca."
-          dirComercialTitle: "Diretoria Comercial e Franquias"
-          dirComercialText: "Vendas, parcerias estratégicas e expansão regional via franquias."
-          conselhoTitle: "Conselho Consultivo"
-          conselhoText: "Estrutura em formação para apoiar decisões estratégicas, transparência e segurança jurídica."
+          pilars:
+            - $type: pilarElement
+              title: "Integração Total"
+              text: "Todos os portais comunicam entre si, criando uma experiência unificada para empresas e consumidores."
+            - $type: pilarElement
+              title: "Governança Estruturada"
+              text: "Presidência, diretoria executiva e conselho consultivo com papéis e responsabilidades bem definidos."
+            - $type: pilarElement
+              title: "Capilaridade Regional"
+              text: "Modelo replicável para 478 regionais em todos os 27 estados do Brasil."
+            - $type: pilarElement
+              title: "Compliance e LGPD"
+              text: "Conformidade regulatória plena e proteção de dados em toda a plataforma, desde a implantação."
+            - $type: pilarElement
+              title: "Modelo Escalável"
+              text: "Estrutura replicável para 478 regionais, com suporte tecnológico centralizado e autonomia local."
+          corpPositions:
+            - $type: corpPositionElement
+              title: "Presidência"
+              text: "Responsável pela visão estratégica, representação institucional e decisões de alto impacto."
+            - $type: corpPositionElement
+              title: "Diretoria de TI"
+              text: "Responsável pela arquitetura tecnológica, integração dos portais e segurança da informação."
+            - $type: corpPositionElement
+              title: "Diretoria Financeira"
+              text: "Gestão financeira, captação de recursos e conformidade contábil e fiscal."
+            - $type: corpPositionElement
+              title: "Diretoria de Marketing"
+              text: "Estratégia de marca, comunicação digital e geração de demanda para a rede."
+            - $type: corpPositionElement
+              title: "Diretoria Comercial"
+              text: "Comercialização de vagas empresariais, gestão de parcerias e expansão regional."
+            - $type: corpPositionElement
+              title: "Conselho Consultivo"
+              text: "Orientação estratégica independente, governança e supervisão das diretorias executivas."
           metaTitle: "A RISIN – Quem Somos | Holding de Projetos Digitais"
           metaDescription: "Conheça a história, missão, valores e estrutura corporativa da RISIN – holding empresarial digital com raízes nos anos 90."
 
@@ -4761,10 +4728,11 @@ content:
               <li><strong>478 regionais</strong> planejadas com grupos populacionais de ~800 mil a 2,5 milhões.</li>
               <li>Modelo de Shopping Empresarial Digital com vagas condominiais, caução e comissões.</li>
             </ul>
-          clikashopSpotlightTitle: "Clikashop – Shopping Virtual da Rede RISIN"
-          clikashopSpotlightContent: |
-            <p>O Clikashop é o núcleo comercial do ecossistema RISIN. Um shopping virtual com 3 setores da economia e 5.000 vagas empresariais projetadas nas 2 Regionais modelo.</p>
-            <p>Diferenciais: transparência contratual, modelo condominial, caução de segurança, comissões escalonadas por plano.</p>
+          clikashopSpotlight:
+            - $type: clikashopItemElement
+              title: "Clikashop – Shopping Digital Regional"
+              content: "<p>Plataforma de e-commerce regional com lojas virtuais para os 3 setores da economia. Conecta consumidores locais com empresas da região.</p>"
+              image: ""
           gEmpresasSpotlightTitle: "G-Empresas"
           gEmpresasSpotlightContent: |
             <p>Painel de controle central para gestão de negócios com dados de toda a plataforma RISIN.</p>
@@ -4946,23 +4914,24 @@ content:
           agreementContent: |
             <p>O Acordo de Sócios da RISIN estabelece permanência mínima, sigilo, lealdade ao projeto e equilíbrio entre capital intelectual e financeiro. Deliberações importantes passam por assembleia e pelo Conselho Consultivo.</p>
           agreementCommitmentsTitle: "Compromissos"
-          agreementCommitments: |
-            <ul>
-              <li>Transparência com lojistas, parceiros e patrocinadores.</li>
-              <li>Respeito integral aos contratos.</li>
-              <li>Foco no longo prazo e na sustentabilidade do projeto.</li>
-            </ul>
+          agreementCommitments:
+            - "Transparência com lojistas, parceiros e patrocinadores."
+            - "Respeito integral aos contratos."
+            - "Foco no longo prazo e na sustentabilidade do projeto."
           complianceTitle: "Compromissos de Governança"
           complianceContent: |
             <p>Ética, transparência e segurança da informação são pilares inegociáveis. A RISIN opera com políticas formais de governança, contratação, financeira e código de conduta desde a fase de implantação.</p>
           documentButtonsTitle: "Documentos e Políticas"
-          documentButton1Label: "Política de Governança"
-          documentButton1Url: "/transparencia#politica-de-governanca"
-          documentButton2Label: "Código de Conduta"
-          documentButton2Url: "/transparencia#codigo-de-conduta"
-          documentButton3Label: "Política de Contratação"
-          documentButton3Url: "/transparencia#politica-de-contratacao"
-          estatutoSocialUrl: ""
+          documents:
+            - $type: docButtonElement
+              label: "Política de Governança"
+              url: "/transparencia#politica-de-governanca"
+            - $type: docButtonElement
+              label: "Código de Conduta"
+              url: "/transparencia#codigo-de-conduta"
+            - $type: docButtonElement
+              label: "Política de Contratação"
+              url: "/transparencia#politica-de-contratacao"
           metaTitle: "Governança RISIN – Estrutura, Acordo de Sócios e Compliance"
           metaDescription: "Conheça a estrutura de governança da RISIN: presidência, diretorias, conselho consultivo e políticas de compliance."
         children:
@@ -5139,7 +5108,7 @@ content:
         properties:
           heroTitle: "Regionais"
           heroSubtitle: "2 Regionais Modelo em implantação estruturada. 478 regionais planejadas para todo o Brasil."
-          heroStatNumber: "478"
+          heroStatNumber: 478
           modelRegionalsTitle: "Regionais Modelo"
           modelRegionalsDescription: "As primeiras duas regionais (SP e RJ) servem como modelo operacional, tecnológico e comercial para validar processos, métricas, atendimento e escalabilidade antes da expansão nacional."
           expansionTitle: "Modelo de Expansão e Implantação Regional"
@@ -5355,15 +5324,17 @@ content:
           heroTitle: "Para Lojistas e Empresas"
           heroSubtitle: "Seja um Parceiro Fundador do Shopping Empresarial Digital da RISIN."
           benefitsTitle: "Benefícios para Lojistas"
-          benefit1: "Vitrine digital em shopping estruturado com tráfego regional garantido."
-          benefit2: "Modelo condominial com contrato claro, caução e sem surpresas."
-          benefit3: "Acesso às cooperativas de compras e logística do ecossistema."
-          benefit4: "Título de Parceiro Fundador com vantagens exclusivas de entrada."
+          benefits:
+            - "Vitrine digital em shopping estruturado com tráfego regional garantido."
+            - "Integração com plataforma de e-commerce Clikashop sem custo adicional."
+            - "Suporte técnico e comercial da rede RISIN."
+            - "Visibilidade em toda a rede de 8 portais integrados."
           howItWorksTitle: "Como funciona na prática"
-          step1: "Escolha seu setor (Primário, Secundário ou Terciário) e plano."
-          step2: "Assine o contrato condominial com caução equivalente a 3 meses."
-          step3: "Configure sua loja virtual com suporte de parceiros credenciados."
-          step4: "Ative sua presença no ecossistema RISIN e comece a vender."
+          steps:
+            - "Escolha seu setor (Primário, Secundário ou Terciário) e plano."
+            - "Preencha o cadastro e aguarde a análise de perfil."
+            - "Assine o contrato digital e configure sua vitrine."
+            - "Lance sua loja e comece a vender para toda a região."
           requirementsTitle: "Requisitos Básicos"
           requirementsContent: |
             <ul>
