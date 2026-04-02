@@ -46,6 +46,14 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         var toUpdate = candidates.FirstOrDefault(c => c.Name == yamlContent.Name);
                         if (toUpdate != null)
                         {
+                            // Restore missing template — content created before v1.0.28 may have TemplateId = null
+                            if (!toUpdate.TemplateId.HasValue || toUpdate.TemplateId.Value == 0)
+                            {
+                                var ct = _contentTypeService.Get(toUpdate.ContentType.Alias);
+                                if (ct != null && ct.DefaultTemplateId > 0)
+                                    toUpdate.TemplateId = ct.DefaultTemplateId;
+                            }
+
                             foreach (var kvp in yamlContent.Values)
                             {
                                 var prop = toUpdate.Properties.FirstOrDefault(p => p.Alias == kvp.Key);
@@ -100,6 +108,11 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                     }
 
                     var content = _contentService.Create(yamlContent.Name, parentId ?? -1, contentType.Alias, Constants.Security.SuperUserId);
+
+                    // IContentService.Create does not auto-assign the document type's default template.
+                    // Explicitly set it so the content node is renderable immediately after creation.
+                    if (contentType.DefaultTemplateId > 0)
+                        content.TemplateId = contentType.DefaultTemplateId;
 
                     // Set property values
                     foreach (var kvp in yamlContent.Values)

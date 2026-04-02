@@ -9,6 +9,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.28] - 2026-04-02
+
+### Fixed
+
+#### Content nodes now receive the document type's default template on creation
+
+`IContentService.Create` does not auto-assign the document type's default template. Content nodes were being saved with `TemplateId = null`, making them unrenderable. Fix: the plugin now explicitly sets `content.TemplateId = contentType.DefaultTemplateId` after `Create` when the document type has a default template.
+
+The `[UPDATE]` path also restores a missing template — content nodes created before this fix will have their template backfilled on the next update pass.
+
 ## [1.0.27] - 2026-04-02
 
 ### Added
