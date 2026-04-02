@@ -144,6 +144,24 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             // ── Scalar string coercion ────────────────────────────────────────────────
             if (value is string strVal)
             {
+                // MultiUrlPicker: wrap a plain URL string in the JSON array format Umbraco expects.
+                // Seed values like "/my-page" are stored as [{"url":"/my-page",...}] by the editor.
+                // Skip if the value already looks like JSON (starts with '[') to avoid double-encoding.
+                if (!string.IsNullOrWhiteSpace(strVal)
+                    && property.PropertyType.PropertyEditorAlias == "Umbraco.MultiUrlPicker"
+                    && !strVal.TrimStart().StartsWith('['))
+                {
+                    var link = new Dictionary<string, object?>
+                    {
+                        ["name"]        = "",
+                        ["target"]      = "",
+                        ["udi"]         = null,
+                        ["url"]         = strVal,
+                        ["queryString"] = ""
+                    };
+                    return JsonSerializer.Serialize(new[] { link });
+                }
+
                 return property.PropertyType.ValueStorageType switch
                 {
                     ValueStorageType.Integer => strVal.ToLowerInvariant() switch

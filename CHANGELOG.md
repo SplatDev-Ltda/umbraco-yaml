@@ -9,6 +9,17 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.23] - 2026-04-02
+
+### Fixed
+
+#### `Umbraco.MultiUrlPicker` seed values now serialised correctly from plain URL strings
+
+- Root cause of `'/' is an invalid start of a value` errors during content seeding: `Umbraco.MultiUrlPicker` stores its value as a JSON array (`[{"url":"/path",...}]`), but seed data typically supplies a plain string (e.g. `"/parceiros"`). `CoerceValue` passed the raw string through and Umbraco's property value converter tried to deserialise it as JSON, hitting the parse error.
+- Fix: `CoerceValue` now detects `Umbraco.MultiUrlPicker` properties and, when the incoming value is a non-empty string that does not already start with `[`, wraps it in the single-link JSON array format: `[{"name":"","target":"","udi":null,"url":"<value>","queryString":""}]`. Values already in JSON format (starting with `[`) are passed through unchanged.
+
+---
+
 ## [1.0.22] - 2026-04-02
 
 ### Added
