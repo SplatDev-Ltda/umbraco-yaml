@@ -31,6 +31,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
         private readonly ModelsBuilderConfigurator _modelsBuilderConfigurator;
         private readonly PublishedModelsGenerator _publishedModelsGenerator;
         private readonly IRuntimeState _runtimeState;
+        private readonly IHostApplicationLifetime _appLifetime;
         private readonly ILogger<YamlInitializationHandler> _logger;
         private readonly IConfiguration _configuration;
         private readonly IHostEnvironment _hostEnvironment;
@@ -54,6 +55,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             ModelsBuilderConfigurator modelsBuilderConfigurator,
             PublishedModelsGenerator publishedModelsGenerator,
             IRuntimeState runtimeState,
+            IHostApplicationLifetime appLifetime,
             ILogger<YamlInitializationHandler> logger,
             IConfiguration configuration,
             IHostEnvironment hostEnvironment)
@@ -76,6 +78,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             _modelsBuilderConfigurator = modelsBuilderConfigurator ?? throw new ArgumentNullException(nameof(modelsBuilderConfigurator));
             _publishedModelsGenerator = publishedModelsGenerator ?? throw new ArgumentNullException(nameof(publishedModelsGenerator));
             _runtimeState = runtimeState ?? throw new ArgumentNullException(nameof(runtimeState));
+            _appLifetime = appLifetime ?? throw new ArgumentNullException(nameof(appLifetime));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _hostEnvironment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
@@ -128,7 +131,16 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                     if (installable > 0)
                     {
                         _logger.LogInformation("YamlInitializationHandler: Installing {Count} package(s).", installable);
-                        _packageInstaller.InstallPackages(yamlRoot.Umbraco.Packages);
+                        var newlyInstalled = _packageInstaller.InstallPackages(yamlRoot.Umbraco.Packages);
+                        if (newlyInstalled > 0)
+                        {
+                            _logger.LogInformation(
+                                "YamlInitializationHandler: {Count} package(s) newly installed. " +
+                                "Restarting application so DI/IComposer registrations take effect.",
+                                newlyInstalled);
+                            _appLifetime.StopApplication();
+                            return;
+                        }
                     }
                 }
 

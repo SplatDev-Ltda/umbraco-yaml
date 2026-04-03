@@ -53,21 +53,29 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             _logger = logger;
         }
 
-        public void InstallPackages(List<YamlPackage> packages)
+        /// <summary>
+        /// Downloads and loads all packages marked with <c>install: true</c>.
+        /// Returns the number of packages that were newly installed (i.e. not already in the AppDomain).
+        /// A non-zero return value means the caller should restart the application so that
+        /// DI / <c>IComposer</c> registrations from the loaded assemblies are executed.
+        /// </summary>
+        public int InstallPackages(List<YamlPackage> packages)
         {
-            if (packages == null || packages.Count == 0) return;
+            if (packages == null || packages.Count == 0) return 0;
 
             var toInstall = packages.Where(p => p.Install && !string.IsNullOrWhiteSpace(p.Id)).ToList();
-            if (toInstall.Count == 0) return;
+            if (toInstall.Count == 0) return 0;
 
             var packagesDir = Path.Combine(_hostEnvironment.ContentRootPath, "packages");
             Directory.CreateDirectory(packagesDir);
 
+            var installedCount = 0;
             foreach (var pkg in toInstall)
             {
                 try
                 {
-                    InstallOne(pkg, packagesDir);
+                    if (InstallOne(pkg, packagesDir))
+                        installedCount++;
                 }
                 catch (Exception ex)
                 {
@@ -75,9 +83,11 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         "PackageInstaller: Failed to install '{Id}'. Continuing with remaining packages.", pkg.Id);
                 }
             }
+            return installedCount;
         }
 
-        private void InstallOne(YamlPackage pkg, string packagesDir)
+        /// <returns><c>true</c> if the package was newly downloaded/loaded; <c>false</c> if it was already present.</returns>
+        private bool InstallOne(YamlPackage pkg, string packagesDir)
         {
             var assemblyName = pkg.AssemblyName ?? pkg.Id!;
 
@@ -86,7 +96,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             {
                 _logger?.LogInformation(
                     "PackageInstaller: '{Id}' already loaded — skipping download.", pkg.Id);
-                return;
+                return false;
             }
 
             // Resolve version (download index if not pinned).
@@ -95,7 +105,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             {
                 _logger?.LogWarning(
                     "PackageInstaller: Could not resolve a version for '{Id}'. Skipping.", pkg.Id);
-                return;
+                return false;
             }
 
             // Check local cache first.
@@ -111,7 +121,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             }
 
             // Load all DLLs in the extracted cache directory.
-            LoadAssemblies(pkgDir, pkg.Id!, version);
+            var loaded = LoadAssemblies(pkgDir, pkg.Id!, version);
+            return loaded > 0;
         }
 
         /// <summary>
@@ -229,7 +240,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             }
         }
 
-        private void LoadAssemblies(string pkgDir, string pkgId, string version)
+        private int LoadAssemblies(string pkgDir, string pkgId, string version)
         {
             var dlls = Directory.GetFiles(pkgDir, "*.dll");
             if (dlls.Length == 0)
@@ -237,7 +248,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                 _logger?.LogWarning(
                     "PackageInstaller: No DLLs found in cache dir for '{Id}' v{Version}. Skipping load.",
                     pkgId, version);
-                return;
+                return 0;
             }
 
             var loaded = 0;
@@ -267,10 +278,11 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             if (loaded > 0)
             {
                 _logger?.LogInformation(
-                    "PackageInstaller: '{Id}' v{Version} — {Count} assembly/ies loaded. " +
-                    "Note: DI/IComposer registrations from this package require a restart to take effect.",
+                    "PackageInstaller: '{Id}' v{Version} — {Count} assembly/ies loaded.",
                     pkgId, version, loaded);
             }
+
+            return loaded;
         }
 
         private static bool IsLoaded(string assemblyName)

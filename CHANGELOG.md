@@ -9,6 +9,23 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.32] - 2026-04-03
+
+### Changed
+
+#### Auto-restart after package installation
+
+When `PackageInstaller` newly downloads and loads one or more assemblies, the application now
+automatically restarts via `IHostApplicationLifetime.StopApplication()`. The remaining YAML
+initialization is skipped for this boot — on the next startup the packages are already cached,
+no restart occurs, and the full initialization (DataTypes, DocumentTypes, Content, etc.) runs
+normally with the newly registered DI services / `IComposer` implementations in place.
+
+```
+Boot 1: package not loaded → download → Assembly.LoadFrom → StopApplication() → restart
+Boot 2: assembly already in AppDomain → skip install → full YAML init runs ✓
+```
+
 ## [1.0.31] - 2026-04-03
 
 ### Added
