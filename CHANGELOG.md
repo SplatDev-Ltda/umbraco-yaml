@@ -9,6 +9,39 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.31] - 2026-04-03
+
+### Added
+
+#### `install: true` — automatic NuGet package download and assembly loading
+
+Packages declared in the `packages:` section can now be automatically downloaded and loaded into the running AppDomain:
+
+```yaml
+umbraco:
+  packages:
+    - id: Examine
+      version: 3.0.0
+      install: true
+    - id: Our.Umbraco.Community.SomePlugin
+      version: 2.0.0
+      required: true
+      install: true
+      source: https://my-private-feed/v3/index.json  # optional; defaults to NuGet.org
+```
+
+**How it works:**
+
+- New `PackageInstaller` service runs before `PackageValidator` at startup
+- Skips packages already present in the AppDomain
+- Queries the NuGet v3 flat-container API (no `NuGet.Protocol` dependency — the `.nupkg` is just a ZIP)
+- Resolves the latest stable version automatically when `version:` is omitted
+- Extracts the best-matching TFM DLLs (`net10.0` → `net9.0` → `net8.0` → … → `netstandard2.0`) to `packages/{id}.{version}/` under the content root
+- Loads each DLL with `Assembly.LoadFrom`
+- Supports private NuGet feeds via `source:` (service index or flat-container URL)
+
+**Limitation:** Assemblies loaded at runtime will not have their DI / `IComposer` registrations executed. A full Umbraco package install (with DI wiring) requires a restart after the first run — on the second start the package is already cached and pre-loaded.
+
 ## [1.0.30] - 2026-04-03
 
 ### Added

@@ -25,6 +25,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
         private readonly DictionaryCreator _dictionaryCreator;
         private readonly MemberCreator _memberCreator;
         private readonly UserCreator _userCreator;
+        private readonly PackageInstaller _packageInstaller;
         private readonly PackageValidator _packageValidator;
         private readonly PropertyEditorCreator _propertyEditorCreator;
         private readonly ModelsBuilderConfigurator _modelsBuilderConfigurator;
@@ -47,6 +48,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             DictionaryCreator dictionaryCreator,
             MemberCreator memberCreator,
             UserCreator userCreator,
+            PackageInstaller packageInstaller,
             PackageValidator packageValidator,
             PropertyEditorCreator propertyEditorCreator,
             ModelsBuilderConfigurator modelsBuilderConfigurator,
@@ -68,6 +70,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             _dictionaryCreator = dictionaryCreator ?? throw new ArgumentNullException(nameof(dictionaryCreator));
             _memberCreator = memberCreator ?? throw new ArgumentNullException(nameof(memberCreator));
             _userCreator = userCreator ?? throw new ArgumentNullException(nameof(userCreator));
+            _packageInstaller = packageInstaller ?? throw new ArgumentNullException(nameof(packageInstaller));
             _packageValidator = packageValidator ?? throw new ArgumentNullException(nameof(packageValidator));
             _propertyEditorCreator = propertyEditorCreator ?? throw new ArgumentNullException(nameof(propertyEditorCreator));
             _modelsBuilderConfigurator = modelsBuilderConfigurator ?? throw new ArgumentNullException(nameof(modelsBuilderConfigurator));
@@ -118,7 +121,18 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                     _modelsBuilderConfigurator.Configure(yamlRoot.Umbraco.ModelsBuilder);
                 }
 
-                // Validate declared NuGet packages (informational — no installation performed)
+                // Install packages marked with install: true (download + load into AppDomain)
+                if (yamlRoot.Umbraco.Packages?.Count > 0)
+                {
+                    var installable = yamlRoot.Umbraco.Packages.Count(p => p.Install);
+                    if (installable > 0)
+                    {
+                        _logger.LogInformation("YamlInitializationHandler: Installing {Count} package(s).", installable);
+                        _packageInstaller.InstallPackages(yamlRoot.Umbraco.Packages);
+                    }
+                }
+
+                // Validate declared NuGet packages (informational — checks assembly presence)
                 if (yamlRoot.Umbraco.Packages?.Count > 0)
                 {
                     _logger.LogInformation("YamlInitializationHandler: Validating {Count} package(s).", yamlRoot.Umbraco.Packages.Count);

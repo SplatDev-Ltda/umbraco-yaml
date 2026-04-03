@@ -27,6 +27,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Composers
             builder.Services.AddScoped<DictionaryCreator>();
             builder.Services.AddScoped<MemberCreator>();
             builder.Services.AddScoped<UserCreator>();
+            builder.Services.AddScoped<PackageInstaller>();
             builder.Services.AddScoped<PackageValidator>();
             builder.Services.AddScoped<PropertyEditorCreator>();
             builder.Services.AddScoped<ModelsBuilderConfigurator>();

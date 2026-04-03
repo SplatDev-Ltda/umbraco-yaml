@@ -470,6 +470,24 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
         /// </summary>
         [YamlMember(Alias = "assemblyName")]
         public string? AssemblyName { get; set; }
+
+        /// <summary>
+        /// When <c>true</c>, the plugin downloads the package from NuGet (or <c>source</c>) and
+        /// loads its assemblies into the current AppDomain if they are not already present.
+        /// The package is cached in the <c>packages/</c> directory under the content root.
+        ///
+        /// Note: assemblies loaded at runtime will not have their DI / IComposer registrations
+        /// executed. A full Umbraco package install (with DI wiring) requires a restart.
+        /// </summary>
+        [YamlMember(Alias = "install")]
+        public bool Install { get; set; } = false;
+
+        /// <summary>
+        /// NuGet feed URL to download from. Defaults to <c>https://api.nuget.org/v3/index.json</c>.
+        /// The flat-container endpoint is derived automatically from this base URL.
+        /// </summary>
+        [YamlMember(Alias = "source")]
+        public string? Source { get; set; }
     }
 
     // ── ModelsBuilder ─────────────────────────────────────────────────────────
