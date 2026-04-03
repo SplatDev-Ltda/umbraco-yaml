@@ -53,6 +53,20 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
 
         [YamlMember(Alias = "propertyEditors")]
         public List<YamlPropertyEditor> PropertyEditors { get; set; } = new();
+
+        /// <summary>
+        /// Default folder applied to all <c>media:</c> items that do not specify their own <c>folder:</c>.
+        /// Supports nested paths (e.g. "Images/Uploads"). Folders are created automatically.
+        /// </summary>
+        [YamlMember(Alias = "mediaDefaultFolder")]
+        public string? MediaDefaultFolder { get; set; }
+
+        /// <summary>
+        /// Umbraco Models Builder configuration. When present, the plugin writes the specified
+        /// settings into <c>appsettings.json</c> under <c>Umbraco:CMS:ModelsBuilder</c> at startup.
+        /// </summary>
+        [YamlMember(Alias = "modelsBuilder")]
+        public YamlModelsBuilder? ModelsBuilder { get; set; }
     }
 
     public class YamlDataType
@@ -456,6 +470,29 @@ namespace Umbraco.Plugins.Yaml2Schema.Models
         /// </summary>
         [YamlMember(Alias = "assemblyName")]
         public string? AssemblyName { get; set; }
+    }
+
+    // ── ModelsBuilder ─────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Controls Umbraco Models Builder settings written to <c>appsettings.json</c>.
+    /// </summary>
+    public class YamlModelsBuilder
+    {
+        /// <summary>
+        /// Absolute or content-root-relative path where generated model files are written
+        /// (maps to <c>Umbraco:CMS:ModelsBuilder:ModelsDirectoryAbsolute</c>).
+        /// </summary>
+        [YamlMember(Alias = "outputPath")]
+        public string? OutputPath { get; set; }
+
+        /// <summary>
+        /// Models Builder mode: <c>InMemoryAuto</c>, <c>SourceCodeAuto</c>,
+        /// <c>SourceCodeManual</c>, or <c>Nothing</c>
+        /// (maps to <c>Umbraco:CMS:ModelsBuilder:ModelsMode</c>).
+        /// </summary>
+        [YamlMember(Alias = "mode")]
+        public string? Mode { get; set; }
     }
 
     // ── PropertyEditor ────────────────────────────────────────────────────────

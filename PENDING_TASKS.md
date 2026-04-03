@@ -16,3 +16,10 @@
  + [x] Add media folder creation for organizing media (EnsureFolder helper)
  + [x] Add folder field to each media item
  + [x] Download medias from url and save in media folder into folder set in parameter
+
+ # Phase 4 ✅
+- [x] Add support for changing the ModelBuilder output path — `modelsBuilder.outputPath` in YAML writes `Umbraco:CMS:ModelsBuilder:ModelsDirectoryAbsolute` to `appsettings.json` (`ModelsBuilderConfigurator` service).
+- [x] Add support for generating `publishedmodels` from the YAML-defined schema — `PublishedModelsGenerator` creates typed C# partial classes (`[PublishedModel]`, `PublishedContentModel`) with property accessors, written to the configured `outputPath`.
+- [x] Organize media downloads into a folder structure — `mediaDefaultFolder:` on the `umbraco:` root applies as a section-level default for all `media:` items without their own `folder:`.
+- [x] Add support for selecting icon for nested elements in Block List, Block Grid, and Single Block editor configs. *(Already implemented: `icon:` on `documentTypes` entries is applied to element types in DocumentTypeCreator.)*
+

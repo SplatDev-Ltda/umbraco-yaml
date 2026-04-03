@@ -269,10 +269,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
                 .Setup(x => x.Create(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
                 .Returns(mockContent.Object);
 
+            var mockMediaService = new Mock<IMediaService>();
+
             var dataTypeCreator = new DataTypeCreator(mockDataTypeService.Object, mockContentTypeService.Object, mockPropertyEditors.Object, mockConfigSerializer.Object, mockLogger.Object);
             var docTypeCreator = new DocumentTypeCreator(mockContentTypeService.Object, mockDataTypeService.Object, mockTemplateService.Object, mockShortStringHelper.Object, mockDocLogger.Object);
             var templateCreator = new TemplateCreator(mockTemplateService.Object, mockTplLogger.Object);
-            var contentCreator = new ContentCreator(mockContentService.Object, mockContentTypeService.Object);
+            var contentCreator = new ContentCreator(mockContentService.Object, mockContentTypeService.Object, mockMediaService.Object);
 
             // Act
             dataTypeCreator.CreateDataTypes(result.Umbraco.DataTypes);

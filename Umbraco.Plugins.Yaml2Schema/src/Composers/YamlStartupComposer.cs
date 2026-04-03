@@ -29,6 +29,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Composers
             builder.Services.AddScoped<UserCreator>();
             builder.Services.AddScoped<PackageValidator>();
             builder.Services.AddScoped<PropertyEditorCreator>();
+            builder.Services.AddScoped<ModelsBuilderConfigurator>();
+            builder.Services.AddScoped<PublishedModelsGenerator>();
 
             // IHttpClientFactory is needed by MediaCreator for URL-based file downloads
             builder.Services.AddHttpClient();

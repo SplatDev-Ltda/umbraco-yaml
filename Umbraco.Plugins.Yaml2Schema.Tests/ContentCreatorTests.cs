@@ -15,7 +15,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
         {
             var mockContentService = new Mock<IContentService>();
             var mockContentTypeService = new Mock<IContentTypeService>();
-            var creator = new ContentCreator(mockContentService.Object, mockContentTypeService.Object);
+            var mockMediaService = new Mock<IMediaService>();
+            var creator = new ContentCreator(mockContentService.Object, mockContentTypeService.Object, mockMediaService.Object);
             return (mockContentService, mockContentTypeService, creator);
         }
 
@@ -94,6 +95,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             var mockNode = new Mock<IContent>();
             mockNode.Setup(x => x.Name).Returns("Home");
             mockNode.Setup(x => x.Id).Returns(1);
+            mockNode.Setup(x => x.TemplateId).Returns(1); // skip template restoration branch
             mockNode.Setup(x => x.Properties).Returns(new PropertyCollection());
 
             mockContentService.Setup(x => x.GetRootContent()).Returns(new[] { mockNode.Object });

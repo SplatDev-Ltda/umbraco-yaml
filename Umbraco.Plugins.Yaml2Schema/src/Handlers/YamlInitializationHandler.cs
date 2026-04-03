@@ -27,6 +27,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
         private readonly UserCreator _userCreator;
         private readonly PackageValidator _packageValidator;
         private readonly PropertyEditorCreator _propertyEditorCreator;
+        private readonly ModelsBuilderConfigurator _modelsBuilderConfigurator;
+        private readonly PublishedModelsGenerator _publishedModelsGenerator;
         private readonly IRuntimeState _runtimeState;
         private readonly ILogger<YamlInitializationHandler> _logger;
         private readonly IConfiguration _configuration;
@@ -47,6 +49,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             UserCreator userCreator,
             PackageValidator packageValidator,
             PropertyEditorCreator propertyEditorCreator,
+            ModelsBuilderConfigurator modelsBuilderConfigurator,
+            PublishedModelsGenerator publishedModelsGenerator,
             IRuntimeState runtimeState,
             ILogger<YamlInitializationHandler> logger,
             IConfiguration configuration,
@@ -66,6 +70,8 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             _userCreator = userCreator ?? throw new ArgumentNullException(nameof(userCreator));
             _packageValidator = packageValidator ?? throw new ArgumentNullException(nameof(packageValidator));
             _propertyEditorCreator = propertyEditorCreator ?? throw new ArgumentNullException(nameof(propertyEditorCreator));
+            _modelsBuilderConfigurator = modelsBuilderConfigurator ?? throw new ArgumentNullException(nameof(modelsBuilderConfigurator));
+            _publishedModelsGenerator = publishedModelsGenerator ?? throw new ArgumentNullException(nameof(publishedModelsGenerator));
             _runtimeState = runtimeState ?? throw new ArgumentNullException(nameof(runtimeState));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -103,6 +109,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                 {
                     _logger.LogWarning("YamlInitializationHandler: YAML configuration is empty or invalid. No items to create.");
                     return;
+                }
+
+                // Apply Models Builder settings to appsettings.json (before schema creation)
+                if (yamlRoot.Umbraco.ModelsBuilder != null)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Configuring Models Builder settings.");
+                    _modelsBuilderConfigurator.Configure(yamlRoot.Umbraco.ModelsBuilder);
                 }
 
                 // Validate declared NuGet packages (informational — no installation performed)
@@ -148,6 +161,16 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                 else
                 {
                     _logger.LogInformation("YamlInitializationHandler: No DocumentTypes to create.");
+                }
+
+                // Generate published model .cs files (after DocumentTypes exist)
+                if (yamlRoot.Umbraco.DocumentTypes?.Count > 0 && yamlRoot.Umbraco.ModelsBuilder != null)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Generating published models.");
+                    _publishedModelsGenerator.GenerateModels(
+                        yamlRoot.Umbraco.DocumentTypes,
+                        yamlRoot.Umbraco.DataTypes,
+                        yamlRoot.Umbraco.ModelsBuilder.OutputPath);
                 }
 
                 // Create MediaTypes
@@ -212,7 +235,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                 if (yamlRoot.Umbraco.Media?.Count > 0)
                 {
                     _logger.LogInformation("YamlInitializationHandler: Creating {Count} Media items.", yamlRoot.Umbraco.Media.Count);
-                    _mediaCreator.CreateMedia(yamlRoot.Umbraco.Media);
+                    _mediaCreator.CreateMedia(yamlRoot.Umbraco.Media, defaultFolder: yamlRoot.Umbraco.MediaDefaultFolder);
                     _logger.LogInformation("YamlInitializationHandler: Successfully created {Count} Media items.", yamlRoot.Umbraco.Media.Count);
                 }
                 else

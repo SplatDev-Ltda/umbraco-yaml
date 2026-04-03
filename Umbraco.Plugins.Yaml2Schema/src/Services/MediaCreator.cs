@@ -35,7 +35,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
             _logger = logger;
         }
 
-        public void CreateMedia(List<YamlMedia> mediaItems, int? parentId = null)
+        public void CreateMedia(List<YamlMedia> mediaItems, int? parentId = null, string? defaultFolder = null)
         {
             if (mediaItems == null) throw new ArgumentNullException(nameof(mediaItems));
 
@@ -96,10 +96,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
-                    // Resolve folder if specified (overrides parentId for this item only)
+                    // Resolve folder: per-item folder takes precedence, then section-level defaultFolder
                     var effectiveParentId = parentId;
-                    if (!string.IsNullOrWhiteSpace(yamlMedia.Folder))
-                        effectiveParentId = EnsureFolder(yamlMedia.Folder, parentId ?? -1);
+                    var folderToUse = !string.IsNullOrWhiteSpace(yamlMedia.Folder)
+                        ? yamlMedia.Folder
+                        : defaultFolder;
+                    if (!string.IsNullOrWhiteSpace(folderToUse))
+                        effectiveParentId = EnsureFolder(folderToUse, parentId ?? -1);
 
                     // Check if already exists
                     var existing = (effectiveParentId.HasValue

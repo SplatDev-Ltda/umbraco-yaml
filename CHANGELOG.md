@@ -9,6 +9,47 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [1.0.30] - 2026-04-03
+
+### Added
+
+#### `modelsBuilder:` — configure and generate published models from YAML
+
+Two new Phase 4 capabilities controlled by a new top-level `modelsBuilder:` section:
+
+```yaml
+umbraco:
+  modelsBuilder:
+    outputPath: Models/GeneratedModels   # relative to content root, or absolute
+    mode: SourceCodeManual               # InMemoryAuto | SourceCodeAuto | SourceCodeManual | Nothing
+```
+
+**T1 — `ModelsBuilderConfigurator`:** At startup the plugin writes the specified values into `appsettings.json` under `Umbraco:CMS:ModelsBuilder` (`ModelsDirectoryAbsolute`, `ModelsMode`). Only fields that are explicitly set in the YAML are touched; omitted fields are left unchanged. The path is resolved relative to the content root when not absolute.
+
+**T2 — `PublishedModelsGenerator`:** When `modelsBuilder:` is present, the plugin generates typed C# partial classes (one `.generated.cs` file per document type) in the configured `outputPath`. Each class:
+- Is decorated with `[PublishedModel("alias")]`
+- Inherits `PublishedContentModel`
+- Exposes a typed, lazily-evaluated property per YAML-declared property (editor alias → C# type mapping covers all built-in Umbraco editors)
+
+#### `mediaDefaultFolder:` — section-level default folder for media uploads
+
+```yaml
+umbraco:
+  mediaDefaultFolder: Images/Uploads
+  media:
+    - name: Hero Image
+      mediaType: Image
+      url: https://example.com/hero.jpg
+      # no per-item folder needed — inherits mediaDefaultFolder
+```
+
+A new `mediaDefaultFolder:` field on the `umbraco:` root acts as a fallback folder for any `media:` item that does not specify its own `folder:`. Per-item `folder:` always takes precedence. The folder path is created automatically if it does not exist.
+
+### Fixed
+
+- Pre-existing test regression: `ContentCreatorTests` and `IntegrationTests` were calling `ContentCreator` without the `IMediaService` parameter added in v1.0.29. Both test files updated.
+- `ContentCreatorTests.CreateContent_ShouldUpdateExistingContent` was failing with a `NullReferenceException` because the mock `IContent` node had no `TemplateId` set up, causing the v1.0.28 template-restoration branch to dereference a null `ContentType`. Fixed by stubbing `TemplateId = 1` in the test.
+
 ## [1.0.29] - 2026-04-02
 
 ### Fixed
