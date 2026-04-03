@@ -3340,9 +3340,13 @@ content:
           finalCtaTitle: "RISIN. Estrutura. Governança. Escala."
           finalCtaText: "Se a sua empresa busca um projeto estruturado, com modelo econômico claro e governança desde a base, fale com a RISIN."
           finalCtaButton1Label: "Contato Institucional"
-          finalCtaButton1Url: "/contato"
+          finalCtaButton1Url:
+            url: "/contato"
+            title: "Contato Institucional"
           finalCtaButton2Label: "Download Apresentação (PDF)"
-          finalCtaButton2Url: "/transparencia"
+          finalCtaButton2Url:
+            url: "/transparencia"
+            title: "Download Apresentação (PDF)"
           metaTitle: "RISIN – Plataforma Empresarial Digital em Implantação Estruturada"
           metaDescription: "Ecossistema de 08 websites com modelo regional estruturado, governança progressiva e 5.000 vagas empresariais."
 
@@ -3500,7 +3504,9 @@ content:
               websiteCategory: "Commerce"
               websiteDescription: "Shopping virtual com 3 setores da economia e 5.000 vagas empresariais projetadas em 2 Regionais modelo."
               websiteFullDescription: "<p>O Clikashop é o Shopping Empresarial Digital da RISIN. Opera nos setores Primário (B2B), Secundário (B2B/B2B2C) e Terciário (B2C), com vagas condominiais para lojistas parceiros fundadores.</p>"
-              websiteUrl: "https://clikashop.com.br"
+              websiteUrl:
+                url: "https://clikashop.com.br"
+                title: "Clikashop"
               isFeatured: true
               sortOrder: 0
           - alias: cooperTranslog
@@ -3513,7 +3519,9 @@ content:
               websiteName: "Cooper-Translog"
               websiteCategory: "Logistics"
               websiteDescription: "Cooperativa de Transportes e Logística integrada à operação dos shoppings e da rede RISIN."
-              websiteUrl: "https://coopertranslog.com.br"
+              websiteUrl:
+                url: "https://coopertranslog.com.br"
+                title: "Cooper-Translog"
               isFeatured: false
               sortOrder: 1
           - alias: coopSupri
@@ -3526,7 +3534,9 @@ content:
               websiteName: "Coop-Supri"
               websiteCategory: "Purchasing"
               websiteDescription: "Cooperativa de Compras PJ para reduzir custos produtivos e improdutivos das empresas."
-              websiteUrl: "https://coopsupri.com.br"
+              websiteUrl:
+                url: "https://coopsupri.com.br"
+                title: "Coop-Supri"
               isFeatured: false
               sortOrder: 2
           - alias: gEmpresas
@@ -3539,7 +3549,9 @@ content:
               websiteName: "G-Empresas"
               websiteCategory: "Directory"
               websiteDescription: "Guia Empresas Regional com atualizações periódicas, mídia digital e impressa."
-              websiteUrl: "https://gempresas.com.br"
+              websiteUrl:
+                url: "https://gempresas.com.br"
+                title: "G-Empresas"
               isFeatured: false
               sortOrder: 3
           - alias: classificadosRisin
@@ -3552,7 +3564,9 @@ content:
               websiteName: "Classificados-RISIN"
               websiteCategory: "Classifieds"
               websiteDescription: "Classificados corporativos e de pessoas físicas focados em usados, doações, empregos e oportunidades."
-              websiteUrl: "https://classificadosrisin.com.br"
+              websiteUrl:
+                url: "https://classificadosrisin.com.br"
+                title: "Classificados-RISIN"
               isFeatured: false
               sortOrder: 4
           - alias: agenciaRisin
@@ -3565,7 +3579,9 @@ content:
               websiteName: "Agência-RISIN"
               websiteCategory: "Marketing"
               websiteDescription: "Agência de marketing digital, publicidade e eventos conectada ao ecossistema RISIN."
-              websiteUrl: "https://agenciarisin.com.br"
+              websiteUrl:
+                url: "https://agenciarisin.com.br"
+                title: "Agência-RISIN"
               isFeatured: false
               sortOrder: 5
           - alias: tvRisin
@@ -3578,7 +3594,9 @@ content:
               websiteName: "TV-RISIN"
               websiteCategory: "Media"
               websiteDescription: "TV online voltada a empresas, programas e conteúdos corporativos nas regionais."
-              websiteUrl: "https://tvrisin.com.br"
+              websiteUrl:
+                url: "https://tvrisin.com.br"
+                title: "TV-RISIN"
               isFeatured: false
               sortOrder: 6
           - alias: centertur
@@ -3591,7 +3609,9 @@ content:
               websiteName: "Centertur"
               websiteCategory: "Tourism"
               websiteDescription: "Plataforma de turismo regional, eventos e divulgação de destinos, conectada ao portal."
-              websiteUrl: "https://centertur.com.br"
+              websiteUrl:
+                url: "https://centertur.com.br"
+                title: "Centertur"
               isFeatured: false
               sortOrder: 7
 
@@ -3625,7 +3645,9 @@ content:
           foundersTitle: "5.000 Vagas de Sócios Fundadores"
           foundersSubtitle: "Seja um Sócio Fundador da RISIN e participe ativamente da construção da maior plataforma empresarial digital do Brasil. Vagas limitadas com benefícios exclusivos e vitalícios."
           foundersCtaLabel: "Garanta sua Vaga como Sócio Fundador"
-          foundersCtaUrl: "/parceiros"
+          foundersCtaUrl:
+            url: "/parceiros"
+            title: "Garanta sua Vaga como Sócio Fundador"
           commercialPolicyTitle: "Política Comercial"
           commercialPolicyContent: |
             <p>Política comercial baseada em transparência, contratos padronizados e respeito ao lojista parceiro. Planos diferenciados por setor e tamanho de empresa, com condições claras de entrada, permanência e saída.</p>
@@ -3900,7 +3922,9 @@ content:
           presentationTitle: "Apresentação Institucional"
           presentationContent: "Acesse a apresentação completa com modelo de negócio, arquitetura operacional, projeções financeiras e oportunidades de parceria."
           downloadLabel: "Download Apresentação Completa (PDF)"
-          downloadUrl: "/media/risin-apresentacao-institucional.pdf"
+          downloadUrl:
+            url: "/media/risin-apresentacao-institucional.pdf"
+            title: "Download Apresentação Completa (PDF)"
           ctaTitle: "Estabeleça uma conexão estratégica"
           ctaText: "Entre em contato com nossa equipe de relações institucionais para explorar as possibilidades de parceria e integração ao ecossistema RISIN. Juntos, podemos construir algo extraordinário."
           institutionalEmail: "institucional@risin.com.br"
