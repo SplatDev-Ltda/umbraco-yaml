@@ -1858,7 +1858,7 @@ templates:
                   }
                   else
                   {
-                      <a href="/" class="text-2xl font-black tracking-tighter text-slate-900">@siteName</a>
+                      <a href="/" class="text-2xl font-black tracking-tighter text-slate-900" title="@siteName">@(Model.Value<IPublishedContent>("siteLogo"))</a>
                   }
                   <div class="hidden md:flex items-center gap-8">
                       <a href="/" class="@NavCls("/")">Home</a>
