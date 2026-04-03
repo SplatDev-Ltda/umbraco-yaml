@@ -1735,10 +1735,10 @@ templates:
           var root = Model.Root();
           var siteName = root.Value<string>("siteName") ?? "RISIN";
           var siteEmail = root.Value<string>("siteEmail") ?? "contato@risin.com.br";
-          var siteLocation = root.Value<string>("siteLocation") ?? "Niteroi, RJ";
-          var copyright = root.Value<string>("copyrightText") ?? "c 2026 RISIN - Rede de Informacoes e Servicos na Internet Ltda.";
+          var siteLocation = root.Value<string>("siteLocation") ?? "Niter&#243;i, RJ";
+          var copyright = root.Value<string>("copyrightText") ?? "&#169; 2026 RISIN &#8211; Rede de Informa&#231;&#245;es e Servi&#231;os na Internet Ltda.";
           var ctaNavLink = root.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("ctaButtonUrl")?.FirstOrDefault();
-          var ctaLabel = ctaNavLink?.Name ?? "Parcerias Estrategicas";
+          var ctaLabel = ctaNavLink?.Name ?? "Parcerias Estrat&#233;gicas";
           var ctaUrl = ctaNavLink?.Url ?? "/parceiros";
           var currentPath = Context.Request.Path.ToString().TrimEnd('/');
           bool IsActive(string href) => currentPath == href || (href != "/" && currentPath.StartsWith(href));
@@ -1756,7 +1756,7 @@ templates:
       <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>@metaTitle - @siteName</title>
+          <title>@metaTitle &#8211; @siteName</title>
           @if (!string.IsNullOrEmpty(metaDesc)) { <meta name="description" content="@metaDesc"> }
           @if (faviconIco != null) { <link rel="icon" href="@faviconIco.Url()" sizes="any"> }
           @if (faviconSvg != null) { <link rel="icon" href="@faviconSvg.Url()" type="image/svg+xml"> }
