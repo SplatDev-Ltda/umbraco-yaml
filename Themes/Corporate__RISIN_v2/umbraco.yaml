@@ -2557,343 +2557,822 @@ templates:
 
   - alias: aRisin
     name: "A RISIN"
-    path: ARisin.cshtml
+    path: aRisin.cshtml
     masterTemplate: "master"
     update: true
     content: |
       @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{ Layout = "master.cshtml"; }
+      <style>
+      .ar-tag{color:var(--risin-green);font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:.75rem;display:block;margin-bottom:.5rem}
+      .ar-h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:800;color:#0f172a;letter-spacing:-.02em;margin:0 0 2rem}
+      .ar-sec-hd{text-align:center;margin-bottom:4rem}
+      .ar-history{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .ar-history-inner{max-width:var(--risin-max-width);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+      .ar-body{color:#475569;line-height:1.8}.ar-body p{margin-bottom:1.25rem}.ar-body strong{color:#0f172a;font-weight:600}
+      .ar-pillars{display:flex;flex-direction:column;gap:1rem;margin-top:1.5rem}
+      .ar-pilar{display:flex;align-items:flex-start;gap:1rem;padding:1.25rem;border-radius:.75rem;background:#f8fafc}
+      .ar-pilar-icon{width:40px;height:40px;background:rgba(5,150,105,.1);border-radius:.5rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      .ar-pilar-icon svg{width:20px;height:20px;stroke:var(--risin-green);fill:none}
+      .ar-pilar-title{font-weight:700;color:#0f172a;font-size:.95rem;margin-bottom:.25rem}
+      .ar-pilar-text{font-size:.875rem;color:#64748b}
+      .ar-timeline{padding:var(--risin-section-py) var(--risin-padding);background:#f8fafc}
+      .ar-tl-list{position:relative;max-width:720px;margin:0 auto}
+      .ar-tl-list::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--risin-green),var(--risin-cyan),#cbd5e1)}
+      .ar-tl-item{display:flex;gap:2rem;align-items:flex-start;margin-bottom:2rem}
+      .ar-tl-num{width:48px;height:48px;border-radius:50%;background:var(--risin-green);color:#fff;font-weight:900;font-size:.875rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+      .ar-tl-card{background:#fff;border-radius:.75rem;padding:1.5rem;flex:1;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+      .ar-tl-year{display:inline-block;padding:.125rem .625rem;background:rgba(5,150,105,.1);color:var(--risin-green);font-size:.75rem;font-weight:700;border-radius:9999px;margin-bottom:.5rem}
+      .ar-tl-title{font-weight:700;font-size:1.05rem;color:#0f172a;margin-bottom:.25rem}
+      .ar-tl-desc{font-size:.875rem;color:#64748b;line-height:1.6}
+      .ar-mvv{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .ar-mvv-grid{max-width:var(--risin-max-width);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+      .ar-mvv-card{background:#f8fafc;border-radius:1rem;padding:2rem}
+      .ar-mvv-card svg{width:40px;height:40px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .ar-mvv-card h3{font-size:1.2rem;font-weight:700;color:#0f172a;margin-bottom:1rem}
+      .ar-mvv-card p{color:#64748b;line-height:1.7;font-size:.925rem}
+      .ar-directors{padding:var(--risin-section-py) var(--risin-padding);background:#f8fafc}
+      .ar-dir-grid{max-width:var(--risin-max-width);margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:1.5rem}
+      .ar-dir-card{background:#fff;border-radius:.75rem;padding:2rem;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+      .ar-dir-card.green{background:var(--risin-green)}
+      .ar-dir-card svg{width:40px;height:40px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .ar-dir-card.green svg{stroke:rgba(255,255,255,.9)}
+      .ar-dir-title{font-weight:700;font-size:1rem;color:#0f172a;margin-bottom:.5rem}
+      .ar-dir-card.green .ar-dir-title{color:#fff}
+      .ar-dir-desc{font-size:.8rem;color:#64748b;line-height:1.5}
+      .ar-dir-card.green .ar-dir-desc{color:rgba(255,255,255,.8)}
+      @@media(max-width:1024px){.ar-history-inner{grid-template-columns:1fr;gap:3rem}.ar-mvv-grid{grid-template-columns:1fr}.ar-dir-grid{grid-template-columns:repeat(2,1fr)}}
+      @@media(max-width:640px){.ar-dir-grid{grid-template-columns:1fr}}
+      </style>
       <main>
-          <section class="page-hero">
-              <div class="grid-bg"></div>
-              <div class="orb-1"></div>
-              <div class="orb-2"></div>
-              <div class="ph-container">
-                  <h1>A <span class="gradient">RISIN</span></h1>
-                  <p class="ph-subtitle">Conhe&#231;a a hist&#243;ria, miss&#227;o, vis&#227;o e valores da holding digital que est&#225; estruturando o futuro do com&#233;rcio empresarial no Brasil.</p>
-              </div>
-          </section>
+      <section class="page-hero"><div class="grid-bg"></div><div class="orb-1"></div><div class="orb-2"></div>
+      <div class="ph-container"><h1>A <span class="gradient">RISIN</span></h1>
+      <p class="ph-subtitle">Conhe&#231;a a hist&#243;ria, miss&#227;o, vis&#227;o e valores da holding digital que est&#225; estruturando o futuro do com&#233;rcio empresarial no Brasil.</p></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Nossa Hist&#243;ria</h2>
-                  <div class="cs-body">
-                      <p>A RISIN nasceu de um sistema patenteado pelo INPI em 1995, originalmente desenvolvido pela IBM do Brasil para uma opera&#231;&#227;o cooperativa de log&#237;stica em Campinas-SP. Ap&#243;s anos de pesquisa e valida&#231;&#227;o &#8212; incluindo um blog em 2010 com mais de 2.000 empresas cadastradas &#8212; a RISIN foi legalmente constitu&#237;da em 2013 em Niter&#243;i, RJ.</p>
-                      <p>Hoje, a empresa est&#225; em sua fase de implanta&#231;&#227;o estruturada, com foco em validar o modelo operacional atrav&#233;s de 2 regionais modelo antes da expans&#227;o nacional para 478 regionais.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="ar-history"><div class="ar-history-inner">
+      <div><span class="ar-tag">Nossa Hist&#243;ria</span><h2 class="ar-h2">A Vis&#227;o Fundadora</h2>
+      <div class="ar-body">
+      <p>A <strong>RISIN &#8211; Plataforma Empresarial Digital</strong> nasceu da vis&#227;o de criar um ecossistema integrado que conectasse empresas, profissionais e consumidores em uma &#250;nica plataforma robusta e governada.</p>
+      <p>Identificamos que o mercado brasileiro carecia de uma solu&#231;&#227;o que unificasse servi&#231;os empresariais digitais com <strong>governan&#231;a regional estruturada</strong>, permitindo que pequenas e m&#233;dias empresas acessassem ferramentas de n&#237;vel corporativo.</p>
+      <p>Com 08 portais estrat&#233;gicos operando de forma integrada, a RISIN oferece desde marketplace B2B/B2C at&#233; streaming corporativo, passando por log&#237;stica, suprimentos, classificados e marketing digital &#8211; tudo sob uma &#250;nica identidade e governan&#231;a.</p>
+      <p>O modelo de <strong>S&#243;cios Fundadores</strong> permite que empresas e profissionais participem ativamente da constru&#231;&#227;o desta plataforma, garantindo benef&#237;cios exclusivos e participa&#231;&#227;o no crescimento do ecossistema.</p>
+      </div></div>
+      <div><span class="ar-tag">Pilares da Plataforma</span><div class="ar-pillars">
+      <div class="ar-pilar"><div class="ar-pilar-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg></div><div><div class="ar-pilar-title">Integra&#231;&#227;o Total</div><div class="ar-pilar-text">Todos os portais comunicam entre si, criando uma experi&#234;ncia unificada.</div></div></div>
+      <div class="ar-pilar"><div class="ar-pilar-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18"/></svg></div><div><div class="ar-pilar-title">Governan&#231;a Estruturada</div><div class="ar-pilar-text">Presid&#234;ncia, diretoria executiva e conselho consultivo com pap&#233;is bem definidos.</div></div></div>
+      <div class="ar-pilar"><div class="ar-pilar-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c-.317-.159-.69-.159-1.006 0l4.994 2.497z"/></svg></div><div><div class="ar-pilar-title">Capilaridade Regional</div><div class="ar-pilar-text">Modelo replic&#225;vel para 478 regionais em todos os 27 estados.</div></div></div>
+      <div class="ar-pilar"><div class="ar-pilar-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></div><div><div class="ar-pilar-title">Compliance e LGPD</div><div class="ar-pilar-text">Conformidade regulat&#243;ria e prote&#231;&#227;o de dados em toda a plataforma.</div></div></div>
+      <div class="ar-pilar"><div class="ar-pilar-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg></div><div><div class="ar-pilar-title">Cooperativismo Digital</div><div class="ar-pilar-text">Poder coletivo de compras, negocia&#231;&#245;es e visibilidade para todos os membros.</div></div></div>
+      </div></div></div></section>
       
-          <section class="content-section alt">
-              <div class="cs-container">
-                  <h2>Miss&#227;o, Vis&#227;o e Valores</h2>
-                  <div class="cs-body">
-                      <p><strong>Miss&#227;o:</strong> Estruturar e operar uma plataforma digital integrada que conecta empresas em um ecossistema tecnol&#243;gico &#250;nico, com governan&#231;a, transpar&#234;ncia e escalabilidade desde a concep&#231;&#227;o.</p>
-                      <p><strong>Vis&#227;o:</strong> Ser a principal holding digital de neg&#243;cios empresariais do Brasil, com presen&#231;a em todas as 478 regi&#245;es e expans&#227;o internacional planejada.</p>
-                      <p><strong>Valores:</strong> Governan&#231;a, Transpar&#234;ncia, Inova&#231;&#227;o, Sustentabilidade, Profissionalismo e Compromisso com o longo prazo.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="ar-timeline">
+      <div style="max-width:var(--risin-max-width);margin:0 auto;padding:0 var(--risin-padding)"><div class="ar-sec-hd" style="padding-top:0"><span class="ar-tag">Cronograma</span><h2 class="ar-h2" style="margin:0">Linha do Tempo da Implanta&#231;&#227;o</h2></div></div>
+      <div class="ar-tl-list">
+      <div class="ar-tl-item"><div class="ar-tl-num">1</div><div class="ar-tl-card"><span class="ar-tl-year">2024</span><div class="ar-tl-title">Concep&#231;&#227;o e Estrutura&#231;&#227;o</div><p class="ar-tl-desc">Defini&#231;&#227;o do modelo de neg&#243;cio, arquitetura da plataforma e estrutura de governan&#231;a corporativa.</p></div></div>
+      <div class="ar-tl-item"><div class="ar-tl-num">2</div><div class="ar-tl-card"><span class="ar-tl-year">2025</span><div class="ar-tl-title">Implanta&#231;&#227;o das Regionais Modelo</div><p class="ar-tl-desc">Lan&#231;amento das 2 primeiras regionais (SP e RJ) com 5.000 vagas para S&#243;cios Fundadores.</p></div></div>
+      <div class="ar-tl-item"><div class="ar-tl-num">3</div><div class="ar-tl-card"><span class="ar-tl-year">2026&#8211;2027</span><div class="ar-tl-title">Expans&#227;o Nacional</div><p class="ar-tl-desc">Replica&#231;&#227;o do modelo validado para as primeiras 50 regionais priorit&#225;rias no Brasil.</p></div></div>
+      <div class="ar-tl-item"><div class="ar-tl-num">4</div><div class="ar-tl-card"><span class="ar-tl-year">2028&#8211;2030</span><div class="ar-tl-title">Consolida&#231;&#227;o Nacional</div><p class="ar-tl-desc">Atingir 478 regionais ativas em todo o territ&#243;rio nacional com autossufici&#234;ncia financeira.</p></div></div>
+      <div class="ar-tl-item"><div class="ar-tl-num">5</div><div class="ar-tl-card"><span class="ar-tl-year">2030+</span><div class="ar-tl-title">Hold-Dig &#8211; Soberania Digital</div><p class="ar-tl-desc">Consolida&#231;&#227;o da holding digital com autossufici&#234;ncia financeira em todas as regionais.</p></div></div>
+      </div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Estrutura Corporativa</h2>
-                  <div class="cs-body">
-                      <p>A RISIN opera com capital social de R$510.000, distribu&#237;do entre a Presid&#234;ncia Executiva (64%), CTO (15%), CFO/CAO (8%), CMO (8%) e CSO (5%), com 13% reservados para conselheiros e futuros parceiros.</p>
-                      <p>Um Conselho Consultivo de 7 especialistas e pol&#237;ticas rigorosas de compliance e transpar&#234;ncia garantem governan&#231;a s&#243;lida desde o primeiro dia.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="ar-mvv">
+      <div style="max-width:var(--risin-max-width);margin:0 auto"><div class="ar-sec-hd"><span class="ar-tag">Prop&#243;sito</span><h2 class="ar-h2" style="margin:0">Miss&#227;o, Vis&#227;o e Valores</h2></div></div>
+      <div class="ar-mvv-grid">
+      <div class="ar-mvv-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l1.664 9.526a2.25 2.25 0 002.238 1.974h10.196a2.25 2.25 0 002.238-1.974L21 3M3 3h18M12 12v9m0 0H8.25m3.75 0H15.75"/></svg><h3>Nossa Miss&#227;o</h3><p>Integrar, estruturar e potencializar o ecossistema empresarial brasileiro por meio de uma plataforma digital completa, acess&#237;vel e com governan&#231;a transparente.</p></div>
+      <div class="ar-mvv-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg><h3>Nossa Vis&#227;o</h3><p>Ser a maior plataforma de integra&#231;&#227;o empresarial do Brasil at&#233; 2030, com 478 regionais ativas, impactando mais de 100 mil empresas em todo o territ&#243;rio nacional.</p></div>
+      <div class="ar-mvv-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/></svg><h3>Nossos Valores</h3><p>Transpar&#234;ncia na governan&#231;a, inova&#231;&#227;o cont&#237;nua, cooperativismo empresarial, responsabilidade regional e compromisso com o desenvolvimento sustent&#225;vel do pa&#237;s.</p></div>
+      </div></section>
+      
+      <section class="ar-directors">
+      <div style="max-width:var(--risin-max-width);margin:0 auto"><div class="ar-sec-hd"><span class="ar-tag">Estrutura Executiva</span><h2 class="ar-h2" style="margin:0">5 Diretorias Especializadas</h2><p style="color:#64748b;margin-top:1rem;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6">A RISIN opera com uma estrutura executiva completa, cada diretoria respons&#225;vel por uma &#225;rea estrat&#233;gica da plataforma.</p></div></div>
+      <div class="ar-dir-grid">
+      <div class="ar-dir-card green"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"/></svg><div class="ar-dir-title">Presid&#234;ncia</div><div class="ar-dir-desc">Dire&#231;&#227;o estrat&#233;gica e representa&#231;&#227;o institucional</div></div>
+      <div class="ar-dir-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3"/></svg><div class="ar-dir-title">Diretoria de TI</div><div class="ar-dir-desc">Infraestrutura tecnol&#243;gica, desenvolvimento e seguran&#231;a da plataforma.</div></div>
+      <div class="ar-dir-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg><div class="ar-dir-title">Diretoria Financeira</div><div class="ar-dir-desc">Gest&#227;o financeira, controladoria e rela&#231;&#245;es com investidores.</div></div>
+      <div class="ar-dir-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.402m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46"/></svg><div class="ar-dir-title">Diretoria de Marketing</div><div class="ar-dir-desc">Comunica&#231;&#227;o institucional, branding e estrat&#233;gias de crescimento.</div></div>
+      <div class="ar-dir-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg><div class="ar-dir-title">Diretoria Comercial</div><div class="ar-dir-desc">Vendas, parcerias estrat&#233;gicas e expans&#227;o de base de clientes.</div></div>
+      </div></section>
       </main>
-
   - alias: ecossistema
     name: "Ecossistema"
-    path: Ecossistema.cshtml
+    path: ecossistema.cshtml
     masterTemplate: "master"
     update: true
     content: |
       @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{ Layout = "master.cshtml"; }
+      <style>
+      .ecs-tag{color:var(--risin-green);font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:.75rem;display:block;margin-bottom:.5rem}
+      .ecs-h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:800;color:#0f172a;letter-spacing:-.02em;margin:0 0 1.5rem}
+      .ecs-portals{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .ecs-portals-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .ecs-sec-hd{text-align:center;margin-bottom:3.5rem}
+      .ecs-sec-hd h2{margin:.5rem 0 1rem}
+      .ecs-sec-hd p{color:#64748b;max-width:560px;margin:0 auto;line-height:1.6}
+      .ecs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+      .ecs-card{background:#f8fafc;border-radius:1rem;padding:1.75rem;border-top:3px solid transparent;transition:border-color .2s,transform .2s,box-shadow .2s}
+      .ecs-card:hover{border-top-color:var(--risin-green);transform:translateY(-3px);box-shadow:0 8px 24px rgba(5,150,105,.12)}
+      .ecs-card svg{width:36px;height:36px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .ecs-card-name{font-weight:800;font-size:1.05rem;color:#0f172a;margin-bottom:.5rem}
+      .ecs-card-type{display:inline-block;padding:.2rem .625rem;background:rgba(5,150,105,.1);color:var(--risin-green);font-size:.7rem;font-weight:700;border-radius:9999px;margin-bottom:.75rem}
+      .ecs-card-desc{font-size:.85rem;color:#64748b;line-height:1.55}
+      .ecs-integration{padding:var(--risin-section-py) var(--risin-padding);background:#f8fafc}
+      .ecs-int-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .ecs-int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+      .ecs-int-card{background:#fff;border-radius:1rem;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+      .ecs-int-card.accent{background:var(--risin-green)}
+      .ecs-int-card svg{width:36px;height:36px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .ecs-int-card.accent svg{stroke:#fff}
+      .ecs-int-card h3{font-weight:700;font-size:1.1rem;color:#0f172a;margin-bottom:.75rem}
+      .ecs-int-card.accent h3{color:#fff}
+      .ecs-int-card p{font-size:.875rem;color:#64748b;line-height:1.6}
+      .ecs-int-card.accent p{color:rgba(255,255,255,.85)}
+      .ecs-int-features{margin-top:1rem;display:flex;flex-direction:column;gap:.5rem}
+      .ecs-int-feat{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:#475569}
+      .ecs-int-card.accent .ecs-int-feat{color:rgba(255,255,255,.85)}
+      .ecs-int-feat::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--risin-green);flex-shrink:0}
+      .ecs-int-card.accent .ecs-int-feat::before{background:#fff}
+      .ecs-stats{padding:var(--risin-section-py) var(--risin-padding);background:#0f172a}
+      .ecs-stats-inner{max-width:var(--risin-max-width);margin:0 auto;text-align:center}
+      .ecs-stats-inner h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;color:#f1f5f9;margin-bottom:.75rem}
+      .ecs-stats-inner p{color:#94a3b8;max-width:500px;margin:0 auto 3rem;line-height:1.6}
+      .ecs-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+      .ecs-stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:1rem;padding:2rem}
+      .ecs-stat-num{font-size:2.5rem;font-weight:900;background:linear-gradient(135deg,var(--risin-green),var(--risin-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:.5rem}
+      .ecs-stat-label{font-size:.875rem;color:#94a3b8}
+      @@media(max-width:1200px){.ecs-grid{grid-template-columns:repeat(2,1fr)}}
+      @@media(max-width:1024px){.ecs-int-grid{grid-template-columns:1fr}.ecs-stats-row{grid-template-columns:repeat(2,1fr)}}
+      @@media(max-width:640px){.ecs-grid{grid-template-columns:1fr}.ecs-stats-row{grid-template-columns:1fr}}
+      </style>
       <main>
-          <section class="page-hero">
-              <div class="grid-bg"></div>
-              <div class="orb-1"></div>
-              <div class="orb-2"></div>
-              <div class="ph-container">
-                  <h1>Ecossistema <span class="gradient">RISIN</span></h1>
-                  <p class="ph-subtitle">Oito websites independentes funcionando sob uma &#250;nica infraestrutura tecnol&#243;gica, compartilhando governan&#231;a, dados e modelo econ&#244;mico.</p>
-              </div>
-          </section>
+      <section class="page-hero"><div class="grid-bg"></div><div class="orb-1"></div><div class="orb-2"></div>
+      <div class="ph-container"><h1>O <span class="gradient">Ecossistema</span></h1>
+      <p class="ph-subtitle">8 portais estrat&#233;gicos integrados, formando a maior plataforma de neg&#243;cios digitais do Brasil com solu&#231;&#245;es para cada necessidade empresarial.</p></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Plataforma Integrada</h2>
-                  <div class="cs-body">
-                      <p>O ecossistema RISIN &#233; composto por 8 websites independentes que operam sob uma infraestrutura tecnol&#243;gica unificada. Cada plataforma atende a uma necessidade espec&#237;fica do mercado empresarial, enquanto compartilha governan&#231;a, dados e modelo econ&#244;mico com as demais.</p>
-                      <p>O Cadastro &#218;nico permite que uma &#250;nica inscri&#231;&#227;o d&#234; acesso a todos os servi&#231;os: opera&#231;&#227;o de loja, compras B2B, associa&#231;&#227;o cooperativa e status de fornecedor.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="ecs-portals"><div class="ecs-portals-inner">
+      <div class="ecs-sec-hd"><span class="ecs-tag">Portais</span><h2 class="ecs-h2" style="margin:0">8 Portais Integrados</h2><p>Cada portal opera de forma especializada e integrada aos demais, criando um ecossistema completo para empresas e profissionais.</p></div>
+      <div class="ecs-grid">
+      <div class="ecs-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+      <div class="ecs-card-name">Clikashop</div><span class="ecs-card-type">Marketplace B2B/B2C</span>
+      <p class="ecs-card-desc">Plataforma de marketplace com lojas virtuais, vendas diretas e integra&#231;&#227;o com log&#237;stica para todo o Brasil.</p></div>
       
-          <section class="content-section alt">
-              <div class="cs-container">
-                  <h2>Clikashop &#8211; Shopping Digital</h2>
-                  <div class="cs-body">
-                      <p>A principal plataforma do ecossistema. Um shopping virtual organizado em 3 setores econ&#244;micos (prim&#225;rio, secund&#225;rio e terci&#225;rio), com pagamento trimestral de cau&#231;&#227;o cobrindo aluguel, condom&#237;nio e comiss&#245;es. Cada loja emite sua pr&#243;pria NFe e recebe pagamentos diretamente.</p>
-                  </div>
-              </div>
-          </section>
+      <div class="ecs-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/></svg>
+      <div class="ecs-card-name">Cooper-Translog</div><span class="ecs-card-type">Log&#237;stica</span>
+      <p class="ecs-card-desc">Cooperativa de transporte e log&#237;stica conectando transportadoras, distribuidoras e empresas embarcadoras.</p></div>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Plataformas Operacionais</h2>
-                  <div class="cs-body">
-                      <p><strong>Cooper-Translog:</strong> Cooperativa de transporte e log&#237;stica integrada com as opera&#231;&#245;es do shopping e toda a rede RISIN, baseada no sistema patenteado pelo INPI.</p>
-                      <p><strong>Coop-Supri:</strong> Cooperativa de compras B2B que reduz custos produtivos e improdutivos atrav&#233;s do CRD (Coeficiente de Rateio de Despesas).</p>
-                  </div>
-              </div>
-          </section>
+      <div class="ecs-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+      <div class="ecs-card-name">Coop-Supri</div><span class="ecs-card-type">Suprimentos</span>
+      <p class="ecs-card-desc">Portal de suprimentos empresariais com poder de compra coletivo e negocia&#231;&#245;es centralizadas para membros.</p></div>
       
-          <section class="content-section alt">
-              <div class="cs-container">
-                  <h2>Informa&#231;&#227;o e Marketing</h2>
-                  <div class="cs-body">
-                      <p><strong>G-Empresas:</strong> Guia regional de empresas com atualiza&#231;&#245;es peri&#243;dicas em m&#237;dia digital e impressa.</p>
-                      <p><strong>Classificados-RISIN:</strong> Classificados corporativos focados em bens usados, doa&#231;&#245;es, empregos e oportunidades.</p>
-                      <p><strong>Ag&#234;ncia-RISIN:</strong> Ag&#234;ncia de marketing digital e eventos integrada ao ecossistema.</p>
-                      <p><strong>TV-RISIN:</strong> Televis&#227;o online corporativa com conte&#250;do para empresas e programa&#231;&#227;o regional.</p>
-                      <p><strong>Centertur:</strong> Plataforma regional de turismo conectada ao portal principal.</p>
-                  </div>
-              </div>
-          </section>
+      <div class="ecs-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+      <div class="ecs-card-name">G-Empresas</div><span class="ecs-card-type">Gest&#227;o Empresarial</span>
+      <p class="ecs-card-desc">ERP simplificado para PMEs com gest&#227;o financeira, fiscal, RH e operacional integrado &#224; plataforma RISIN.</p></div>
+      
+      <div class="ecs-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3"/></svg>
+      <div class="ecs-card-name">Classificados RISIN</div><span class="ecs-card-type">Classificados</span>
+      <p class="ecs-card-desc">Portal de classificados empresariais para an&#250;ncios de im&#243;veis, ve&#237;culos, servi&#231;os e produtos entre membros.</p></div>
+      
+      <div class="ecs-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.402m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46"/></svg>
+      <div class="ecs-card-name">Ag&#234;ncia RISIN</div><span class="ecs-card-type">Marketing Digital</span>
+      <p class="ecs-card-desc">Ag&#234;ncia digital integrada com gest&#227;o de tr&#225;fego pago, SEO, redes sociais e produ&#231;&#227;o de conte&#250;do.</p></div>
+      
+      <div class="ecs-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125z"/></svg>
+      <div class="ecs-card-name">TV-RISIN</div><span class="ecs-card-type">Streaming Corporativo</span>
+      <p class="ecs-card-desc">Canal de streaming corporativo com conte&#250;do empresarial, treinamentos, webinars e transmiss&#245;es ao vivo.</p></div>
+      
+      <div class="ecs-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.115 5.19l.319 1.913A6 6 0 008.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 002.288-4.042 1.087 1.087 0 00-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 01-.98-.314l-.295-.295a1.125 1.125 0 010-1.591l.13-.132a1.125 1.125 0 011.3-.21l.603.302a.809.809 0 001.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 001.528-1.732l.146-.292M6.115 5.19A9 9 0 1017.18 4.64M6.115 5.19A8.965 8.965 0 0112 3c1.929 0 3.716.607 5.18 1.64"/></svg>
+      <div class="ecs-card-name">Centertur</div><span class="ecs-card-type">Turismo Corporativo</span>
+      <p class="ecs-card-desc">Portal de turismo corporativo com pacotes especiais para eventos, viagens empresariais e incentivos.</p></div>
+      </div></div></section>
+      
+      <section class="ecs-integration"><div class="ecs-int-inner">
+      <div class="ecs-sec-hd"><span class="ecs-tag">Integra&#231;&#227;o</span><h2 class="ecs-h2" style="margin:.5rem 0 1rem">Como os Portais se Integram</h2><p>A sinergia entre os portais cria um ecossistema onde cada membro se beneficia de toda a rede.</p></div>
+      <div class="ecs-int-grid">
+      <div class="ecs-int-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
+      <h3>Clikashop como Hub Central</h3>
+      <p>O marketplace conecta vendedores, compradores, log&#237;stica e suprimentos em um &#250;nico fluxo comercial integrado.</p>
+      <div class="ecs-int-features">
+      <span class="ecs-int-feat">Vendas diretas para membros</span>
+      <span class="ecs-int-feat">Integra&#231;&#227;o com Cooper-Translog</span>
+      <span class="ecs-int-feat">Suprimentos via Coop-Supri</span>
+      </div></div>
+      <div class="ecs-int-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+      <h3>G-Empresas como Backbone</h3>
+      <p>O ERP unifica a gest&#227;o de todas as opera&#231;&#245;es dos membros, alimentando dados para os demais portais em tempo real.</p>
+      <div class="ecs-int-features">
+      <span class="ecs-int-feat">Gest&#227;o financeira integrada</span>
+      <span class="ecs-int-feat">Relat&#243;rios consolidados</span>
+      <span class="ecs-int-feat">Automa&#231;&#227;o operacional</span>
+      </div></div>
+      <div class="ecs-int-card accent"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.402m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46"/></svg>
+      <h3>Ag&#234;ncia RISIN</h3>
+      <p>Visibilidade para todos os portais com estrat&#233;gias de marketing digital especializadas para cada verticl do ecossistema.</p>
+      <div class="ecs-int-features">
+      <span class="ecs-int-feat">SEO e tr&#225;fego pago</span>
+      <span class="ecs-int-feat">Branding unificado</span>
+      <span class="ecs-int-feat">Conte&#250;do estrat&#233;gico</span>
+      </div></div>
+      </div></div></section>
+      
+      <section class="ecs-stats"><div class="ecs-stats-inner">
+      <h2>Poder do Ecossistema Integrado</h2>
+      <p>N&#250;meros que demonstram o potencial da plataforma com todos os portais operando em sinergia.</p>
+      <div class="ecs-stats-row">
+      <div class="ecs-stat"><div class="ecs-stat-num">8</div><div class="ecs-stat-label">Portais Integrados</div></div>
+      <div class="ecs-stat"><div class="ecs-stat-num">478</div><div class="ecs-stat-label">Regionais Planejadas</div></div>
+      <div class="ecs-stat"><div class="ecs-stat-num">100k+</div><div class="ecs-stat-label">Empresas Impactadas</div></div>
+      <div class="ecs-stat"><div class="ecs-stat-num">27</div><div class="ecs-stat-label">Estados Brasileiros</div></div>
+      </div></div></section>
       </main>
-
   - alias: modeloNegocio
     name: "Modelo de Negocio"
-    path: ModeloNegocio.cshtml
+    path: modeloNegocio.cshtml
     masterTemplate: "master"
     update: true
     content: |
       @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{ Layout = "master.cshtml"; }
+      <style>
+      .mn-tag{color:var(--risin-green);font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:.75rem;display:block;margin-bottom:.5rem}
+      .mn-h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:800;color:#0f172a;letter-spacing:-.02em;margin:0 0 1.5rem}
+      .mn-revenue{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .mn-rev-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .mn-sec-hd{text-align:center;margin-bottom:3.5rem}
+      .mn-sec-hd p{color:#64748b;max-width:560px;margin:.75rem auto 0;line-height:1.6}
+      .mn-rev-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+      .mn-rev-card{background:#f8fafc;border-radius:1rem;padding:2rem;border-top:3px solid var(--risin-green)}
+      .mn-rev-card svg{width:36px;height:36px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .mn-rev-card h3{font-weight:700;font-size:1rem;color:#0f172a;margin-bottom:.75rem}
+      .mn-rev-card p{font-size:.85rem;color:#64748b;line-height:1.6}
+      .mn-rev-pct{display:inline-block;margin-top:1rem;padding:.3rem .875rem;background:rgba(5,150,105,.1);color:var(--risin-green);font-size:.8rem;font-weight:700;border-radius:9999px}
+      .mn-contracts{padding:var(--risin-section-py) var(--risin-padding);background:#f8fafc}
+      .mn-con-inner{max-width:var(--risin-max-width);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+      .mn-con-body{color:#475569;font-size:.925rem;line-height:1.8;margin-bottom:2rem}
+      .mn-con-body p{margin-bottom:1rem}
+      .mn-con-body strong{color:#0f172a;font-weight:600}
+      .mn-steps{display:flex;flex-direction:column;gap:1rem}
+      .mn-step{display:flex;align-items:flex-start;gap:1rem}
+      .mn-step-num{width:36px;height:36px;border-radius:50%;background:var(--risin-green);color:#fff;font-weight:900;font-size:.875rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      .mn-step-title{font-weight:700;color:#0f172a;margin-bottom:.25rem;font-size:.95rem}
+      .mn-step-text{font-size:.85rem;color:#64748b;line-height:1.5}
+      .mn-con-visual{position:relative}
+      .mn-con-badge{background:#fff;border-radius:1rem;padding:1.5rem;box-shadow:0 8px 32px rgba(0,0,0,.12);margin-bottom:1.5rem}
+      .mn-con-badge h3{font-weight:700;font-size:1.1rem;color:#0f172a;margin-bottom:.5rem}
+      .mn-con-badge p{font-size:.875rem;color:#64748b;line-height:1.55}
+      .mn-con-badge .mn-tag{margin-bottom:.5rem}
+      .mn-vagas{padding:var(--risin-section-py) var(--risin-padding);background:#0f172a}
+      .mn-vg-inner{max-width:var(--risin-max-width);margin:0 auto;text-align:center}
+      .mn-vg-inner .mn-tag{color:#34d399;display:inline-block;text-align:center}
+      .mn-vg-h2{font-size:clamp(2rem,4vw,3.5rem);font-weight:900;color:#f1f5f9;letter-spacing:-.02em;margin:.5rem 0 1rem;line-height:1.15}
+      .mn-vg-h2 span{background:linear-gradient(135deg,var(--risin-green),var(--risin-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+      .mn-vg-sub{color:#94a3b8;max-width:540px;margin:0 auto 3rem;line-height:1.65;font-size:1.05rem}
+      .mn-vg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-bottom:3rem}
+      .mn-vg-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:1rem;padding:2rem;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+      .mn-vg-card svg{width:32px;height:32px;stroke:#34d399;fill:none;margin-bottom:1rem}
+      .mn-vg-card h3{font-weight:700;color:#f1f5f9;font-size:.95rem;margin-bottom:.5rem}
+      .mn-vg-card p{font-size:.8rem;color:#94a3b8;line-height:1.5}
+      .mn-vg-cta{display:inline-flex;align-items:center;gap:.75rem;padding:1rem 2.5rem;background:var(--risin-green);color:#fff;font-weight:700;font-size:1rem;border-radius:.75rem;text-decoration:none;transition:background .2s}
+      .mn-vg-cta:hover{background:var(--risin-green-dark)}
+      .mn-vg-cta svg{width:20px;height:20px;stroke:currentColor;fill:none}
+      @@media(max-width:1200px){.mn-rev-grid{grid-template-columns:repeat(2,1fr)}}
+      @@media(max-width:1024px){.mn-con-inner{grid-template-columns:1fr;gap:3rem}.mn-vg-grid{grid-template-columns:repeat(2,1fr)}}
+      @@media(max-width:640px){.mn-rev-grid{grid-template-columns:1fr}.mn-vg-grid{grid-template-columns:1fr}}
+      </style>
       <main>
-          <section class="page-hero">
-              <div class="grid-bg"></div>
-              <div class="orb-1"></div>
-              <div class="orb-2"></div>
-              <div class="ph-container">
-                  <h1>Modelo de <span class="gradient">Neg&#243;cio</span></h1>
-                  <p class="ph-subtitle">Estrutura econ&#244;mica projetada para sustentabilidade, escalabilidade e previsibilidade financeira.</p>
-              </div>
-          </section>
+      <section class="page-hero"><div class="grid-bg"></div><div class="orb-1"></div><div class="orb-2"></div>
+      <div class="ph-container"><h1>Modelo de <span class="gradient">Neg&#243;cio</span></h1>
+      <p class="ph-subtitle">Receitas recorrentes, contratos estruturados e 5.000 vagas para S&#243;cios Fundadores que querem participar da constru&#231;&#227;o da maior holding digital do Brasil.</p></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Fontes de Receita</h2>
-                  <div class="cs-body">
-                      <p><strong>Receita Recorrente Empresarial:</strong> Alugu&#233;is de lojas e taxas de condom&#237;nio (Clikashop), comiss&#245;es sobre vendas (~10% abaixo das taxas padr&#227;o de mercado).</p>
-                      <p><strong>Publicidade e Patroc&#237;nio:</strong> Banners em 4 categorias (B&#225;sico, Bronze, Prata, Ouro), com 216 apari&#231;&#245;es a cada 24h em intervalos de 7 segundos.</p>
-                      <p><strong>Servi&#231;os Digitais:</strong> Cooperativas, guias, ag&#234;ncia de marketing, TV e streaming.</p>
-                      <p><strong>Franquias:</strong> Royalties sobre receita bruta e taxa de franquia de R$100.000 por regional.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="mn-revenue"><div class="mn-rev-inner">
+      <div class="mn-sec-hd"><span class="mn-tag">Receita</span><h2 class="mn-h2" style="margin:.5rem 0 0">4 Fontes de Receita</h2><p>Modelo de neg&#243;cio diversificado com fontes de receita complementares e recorrentes.</p></div>
+      <div class="mn-rev-grid">
+      <div class="mn-rev-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+      <h3>Receitas Recorrentes</h3><p>Mensalidades e assinaturas dos S&#243;cios Fundadores, regionais e empresas membros da plataforma.</p><span class="mn-rev-pct">Principal fonte</span></div>
       
-          <section class="content-section alt">
-              <div class="cs-container">
-                  <h2>5.000 Vagas Empresariais</h2>
-                  <div class="cs-body">
-                      <p>O modelo prev&#234; 4.500 vagas de &#8220;Lojista Parceiro Fundador&#8221; nas 2 regionais modelo de lan&#231;amento, com proje&#231;&#227;o de 5.000+ lojas na plataforma completa. Cada regional opera com meta m&#237;nima de 5.000 operadores ativos, crescendo para 8.000-10.000/ano.</p>
-                  </div>
-              </div>
-          </section>
+      <div class="mn-rev-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+      <h3>Comiss&#245;es por Transa&#231;&#227;o</h3><p>Percentual sobre vendas realizadas no marketplace Clikashop e demais portais transacionais.</p><span class="mn-rev-pct">Escal&#225;vel</span></div>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Endere&#231;o Eletr&#244;nico de Lojas</h2>
-                  <div class="cs-body">
-                      <p>As lojas utilizam um sistema de endere&#231;amento composto: REG[001-478].[Setor 1-3].[Atividade 01-10].[Segmento A-nn].[Loja#]. Exemplo: REG050.2.03.A02.XXXX = Regional 050, Setor 2, Atacadista, Alimentos, Loja #XXXX.</p>
-                  </div>
-              </div>
-          </section>
+      <div class="mn-rev-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.402m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46"/></svg>
+      <h3>Patrocinadores e Publicidade</h3><p>Exposi&#231;&#227;o de marcas para a base de membros em todos os portais da plataforma com alto engajamento.</p><span class="mn-rev-pct">Premium</span></div>
+      
+      <div class="mn-rev-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3"/></svg>
+      <h3>Licenciamentos Tecnol&#243;gicos</h3><p>Licenciamento da plataforma para terceiros e receita de API para integra&#231;&#245;es com sistemas externos.</p><span class="mn-rev-pct">Futuro</span></div>
+      </div></div></section>
+      
+      <section class="mn-contracts"><div class="mn-con-inner">
+      <div>
+      <span class="mn-tag">Contratos</span><h2 class="mn-h2">Estrutura Contratual Simplificada</h2>
+      <div class="mn-con-body"><p>A RISIN opera com <strong>contratos padronizados e transparentes</strong>, desenvolvidos para proteger todos os participantes do ecossistema &#8211; S&#243;cios Fundadores, regionais e empresas membros.</p><p>Todos os contratos passam por revis&#227;o jur&#237;dica especializada e est&#227;o em conformidade com o C&#243;digo Civil, Lei das Franquias e regulamenta&#231;&#245;es do setor digital.</p></div>
+      <div class="mn-steps">
+      <div class="mn-step"><div class="mn-step-num">1</div><div><div class="mn-step-title">Adesão ao Ecossistema</div><div class="mn-step-text">Contrato de S&#243;cio Fundador com direitos, deveres e benef&#237;cios exclusivos.</div></div></div>
+      <div class="mn-step"><div class="mn-step-num">2</div><div><div class="mn-step-title">Implanta&#231;&#227;o Regional</div><div class="mn-step-text">Contrato de regional com playbook completo, suporte e exclusividade territorial.</div></div></div>
+      <div class="mn-step"><div class="mn-step-num">3</div><div><div class="mn-step-title">Opera&#231;&#227;o nos Portais</div><div class="mn-step-text">Termos de uso espec&#237;ficos para cada portal com regras claras de comiss&#245;es e SLA.</div></div></div>
+      <div class="mn-step"><div class="mn-step-num">4</div><div><div class="mn-step-title">Renova&#231;&#227;o e Expans&#227;o</div><div class="mn-step-text">Renova&#231;&#245;es anuais com prioridade para S&#243;cios Fundadores em novas regionais abertas.</div></div></div>
+      </div></div>
+      <div class="mn-con-visual">
+      <div class="mn-con-badge"><span class="mn-tag">Destaque</span><h3>Contrato de S&#243;cio Fundador</h3><p>Acesso vitalício a todos os portais, participação nas decisões estratégicas, comissões diferenciadas e suporte prioritário.</p></div>
+      <div class="mn-con-badge"><span class="mn-tag">Regional</span><h3>Contrato de Implanta&#231;&#227;o Regional</h3><p>Exclusividade territorial, playbook completo, treinamento inicial e suporte contínuo da equipe RISIN.</p></div>
+      <div class="mn-con-badge"><span class="mn-tag">Operacional</span><h3>Termos de Uso dos Portais</h3><p>Regras transparentes de operação, comissões fixas e políticas de reembolso claramente definidas.</p></div>
+      </div></div></section>
+      
+      <section class="mn-vagas"><div class="mn-vg-inner">
+      <span class="mn-tag">Oportunidade &#218;nica</span>
+      <h2 class="mn-vg-h2">5.000 Vagas<br><span>S&#243;cios Fundadores</span></h2>
+      <p class="mn-vg-sub">Apenas 5.000 vagas para as primeiras regionais modelo. Seja um dos fundadores da maior plataforma digital corporativa do Brasil.</p>
+      <div class="mn-vg-grid">
+      <div class="mn-vg-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><h3>Acesso Vitalício</h3><p>Todos os portais da plataforma com acesso garantido mesmo ap&#243;s encerramento das vagas fundadoras.</p></div>
+      <div class="mn-vg-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg><h3>Comiss&#245;es Diferenciadas</h3><p>Taxa de comiss&#227;o exclusiva para fundadores em todos os portais transacionais da plataforma.</p></div>
+      <div class="mn-vg-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg><h3>Participa&#231;&#227;o Estrat&#233;gica</h3><p>Voto no Conselho Consultivo e acesso a reuni&#245;es de planejamento estrat&#233;gico trimestral.</p></div>
+      <div class="mn-vg-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg><h3>Prioridade Regional</h3><p>Prefer&#234;ncia na abertura de novas regionais e primeiro acesso a novos portais lan&#231;ados.</p></div>
+      </div>
+      <a href="/contato" class="mn-vg-cta"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>Quero ser S&#243;cio Fundador</a>
+      </div></section>
       </main>
-
   - alias: governanca
     name: "Governanca"
-    path: Governanca.cshtml
+    path: governanca.cshtml
     masterTemplate: "master"
     update: true
     content: |
       @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{ Layout = "master.cshtml"; }
+      <style>
+      .gov-tag{color:var(--risin-green);font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:.75rem;display:block;margin-bottom:.5rem}
+      .gov-h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:800;color:#0f172a;letter-spacing:-.02em;margin:0 0 1.5rem}
+      .gov-panel{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .gov-panel-inner{max-width:var(--risin-max-width);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+      .gov-card{background:#f8fafc;border-radius:1rem;padding:2.5rem}
+      .gov-card.dark{background:#0f172a}
+      .gov-card-body{color:#475569;line-height:1.7;font-size:.925rem;margin-bottom:2rem}
+      .gov-card.dark .gov-h2{color:#f1f5f9}
+      .gov-card.dark .gov-tag{color:#34d399}
+      .gov-card.dark .gov-card-body{color:#94a3b8}
+      .gov-items{display:flex;flex-direction:column;gap:1rem}
+      .gov-item{display:flex;align-items:flex-start;gap:1rem;padding:1.25rem;background:#fff;border-radius:.75rem}
+      .gov-card.dark .gov-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+      .gov-item-icon{width:40px;height:40px;background:rgba(5,150,105,.1);border-radius:.5rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+      .gov-card.dark .gov-item-icon{background:rgba(52,211,153,.1)}
+      .gov-item-icon svg{width:20px;height:20px;stroke:var(--risin-green);fill:none}
+      .gov-card.dark .gov-item-icon svg{stroke:#34d399}
+      .gov-item-title{font-weight:700;color:#0f172a;font-size:.95rem;margin-bottom:.2rem}
+      .gov-card.dark .gov-item-title{color:#f1f5f9}
+      .gov-item-text{font-size:.85rem;color:#64748b;line-height:1.5}
+      .gov-card.dark .gov-item-text{color:#94a3b8}
+      .gov-docs{padding:var(--risin-section-py) var(--risin-padding);background:#f8fafc}
+      .gov-docs-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .gov-docs-hd{text-align:center;margin-bottom:3rem}
+      .gov-docs-hd h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;color:#0f172a;margin:.5rem 0 1rem}
+      .gov-docs-hd p{color:#64748b;max-width:480px;margin:0 auto;line-height:1.6}
+      .gov-docs-bar{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+      .gov-doc-btn{display:flex;align-items:center;gap:.75rem;padding:1rem 1.5rem;border-radius:.75rem;text-decoration:none;font-size:.9rem;font-weight:600;transition:all .2s}
+      .gov-doc-btn.primary{background:var(--risin-green);color:#fff}
+      .gov-doc-btn.primary:hover{background:var(--risin-green-dark)}
+      .gov-doc-btn.outline{background:#fff;color:#0f172a;border:2px solid #e2e8f0}
+      .gov-doc-btn.outline:hover{border-color:var(--risin-green);color:var(--risin-green)}
+      .gov-doc-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;flex-shrink:0}
+      .gov-compliance{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .gov-compliance-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .gov-comp-hd{text-align:center;margin-bottom:3rem}
+      .gov-comp-hd h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;color:#0f172a;margin:.5rem 0}
+      .gov-comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+      .gov-comp-card{background:#f8fafc;border-radius:1rem;padding:2rem;border-top:3px solid var(--risin-green)}
+      .gov-comp-card svg{width:36px;height:36px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .gov-comp-card h3{font-size:1.05rem;font-weight:700;color:#0f172a;margin-bottom:.75rem}
+      .gov-comp-card p{font-size:.875rem;color:#64748b;line-height:1.6}
+      @@media(max-width:1024px){.gov-panel-inner{grid-template-columns:1fr;gap:2rem}.gov-comp-grid{grid-template-columns:1fr}}
+      @@media(max-width:640px){.gov-docs-bar{flex-direction:column;align-items:stretch}.gov-doc-btn{justify-content:center}}
+      </style>
       <main>
-          <section class="page-hero">
-              <div class="grid-bg"></div>
-              <div class="orb-1"></div>
-              <div class="orb-2"></div>
-              <div class="ph-container">
-                  <h1>Estrutura de <span class="gradient">Governan&#231;a</span></h1>
-                  <p class="ph-subtitle">Governan&#231;a corporativa implementada desde o dia zero, garantindo transpar&#234;ncia e crescimento sustent&#225;vel.</p>
-              </div>
-          </section>
+      <section class="page-hero"><div class="grid-bg"></div><div class="orb-1"></div><div class="orb-2"></div>
+      <div class="ph-container"><h1><span class="gradient">Governan&#231;a</span> Corporativa</h1>
+      <p class="ph-subtitle">Estrutura de governan&#231;a transparente, compliance regulat&#243;rio e documenta&#231;&#227;o institucional da plataforma RISIN.</p></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Lideran&#231;a Executiva</h2>
-                  <div class="cs-body">
-                      <p>A estrutura executiva da RISIN compreende: Presid&#234;ncia Executiva (Fundador, 64%), CTO &#8211; Diretor Geral de TI (15%), CFO/CAO &#8211; Diretor Admin/Financeiro (8%), CMO &#8211; Diretor S&#234;nior SEO/Marketing (8%), e CSO &#8211; Diretor Comercial e Franquias (5%).</p>
-                  </div>
-              </div>
-          </section>
+      <section class="gov-panel"><div class="gov-panel-inner">
+      <div class="gov-card">
+      <span class="gov-tag">Princ&#237;pios</span><h2 class="gov-h2">Transpar&#234;ncia e Responsabilidade</h2>
+      <p class="gov-card-body">A RISIN opera com governan&#231;a estruturada garantindo direitos dos membros, transpar&#234;ncia financeira e participa&#231;&#227;o ativa na constru&#231;&#227;o da plataforma.</p>
+      <div class="gov-items">
+      <div class="gov-item"><div class="gov-item-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg></div>
+      <div><div class="gov-item-title">Direito dos Membros</div><div class="gov-item-text">Todos os S&#243;cios Fundadores possuem acesso a informa&#231;&#245;es financeiras e estrat&#233;gicas da plataforma.</div></div></div>
+      <div class="gov-item"><div class="gov-item-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg></div>
+      <div><div class="gov-item-title">Transpar&#234;ncia Financeira</div><div class="gov-item-text">Relatórios peri&#243;dicos de receita, despesas e projetos disponíveis para todos os membros ativos.</div></div></div>
+      <div class="gov-item"><div class="gov-item-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg></div>
+      <div><div class="gov-item-title">Governan&#231;a Participativa</div><div class="gov-item-text">Conselho Consultivo com representa&#231;&#227;o de S&#243;cios Fundadores nas decis&#245;es estrat&#233;gicas.</div></div></div>
+      </div></div>
+      <div class="gov-card dark">
+      <span class="gov-tag">Compliance</span><h2 class="gov-h2">Conformidade Regulat&#243;ria</h2>
+      <p class="gov-card-body">Opera&#231;&#227;o em total conformidade com a legisla&#231;&#227;o brasileira, incluindo LGPD, direito empresarial e auditoria independente.</p>
+      <div class="gov-items">
+      <div class="gov-item"><div class="gov-item-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></div>
+      <div><div class="gov-item-title">LGPD &#8211; Lei Geral de Prote&#231;&#227;o de Dados</div><div class="gov-item-text">Pol&#237;ticas de privacidade e prote&#231;&#227;o de dados pessoais em conformidade com a Lei n&#186; 13.709/2018.</div></div></div>
+      <div class="gov-item"><div class="gov-item-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"/></svg></div>
+      <div><div class="gov-item-title">Direito Empresarial</div><div class="gov-item-text">Estrutura jur&#237;dica robusta com contratos padronizados e assessoria jur&#237;dica especializada em direito digital.</div></div></div>
+      <div class="gov-item"><div class="gov-item-icon"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg></div>
+      <div><div class="gov-item-title">Auditoria Independente</div><div class="gov-item-text">Auditoria peri&#243;dica por empresa externa garantindo integridade contábil e operacional da plataforma.</div></div></div>
+      </div></div>
+      </div></section>
       
-          <section class="content-section alt">
-              <div class="cs-container">
-                  <h2>Conselho Consultivo</h2>
-                  <div class="cs-body">
-                      <p>Composto por 7 especialistas de diferentes &#225;reas, com contratos fixos de 2 anos conforme Regulamento Interno. Compensa&#231;&#227;o de 0,5% a 1,5% da receita l&#237;quida, compartilhada entre os 7 membros.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="gov-compliance"><div class="gov-compliance-inner">
+      <div class="gov-comp-hd"><span class="gov-tag" style="display:inline-block;text-align:center">Estrutura</span><h2>Pilares da Governan&#231;a</h2></div>
+      <div class="gov-comp-grid">
+      <div class="gov-comp-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+      <h3>Conselho Consultivo</h3><p>&#211;rg&#227;o deliberativo com S&#243;cios Fundadores representando todas as regionais ativas da plataforma.</p></div>
+      <div class="gov-comp-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18"/></svg>
+      <h3>Diretoria Executiva</h3><p>5 diretorias especializadas (TI, Financeiro, Marketing, Comercial e Presid&#234;ncia) com responsabilidades bem definidas.</p></div>
+      <div class="gov-comp-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
+      <h3>Relat&#243;rios Peri&#243;dicos</h3><p>Publica&#231;&#227;o trimestral de resultados operacionais e financeiros acess&#237;veis a todos os membros da plataforma.</p></div>
+      </div></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Pol&#237;ticas de Compliance</h2>
-                  <div class="cs-body">
-                      <p>Pol&#237;ticas rig​orosas de Governan&#231;a, Contrata&#231;&#227;o, Seguran&#231;a da Informa&#231;&#227;o, Pol&#237;tica Financeira e C&#243;digo de Conduta. Acesso em tempo real a relat&#243;rios de d&#233;bito/cr&#233;dito/despesas/receitas via ERP, auditorias regulares e compromisso com transpar&#234;ncia total.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="gov-docs"><div class="gov-docs-inner">
+      <div class="gov-docs-hd"><span class="gov-tag" style="display:inline-block;text-align:center">Downloads</span><h2>Documentos Institucionais</h2><p>Acesse os documentos oficiais que regem a estrutura jur&#237;dica, &#233;tica e de governan&#231;a da plataforma RISIN.</p></div>
+      <div class="gov-docs-bar">
+      <a href="#" class="gov-doc-btn primary"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>Estatuto Social</a>
+      <a href="#" class="gov-doc-btn outline"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>C&#243;digo de &#201;tica</a>
+      <a href="#" class="gov-doc-btn outline"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>Relat&#243;rio de Governan&#231;a</a>
+      <a href="#" class="gov-doc-btn outline"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>Pol&#237;tica de Privacidade</a>
+      </div></div></section>
       </main>
-
   - alias: parceiros
     name: "Parceiros"
-    path: Parceiros.cshtml
+    path: parceiros.cshtml
     masterTemplate: "master"
     update: true
     content: |
       @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{ Layout = "master.cshtml"; }
+      <style>
+      .prc-tag{color:var(--risin-green);font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:.75rem;display:block;margin-bottom:.5rem}
+      .prc-h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:800;color:#0f172a;letter-spacing:-.02em;margin:0 0 1.5rem}
+      .prc-types{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .prc-types-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .prc-sec-hd{text-align:center;margin-bottom:3.5rem}
+      .prc-sec-hd p{color:#64748b;max-width:540px;margin:.75rem auto 0;line-height:1.6}
+      .prc-bento{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto;gap:1.5rem}
+      .prc-card{background:#f8fafc;border-radius:1.25rem;padding:2rem;transition:box-shadow .2s}
+      .prc-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.1)}
+      .prc-card.wide{grid-column:span 2}
+      .prc-card.green{background:var(--risin-green)}
+      .prc-card svg{width:36px;height:36px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .prc-card.green svg{stroke:#fff}
+      .prc-card h3{font-weight:800;font-size:1.15rem;color:#0f172a;margin-bottom:.75rem}
+      .prc-card.green h3{color:#fff}
+      .prc-card p{font-size:.875rem;color:#64748b;line-height:1.6}
+      .prc-card.green p{color:rgba(255,255,255,.85)}
+      .prc-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+      .prc-badge{padding:.25rem .625rem;background:rgba(5,150,105,.1);color:var(--risin-green);font-size:.7rem;font-weight:700;border-radius:9999px}
+      .prc-card.green .prc-badge{background:rgba(255,255,255,.2);color:#fff}
+      .prc-benefits{display:flex;flex-direction:column;gap:.4rem;margin-top:1rem}
+      .prc-benefit{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:#475569}
+      .prc-card.green .prc-benefit{color:rgba(255,255,255,.85)}
+      .prc-benefit::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--risin-green);flex-shrink:0}
+      .prc-card.green .prc-benefit::before{background:#fff}
+      .prc-img-row{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+      .prc-img-chip{padding:.375rem .875rem;background:rgba(255,255,255,.2);border-radius:.5rem;font-size:.75rem;color:#fff;font-weight:600}
+      .prc-cta{padding:var(--risin-section-py) var(--risin-padding);background:#f8fafc}
+      .prc-cta-inner{max-width:640px;margin:0 auto;text-align:center}
+      .prc-cta-card{background:#fff;border-radius:1.5rem;padding:3rem;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+      .prc-cta-card svg{width:48px;height:48px;stroke:var(--risin-green);fill:none;margin-bottom:1.5rem}
+      .prc-cta-card h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;color:#0f172a;margin-bottom:1rem}
+      .prc-cta-card p{color:#64748b;line-height:1.65;margin-bottom:2rem}
+      .prc-cta-card a{display:inline-flex;align-items:center;gap:.625rem;padding:.875rem 2rem;background:var(--risin-green);color:#fff;font-weight:700;border-radius:.75rem;text-decoration:none;transition:background .2s}
+      .prc-cta-card a:hover{background:var(--risin-green-dark)}
+      .prc-cta-card a svg{width:18px;height:18px;stroke:currentColor;fill:none;margin:0}
+      @@media(max-width:1024px){.prc-bento{grid-template-columns:1fr}.prc-card.wide{grid-column:span 1}}
+      </style>
       <main>
-          <section class="page-hero">
-              <div class="grid-bg"></div>
-              <div class="orb-1"></div>
-              <div class="orb-2"></div>
-              <div class="ph-container">
-                  <h1>Programa <span class="gradient">Parceiros RISIN</span></h1>
-                  <p class="ph-subtitle">Oportunidades estruturadas para empresas que compartilham nossa vis&#227;o de crescimento sustent&#225;vel.</p>
-              </div>
-          </section>
+      <section class="page-hero"><div class="grid-bg"></div><div class="orb-1"></div><div class="orb-2"></div>
+      <div class="ph-container"><h1><span class="gradient">Parceiros</span> Estrat&#233;gicos</h1>
+      <p class="ph-subtitle">Junte-se ao ecossistema RISIN como parceiro tecnol&#243;gico, comercial ou institucional e expanda seu alcance junto a milhares de empresas.</p></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>5 Categorias de Parceiros</h2>
-                  <div class="cs-body">
-                      <p><strong>1. Jur&#237;dico:</strong> Escrit&#243;rios de advocacia e consultores jur&#237;dicos.</p>
-                      <p><strong>2. Tecnologia &amp; Integra&#231;&#227;o:</strong> Integradores de sistemas e parceiros de tecnologia.</p>
-                      <p><strong>3. Desenvolvimento de Lojas Virtuais:</strong> Desenvolvedores e plataformas de e-commerce.</p>
-                      <p><strong>4. Marketing &amp; Publicidade:</strong> Ag&#234;ncias e profissionais de marketing digital.</p>
-                      <p><strong>5. Parcerias Corporativas:</strong> Grandes empresas e parceiros B2B.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="prc-types"><div class="prc-types-inner">
+      <div class="prc-sec-hd"><span class="prc-tag">Categorias</span><h2 class="prc-h2" style="margin:.5rem 0 0">5 Categorias de Parceiros</h2><p>Cada categoria de parceria oferece benef&#237;cios específicos e acesso diferenciado &#224; base de membros da plataforma.</p></div>
+      <div class="prc-bento">
       
-          <section class="content-section alt">
-              <div class="cs-container">
-                  <h2>Benef&#237;cios para Parceiros</h2>
-                  <div class="cs-body">
-                      <p>Status de parceiro fundador em um grupo digital estabelecido, compartilhamento de receita com clareza contratual, acesso a 5.000+ lojas e alcance do ecossistema, e oportunidade de crescimento de longo prazo na expans&#227;o para 478 regi&#245;es.</p>
-                  </div>
-              </div>
-          </section>
+      <div class="prc-card wide"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0H3"/></svg>
+      <h3>Parceiros de Tecnologia</h3>
+      <p>Empresas de software, SaaS, infraestrutura e solu&#231;&#245;es tecnol&#243;gicas que se integram &#224; plataforma RISIN para oferecer valor adicional aos membros.</p>
+      <div class="prc-tags">
+      <span class="prc-badge">SaaS</span><span class="prc-badge">APIs</span><span class="prc-badge">Infraestrutura</span><span class="prc-badge">IA e Automa&#231;&#227;o</span><span class="prc-badge">Seguran&#231;a Digital</span>
+      </div>
+      <div class="prc-benefits">
+      <span class="prc-benefit">Integra&#231;&#227;o nativa via API RISIN</span>
+      <span class="prc-benefit">Listing preferencial no marketplace tecnol&#243;gico</span>
+      <span class="prc-benefit">Co-marketing para base de membros</span>
+      </div></div>
+      
+      <div class="prc-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+      <h3>Lojas Virtuais</h3>
+      <p>Lojistas e e-commerces que querem vender para a base de membros RISIN com condi&#231;&#245;es comerciais diferenciadas.</p>
+      <div class="prc-benefits">
+      <span class="prc-benefit">Vitrine no Clikashop</span>
+      <span class="prc-benefit">Log&#237;stica integrada</span>
+      <span class="prc-benefit">Pagamento facilitado</span>
+      </div></div>
+      
+      <div class="prc-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.402m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46"/></svg>
+      <h3>Ag&#234;ncias de Marketing</h3>
+      <p>Ag&#234;ncias de performance, conte&#250;do e branding que prestam servi&#231;os para membros da plataforma.</p>
+      <div class="prc-benefits">
+      <span class="prc-benefit">Indica&#231;&#245;es certificadas</span>
+      <span class="prc-benefit">Perfil verificado</span>
+      <span class="prc-benefit">Acesso a leads</span>
+      </div></div>
+      
+      <div class="prc-card green"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+      <h3>Corporativo &amp; Financeiro</h3>
+      <p>Institui&#231;&#245;es financeiras, consultorias e empresas de solu&#231;&#245;es corporativas para o segmento B2B.</p>
+      <div class="prc-tags">
+      <span class="prc-badge">Fintechs</span><span class="prc-badge">Consultorias</span><span class="prc-badge">Seguros</span>
+      </div>
+      <div class="prc-benefits">
+      <span class="prc-benefit">Canal exclusivo B2B</span>
+      <span class="prc-benefit">Integra&#231;&#227;o com G-Empresas</span>
+      </div></div>
+      
+      <div class="prc-card wide"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18"/></svg>
+      <h3>Parceiros Institucionais</h3>
+      <p>Associa&#231;&#245;es comerciais, sindicatos, entidades de classe e &#243;rg&#227;os p&#250;blicos que queiram integrar seus associados ao ecossistema RISIN, ampliando servi&#231;os e gerando valor para toda a cadeia.</p>
+      <div class="prc-img-row">
+      <span class="prc-img-chip" style="background:rgba(5,150,105,.12);color:var(--risin-green)">Associa&#231;&#245;es</span>
+      <span class="prc-img-chip" style="background:rgba(5,150,105,.12);color:var(--risin-green)">Sindicatos</span>
+      <span class="prc-img-chip" style="background:rgba(5,150,105,.12);color:var(--risin-green)">Entidades de Classe</span>
+      <span class="prc-img-chip" style="background:rgba(5,150,105,.12);color:var(--risin-green)">&#211;rg&#227;os P&#250;blicos</span>
+      <span class="prc-img-chip" style="background:rgba(5,150,105,.12);color:var(--risin-green)">Universidades</span>
+      </div></div>
+      </div></div></section>
+      
+      <section class="prc-cta"><div class="prc-cta-inner">
+      <div class="prc-cta-card">
+      <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/></svg>
+      <h2>Seja um Parceiro RISIN</h2>
+      <p>Expanda seu neg&#243;cio junto a uma plataforma em crescimento com milhares de empresas ativas em todo o Brasil. Preencha nosso formul&#225;rio de interesse e entraremos em contato.</p>
+      <a href="mailto:parceiros@risin.com.br"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>parceiros&#64;risin.com.br</a>
+      </div></div></section>
       </main>
-
   - alias: regionais
     name: "Regionais"
-    path: Regionais.cshtml
+    path: regionais.cshtml
     masterTemplate: "master"
     update: true
     content: |
       @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{ Layout = "master.cshtml"; }
+      <style>
+      .reg-tag{color:var(--risin-green);font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:.75rem;display:block;margin-bottom:.5rem}
+      .reg-h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:800;color:#0f172a;letter-spacing:-.02em;margin:0 0 1.5rem}
+      .reg-models{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .reg-models-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .reg-sec-hd{text-align:center;margin-bottom:3.5rem}
+      .reg-sec-hd p{color:#64748b;max-width:540px;margin:.75rem auto 0;line-height:1.6}
+      .reg-cards{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+      .reg-card{background:#f8fafc;border-radius:1.25rem;padding:2.5rem;border:2px solid transparent;transition:border-color .2s,box-shadow .2s}
+      .reg-card:hover{border-color:var(--risin-green);box-shadow:0 12px 40px rgba(5,150,105,.12)}
+      .reg-card-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.375rem .875rem;background:rgba(5,150,105,.1);border-radius:9999px;margin-bottom:1.5rem}
+      .reg-card-badge span{font-size:.75rem;font-weight:700;color:var(--risin-green)}
+      .reg-card-badge svg{width:14px;height:14px;stroke:var(--risin-green);fill:none}
+      .reg-card h3{font-size:1.5rem;font-weight:800;color:#0f172a;margin-bottom:.5rem}
+      .reg-card-city{font-size:.925rem;color:#64748b;margin-bottom:1.5rem;display:flex;align-items:center;gap:.375rem}
+      .reg-card-city svg{width:16px;height:16px;stroke:#94a3b8;fill:none}
+      .reg-card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;padding:1.25rem;background:#fff;border-radius:.75rem}
+      .reg-stat-val{font-size:1.4rem;font-weight:900;color:var(--risin-green);line-height:1}
+      .reg-stat-lbl{font-size:.7rem;color:#64748b;margin-top:.2rem}
+      .reg-card-features{display:flex;flex-direction:column;gap:.5rem}
+      .reg-feat{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:#475569}
+      .reg-feat svg{width:16px;height:16px;stroke:var(--risin-green);fill:none;flex-shrink:0}
+      .reg-deploy{padding:var(--risin-section-py) var(--risin-padding);background:#f8fafc}
+      .reg-dep-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .reg-bento{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto;gap:1.5rem}
+      .reg-bento-card{background:#fff;border-radius:1rem;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+      .reg-bento-card.wide{grid-column:span 2}
+      .reg-bento-card.dark{background:#0f172a}
+      .reg-bento-card svg{width:36px;height:36px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .reg-bento-card.dark svg{stroke:#34d399}
+      .reg-bento-card h3{font-weight:700;font-size:1.05rem;color:#0f172a;margin-bottom:.75rem}
+      .reg-bento-card.dark h3{color:#f1f5f9}
+      .reg-bento-card p{font-size:.875rem;color:#64748b;line-height:1.6}
+      .reg-bento-card.dark p{color:#94a3b8}
+      .reg-bento-list{display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem}
+      .reg-bento-item{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:#475569}
+      .reg-bento-card.dark .reg-bento-item{color:#94a3b8}
+      .reg-bento-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--risin-green);flex-shrink:0}
+      .reg-bento-card.dark .reg-bento-item::before{background:#34d399}
+      .reg-cta{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .reg-cta-inner{max-width:800px;margin:0 auto;text-align:center;position:relative}
+      .reg-cta-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;border-radius:50%;border:1px dashed rgba(5,150,105,.25);pointer-events:none}
+      .reg-cta-ring2{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:280px;height:280px;border-radius:50%;border:1px dashed rgba(5,150,105,.15);pointer-events:none}
+      .reg-cta-content{position:relative;z-index:1}
+      .reg-cta-content h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:800;color:#0f172a;margin-bottom:1rem}
+      .reg-cta-content p{color:#64748b;line-height:1.65;margin-bottom:2rem;font-size:1.05rem}
+      .reg-cta-btn{display:inline-flex;align-items:center;gap:.75rem;padding:1rem 2.5rem;background:var(--risin-green);color:#fff;font-weight:700;border-radius:.75rem;text-decoration:none;transition:background .2s}
+      .reg-cta-btn:hover{background:var(--risin-green-dark)}
+      .reg-cta-btn svg{width:20px;height:20px;stroke:currentColor;fill:none}
+      @@media(max-width:1024px){.reg-cards{grid-template-columns:1fr}.reg-bento{grid-template-columns:1fr}.reg-bento-card.wide{grid-column:span 1}}
+      </style>
       <main>
-          <section class="page-hero">
-              <div class="grid-bg"></div>
-              <div class="orb-1"></div>
-              <div class="orb-2"></div>
-              <div class="ph-container">
-                  <h1>Regionais <span class="gradient">Modelo</span></h1>
-                  <p class="ph-subtitle">Centros de valida&#231;&#227;o estrat&#233;gica para garantir a replicabilidade do modelo antes da expans&#227;o nacional.</p>
-              </div>
-          </section>
+      <section class="page-hero"><div class="grid-bg"></div><div class="orb-1"></div><div class="orb-2"></div>
+      <div class="ph-container"><h1><span class="gradient">Regionais</span> Modelo</h1>
+      <p class="ph-subtitle">As primeiras regionais da RISIN est&#227;o em fase de implanta&#231;&#227;o. Um modelo replicável e validado para os 27 estados do Brasil.</p></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Regionais de Lan&#231;amento</h2>
-                  <div class="cs-body">
-                      <p><strong>Sorocaba (REG070):</strong> S&#227;o Paulo, popula&#231;&#227;o 723.582. Designada como futura sede da RISIN Holding.</p>
-                      <p><strong>Zona Sul-RJ (REG024):</strong> Rio de Janeiro, popula&#231;&#227;o 639.522.</p>
-                      <p>Prop&#243;sito: validar opera&#231;&#245;es, processos, padr&#245;es de servi&#231;o e modelo de franquia antes da expans&#227;o nacional.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="reg-models"><div class="reg-models-inner">
+      <div class="reg-sec-hd"><span class="reg-tag">Implanta&#231;&#227;o</span><h2 class="reg-h2" style="margin:.5rem 0 0">Regionais Pioneiras</h2><p>Conhe&#231;a as 2 primeiras regionais da plataforma RISIN, que ser&#227;o o modelo de refer&#234;ncia para a expans&#227;o nacional.</p></div>
+      <div class="reg-cards">
+      <div class="reg-card">
+      <div class="reg-card-badge"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg><span>Regional Fundadora #1</span></div>
+      <h3>RISIN Sorocaba</h3>
+      <p class="reg-card-city"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Sorocaba &#8211; S&#227;o Paulo</p>
+      <div class="reg-card-stats">
+      <div><div class="reg-stat-val">2.500</div><div class="reg-stat-lbl">Vagas</div></div>
+      <div><div class="reg-stat-val">8</div><div class="reg-stat-lbl">Portais</div></div>
+      <div><div class="reg-stat-val">2025</div><div class="reg-stat-lbl">Lan&#231;amento</div></div>
+      </div>
+      <div class="reg-card-features">
+      <div class="reg-feat"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Marketplace Clikashop ativo</div>
+      <div class="reg-feat"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Cooper-Translog com parceiros locais</div>
+      <div class="reg-feat"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>G-Empresas + Classificados</div>
+      <div class="reg-feat"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Suporte presencial na regi&#227;o</div>
+      </div></div>
       
-          <section class="content-section alt">
-              <div class="cs-container">
-                  <h2>Modelo de Franquia</h2>
-                  <div class="cs-body">
-                      <p>Investimento: R$100.000 por regional. Equipe: 5 gerentes + auxiliares para 3 setores de condom&#237;nio. Metas: m&#237;nimo 5.000 operadores ativos, crescendo para 8.000-10.000/ano.</p>
-                  </div>
-              </div>
-          </section>
+      <div class="reg-card">
+      <div class="reg-card-badge"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg><span>Regional Fundadora #2</span></div>
+      <h3>RISIN Zona Sul RJ</h3>
+      <p class="reg-card-city"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Zona Sul &#8211; Rio de Janeiro</p>
+      <div class="reg-card-stats">
+      <div><div class="reg-stat-val">2.500</div><div class="reg-stat-lbl">Vagas</div></div>
+      <div><div class="reg-stat-val">8</div><div class="reg-stat-lbl">Portais</div></div>
+      <div><div class="reg-stat-val">2025</div><div class="reg-stat-lbl">Lan&#231;amento</div></div>
+      </div>
+      <div class="reg-card-features">
+      <div class="reg-feat"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Todos os 8 portais integrados</div>
+      <div class="reg-feat"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>TV-RISIN com estúdio local</div>
+      <div class="reg-feat"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Centertur com roteiros RJ</div>
+      <div class="reg-feat"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Ag&#234;ncia RISIN local ativa</div>
+      </div></div>
+      </div></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Estrat&#233;gia de Expans&#227;o</h2>
-                  <div class="cs-body">
-                      <p>478 escrit&#243;rios regionais planejados em todo o Brasil (S&#227;o Paulo: 99 regionais). Agrupados por cidade e bairro com popula&#231;&#245;es de 800K-2,5M cada. Expans&#227;o internacional: cada unidade-pa&#237;s opera como Franqueador (n&#227;o franqueado) por website.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="reg-deploy"><div class="reg-dep-inner">
+      <div class="reg-sec-hd"><span class="reg-tag">Modelo</span><h2 class="reg-h2" style="margin:.5rem 0 0">Pacote de Implanta&#231;&#227;o</h2><p>Tudo que uma regional precisa para operar com sucesso desde o primeiro dia.</p></div>
+      <div class="reg-bento">
+      <div class="reg-bento-card wide"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+      <h3>Pacote Completo da Plataforma</h3>
+      <p>Acesso a todos os 8 portais da plataforma RISIN pr&#233;-configurados para a regional, incluindo branding local, base de dados inicial e integrações com parceiros regionais.</p>
+      <div class="reg-bento-list">
+      <span class="reg-bento-item">Configura&#231;&#227;o completa em at&#233; 30 dias</span>
+      <span class="reg-bento-item">Migra&#231;&#227;o de dados de plataformas anteriores</span>
+      <span class="reg-bento-item">Onboarding dos primeiros 500 membros</span>
+      </div></div>
+      <div class="reg-bento-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+      <h3>Treinamento Completo</h3>
+      <p>Programa de capacita&#231;&#227;o para a equipe regional com certificação oficial RISIN.</p>
+      <div class="reg-bento-list">
+      <span class="reg-bento-item">40h de treinamento online</span>
+      <span class="reg-bento-item">Workshop presencial de 2 dias</span>
+      <span class="reg-bento-item">Certificado RISIN Specialist</span>
+      </div></div>
+      <div class="reg-bento-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <h3>Suporte 24/7</h3>
+      <p>Canal dedicado de suporte t&#233;cnico e operacional para todas as regionais ativas.</p>
+      <div class="reg-bento-list">
+      <span class="reg-bento-item">Ticket com SLA de 4 horas</span>
+      <span class="reg-bento-item">Gerente de conta exclusivo</span>
+      <span class="reg-bento-item">Comunidade de regionais</span>
+      </div></div>
+      <div class="reg-bento-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+      <h3>Playbook Operacional</h3>
+      <p>Manual completo com processos, scripts e melhores práticas para operar cada portal com efici&#234;ncia.</p>
+      <div class="reg-bento-list">
+      <span class="reg-bento-item">+300 p&#225;ginas de documenta&#231;&#227;o</span>
+      <span class="reg-bento-item">Templates e materiais de venda</span>
+      </div></div>
+      <div class="reg-bento-card dark"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+      <h3>Plug-and-Play</h3>
+      <p>A plataforma RISIN &#233; entregue pronta para operar. Sem necessidade de desenvolvimento tecnol&#243;gico ou infraestrutura pr&#243;pria.</p>
+      <div class="reg-bento-list">
+      <span class="reg-bento-item">Infra cloud inclusa</span>
+      <span class="reg-bento-item">Atualizações autom&#225;ticas</span>
+      <span class="reg-bento-item">Backups di&#225;rios</span>
+      </div></div>
+      </div></div></section>
+      
+      <section class="reg-cta"><div class="reg-cta-inner">
+      <div class="reg-cta-ring"></div><div class="reg-cta-ring2"></div>
+      <div class="reg-cta-content">
+      <span class="reg-tag" style="display:inline-block;text-align:center">Expansão Nacional</span>
+      <h2>Sua Regional Pode ser a Pr&#243;xima</h2>
+      <p>O modelo est&#225; validado. As primeiras regionais est&#227;o em opera&#231;&#227;o. Saiba como implantar a RISIN na sua cidade.</p>
+      <a href="/contato" class="reg-cta-btn"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c-.317-.159-.69-.159-1.006 0l4.994 2.497z"/></svg>Quero uma Regional</a>
+      </div></div></section>
       </main>
-
   - alias: relacoesInstitucionais
     name: "Relacoes Institucionais"
-    path: RelacoesInstitucionais.cshtml
+    path: relacoesInstitucionais.cshtml
     masterTemplate: "master"
     update: true
     content: |
       @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
       @{ Layout = "master.cshtml"; }
+      <style>
+      .rel-tag{color:var(--risin-green);font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:.75rem;display:block;margin-bottom:.5rem}
+      .rel-h2{font-size:clamp(1.75rem,3vw,2.5rem);font-weight:800;color:#0f172a;letter-spacing:-.02em;margin:0 0 1.5rem}
+      .rel-audiences{padding:var(--risin-section-py) var(--risin-padding);background:#fff}
+      .rel-aud-inner{max-width:var(--risin-max-width);margin:0 auto}
+      .rel-sec-hd{text-align:center;margin-bottom:3.5rem}
+      .rel-sec-hd p{color:#64748b;max-width:540px;margin:.75rem auto 0;line-height:1.6}
+      .rel-bento{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+      .rel-card{background:#f8fafc;border-radius:1.25rem;padding:2.5rem;border-top:3px solid transparent;transition:border-color .2s,box-shadow .2s}
+      .rel-card:hover{border-top-color:var(--risin-green);box-shadow:0 8px 32px rgba(5,150,105,.1)}
+      .rel-card.dark{background:#0f172a;border-top:none}
+      .rel-card svg{width:40px;height:40px;stroke:var(--risin-green);fill:none;margin-bottom:1.25rem}
+      .rel-card.dark svg{stroke:#34d399}
+      .rel-card h3{font-weight:800;font-size:1.2rem;color:#0f172a;margin-bottom:.75rem}
+      .rel-card.dark h3{color:#f1f5f9}
+      .rel-card p{font-size:.875rem;color:#64748b;line-height:1.6;margin-bottom:1.25rem}
+      .rel-card.dark p{color:#94a3b8}
+      .rel-mini-tags{display:flex;flex-wrap:wrap;gap:.4rem}
+      .rel-mini-tag{padding:.2rem .5rem;background:rgba(5,150,105,.1);color:var(--risin-green);font-size:.7rem;font-weight:700;border-radius:9999px}
+      .rel-card.dark .rel-mini-tag{background:rgba(52,211,153,.15);color:#34d399}
+      .rel-benefits{display:flex;flex-direction:column;gap:.5rem}
+      .rel-benefit{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:#475569}
+      .rel-card.dark .rel-benefit{color:#94a3b8}
+      .rel-benefit::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--risin-green);flex-shrink:0}
+      .rel-card.dark .rel-benefit::before{background:#34d399}
+      .rel-cta{padding:var(--risin-section-py) var(--risin-padding);background:#f8fafc}
+      .rel-cta-inner{max-width:var(--risin-max-width);margin:0 auto;text-align:center}
+      .rel-cta-inner h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;color:#0f172a;margin:.5rem 0 1rem}
+      .rel-cta-inner > p{color:#64748b;max-width:480px;margin:0 auto 3rem;line-height:1.65}
+      .rel-contacts{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:860px;margin:0 auto}
+      .rel-contact-card{background:#fff;border-radius:1rem;padding:2rem;text-align:left;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+      .rel-contact-card svg{width:32px;height:32px;stroke:var(--risin-green);fill:none;margin-bottom:1rem}
+      .rel-contact-card h4{font-weight:700;font-size:.95rem;color:#0f172a;margin-bottom:.5rem}
+      .rel-contact-card p{font-size:.8rem;color:#64748b;line-height:1.5;margin-bottom:.75rem}
+      .rel-contact-card a{color:var(--risin-green);font-weight:600;font-size:.85rem;text-decoration:none}
+      .rel-contact-card a:hover{text-decoration:underline}
+      @@media(max-width:1024px){.rel-bento{grid-template-columns:1fr}.rel-contacts{grid-template-columns:1fr}}
+      </style>
       <main>
-          <section class="page-hero">
-              <div class="grid-bg"></div>
-              <div class="orb-1"></div>
-              <div class="orb-2"></div>
-              <div class="ph-container">
-                  <h1>Rela&#231;&#245;es <span class="gradient">Institucionais</span></h1>
-                  <p class="ph-subtitle">Canal dedicado para grandes empresas, escrit&#243;rios de advocacia, investidores e conselheiros.</p>
-              </div>
-          </section>
+      <section class="page-hero"><div class="grid-bg"></div><div class="orb-1"></div><div class="orb-2"></div>
+      <div class="ph-container"><h1>Rela&#231;&#245;es <span class="gradient">Institucionais</span></h1>
+      <p class="ph-subtitle">Canal oficial para grandes empresas, investidores e membros do Conselho Consultivo interessados em parcerias estrat&#233;gicas com a plataforma RISIN.</p></div></section>
       
-          <section class="content-section">
-              <div class="cs-container">
-                  <h2>Para Investidores</h2>
-                  <div class="cs-body">
-                      <p>A RISIN oferece oportunidades de investimento em um modelo de neg&#243;cio validado, com governan&#231;a corporativa desde o dia zero, receita recorrente estruturada e potencial de expans&#227;o para 478 regi&#245;es brasileiras e mercado internacional.</p>
-                  </div>
-              </div>
-          </section>
+      <section class="rel-audiences"><div class="rel-aud-inner">
+      <div class="rel-sec-hd"><span class="rel-tag">P&#250;blico</span><h2 class="rel-h2" style="margin:.5rem 0 0">Para Quem &#233; Este Canal</h2><p>Rela&#231;&#245;es institucionais atende tr&#234;s perfis estrat&#233;gicos com abordagens e benef&#237;cios espec&#237;ficos.</p></div>
+      <div class="rel-bento">
       
-          <section class="content-section alt">
-              <div class="cs-container">
-                  <h2>Para Grandes Empresas</h2>
-                  <div class="cs-body">
-                      <p>Parcerias corporativas estruturadas com acesso a um ecossistema de 5.000+ empresas, integra&#231;&#227;o tecnol&#243;gica e modelo de opera&#231;&#227;o transparente com contratos claros e compromissos institucionais.</p>
-                  </div>
-              </div>
-          </section>
+      <div class="rel-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18"/></svg>
+      <h3>Grandes Empresas</h3>
+      <p>Corpora&#231;&#245;es e grupos empresariais que buscam solu&#231;&#245;es integradas para sua cadeia de fornecedores, distribuidores e parceiros comerciais.</p>
+      <div class="rel-mini-tags" style="margin-bottom:1.25rem">
+      <span class="rel-mini-tag">Varejo</span><span class="rel-mini-tag">Ind&#250;stria</span><span class="rel-mini-tag">Servi&#231;os</span><span class="rel-mini-tag">Log&#237;stica</span>
+      </div>
+      <div class="rel-benefits">
+      <span class="rel-benefit">Integra&#231;&#227;o com cadeia de fornecedores</span>
+      <span class="rel-benefit">Acesso ao marketplace B2B exclusivo</span>
+      <span class="rel-benefit">Suporte dedicado a grandes contas</span>
+      <span class="rel-benefit">Contrato personalizado e SLA premium</span>
+      </div></div>
+      
+      <div class="rel-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg>
+      <h3>Investidores</h3>
+      <p>Fundos de investimento, family offices e investidores-anjo interessados em participar do crescimento da maior plataforma digital corporativa do Brasil.</p>
+      <div class="rel-mini-tags" style="margin-bottom:1.25rem">
+      <span class="rel-mini-tag">VC</span><span class="rel-mini-tag">Family Office</span><span class="rel-mini-tag">Angel</span><span class="rel-mini-tag">Private Equity</span>
+      </div>
+      <div class="rel-benefits">
+      <span class="rel-benefit">Acesso ao investor deck atualizado</span>
+      <span class="rel-benefit">Reuni&#245;es com a diretoria executiva</span>
+      <span class="rel-benefit">Due diligence assistida</span>
+      <span class="rel-benefit">Relat&#243;rios de performance mensais</span>
+      </div></div>
+      
+      <div class="rel-card dark"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+      <h3>Conselho Consultivo</h3>
+      <p>Espa&#231;o exclusivo para S&#243;cios Fundadores e representantes regionais que integram o Conselho Consultivo da plataforma.</p>
+      <div class="rel-mini-tags" style="margin-bottom:1.25rem">
+      <span class="rel-mini-tag">S&#243;cio Fundador</span><span class="rel-mini-tag">Regional</span><span class="rel-mini-tag">Deliberativo</span>
+      </div>
+      <div class="rel-benefits">
+      <span class="rel-benefit">Pauta de vota&#231;&#245;es estrat&#233;gicas</span>
+      <span class="rel-benefit">Acesso a atas e delibera&#231;&#245;es</span>
+      <span class="rel-benefit">Canal direto com a presid&#234;ncia</span>
+      <span class="rel-benefit">Prioridade em novas regionais</span>
+      </div></div>
+      
+      </div></div></section>
+      
+      <section class="rel-cta"><div class="rel-cta-inner">
+      <span class="rel-tag" style="display:inline-block;text-align:center">Contato</span>
+      <h2>Entre em Contato</h2>
+      <p>Nosso time de rela&#231;&#245;es institucionais est&#225; dispon&#237;vel para conversar sobre parcerias estrat&#233;gicas, investimentos e participa&#231;&#227;o no ecossistema.</p>
+      <div class="rel-contacts">
+      <div class="rel-contact-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+      <h4>E-mail Institucional</h4><p>Para propostas formais e documentos de parceria.</p><a href="mailto:institucional@risin.com.br">institucional&#64;risin.com.br</a></div>
+      
+      <div class="rel-contact-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+      <h4>Telefone</h4><p>Atendimento de segunda a sexta, das 9h &#224;s 18h.</p><a href="tel:+551140028922">+55 (11) 4002-8922</a></div>
+      
+      <div class="rel-contact-card"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"/></svg>
+      <h4>Agendar Reuni&#227;o</h4><p>Reuni&#245;es online com a diretoria estrat&#233;gica.</p><a href="/contato">Solicitar agendamento</a></div>
+      </div></div></section>
       </main>
-
   - alias: transparencia
     name: "Transparencia"
     path: Transparencia.cshtml
