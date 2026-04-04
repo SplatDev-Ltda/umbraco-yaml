@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- NuGet package metadata -->
+    <PackageId>SplatDev.Umbraco.Plugins.Schema2Yaml</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Carlos Casalicchio</Authors>
+    <Company>SplatDev</Company>
+    <Copyright>Copyright © 2026 SplatDev</Copyright>
+    <Description>An Umbraco 17 plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file.</Description>
+    <PackageTags>umbraco yaml infrastructure-as-code cms content-management export schema document-types data-types templates media languages dictionary members users umbraco-marketplace</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Provides IWebHostEnvironment, IHttpClientFactory, and other ASP.NET Core abstractions -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Core" Version="17.2.2" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.2.2" />
+    <PackageReference Include="YamlDotNet" Version="15.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- Include README and icon in the NuGet package -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- Include App_Plugins in the NuGet package -->
+  <ItemGroup>
+    <Content Include="App_Plugins\**\*" Pack="true" PackagePath="content\App_Plugins\" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

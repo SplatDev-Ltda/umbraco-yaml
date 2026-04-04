@@ -2,3 +2,9 @@
 /.vs
 /Umbraco.Plugins.Yaml2Schema.Tests/bin
 /Umbraco.Plugins.Yaml2Schema.Tests/obj
+/Umbraco.Plugins.Yaml2Schema/bin
+/Umbraco.Plugins.Yaml2Schema/obj
+/SplatDev.Umbraco.Plugins.Schema2Yaml/bin
+/SplatDev.Umbraco.Plugins.Schema2Yaml/obj
+/SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/bin
+/SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/obj
