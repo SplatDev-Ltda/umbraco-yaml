@@ -292,6 +292,14 @@ documentTypes:
             name: Location
             dataType: textString
             description: "Ex: Niterói, RJ - Brasil"
+          - alias: sitePhone
+            name: Phone
+            dataType: textString
+            description: "Ex: +55 21 99999-0000"
+          - alias: siteWhatsApp
+            name: WhatsApp
+            dataType: textString
+            description: "Ex: +5521999990000 (digits only for wa.me link)"
           - alias: siteLogo
             name: Logo
             dataType: imagePicker
@@ -3673,7 +3681,9 @@ content:
       siteTagline: "Rede de Informações e Serviços na Internet Ltda."
       siteEmail: "contato@risin.com.br"
       siteLocation: "Niterói, RJ - Brasil"
-      copyrightText: "© 2026 RISIN – Rede de Informações e Serviços na Internet Ltda. Todos os direitos reservados."
+      sitePhone: "+55 21 2762-0202"
+      siteWhatsApp: "+5521999990000"
+      copyrightText:
       ctaButtonUrl:
         url: "/parceiros"
         title: "Parcerias Estratégicas"
