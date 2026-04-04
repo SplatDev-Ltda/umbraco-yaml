@@ -60,7 +60,9 @@ jobs:
             10.x
 
       - name: Restore
-        run: dotnet restore SplatDev.Umbraco.Plugins.Schema2Yaml/SplatDev.Umbraco.Plugins.Schema2Yaml.csproj
+        run: |
+          dotnet restore SplatDev.Umbraco.Plugins.Schema2Yaml/SplatDev.Umbraco.Plugins.Schema2Yaml.csproj
+          dotnet restore SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.csproj
 
       - name: Build
         run: >
