@@ -1,7 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <!--
+      net8.0  → Umbraco 13 (13.x) and Umbraco 14 (14.x)
+      net9.0  → Umbraco 15 (15.x) and Umbraco 16 (16.x)
+      net10.0 → Umbraco 17 (17.x)
+    -->
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -12,7 +17,7 @@
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
-    <Description>An Umbraco plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file. Supports Umbraco 13 (AngularJS dashboard) and Umbraco 14–17 (Lit dashboard).</Description>
+    <Description>An Umbraco plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file. Supports Umbraco 13–17.</Description>
     <PackageTags>umbraco yaml infrastructure-as-code cms content-management export schema document-types data-types templates media languages dictionary members users umbraco-marketplace</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -21,6 +26,8 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <!-- Suppress transitive vulnerability warnings from Umbraco's own dependencies (MimeKit, Lucene) -->
+    <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,9 +35,26 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- Umbraco 13 / 14  (net8.0) -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Umbraco.Cms.Core" Version="14.3.2" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="14.3.2" />
+  </ItemGroup>
+
+  <!-- Umbraco 15 / 16  (net9.0) -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Umbraco.Cms.Core" Version="16.3.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="16.3.0" />
+  </ItemGroup>
+
+  <!-- Umbraco 17  (net10.0) -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
     <PackageReference Include="Umbraco.Cms.Core" Version="17.2.2" />
     <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.2.2" />
+  </ItemGroup>
+
+  <!-- Version-independent packages -->
+  <ItemGroup>
     <PackageReference Include="YamlDotNet" Version="15.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
