@@ -12,7 +12,7 @@
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
-    <Description>An Umbraco 17 plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file.</Description>
+    <Description>An Umbraco plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file. Supports Umbraco 13 (AngularJS dashboard) and Umbraco 14–17 (Lit dashboard).</Description>
     <PackageTags>umbraco yaml infrastructure-as-code cms content-management export schema document-types data-types templates media languages dictionary members users umbraco-marketplace</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>

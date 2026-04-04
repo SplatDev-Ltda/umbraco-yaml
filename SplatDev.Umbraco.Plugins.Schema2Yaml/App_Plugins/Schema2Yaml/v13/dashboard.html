@@ -1,0 +1,193 @@
+<div class="umb-dashboard" ng-controller="Schema2Yaml.ExportController">
+
+    <!-- Header -->
+    <umb-load-indicator ng-if="loading"></umb-load-indicator>
+
+    <div class="umb-dashboard-header">
+        <h1 class="umb-dashboard-header__title">
+            <localize key="schema2yaml_dashboardTitle">Schema Export</localize>
+        </h1>
+        <p class="umb-dashboard-header__description">
+            <localize key="schema2yaml_dashboardDescription">Export your Umbraco site structure to YAML for version control and migration.</localize>
+        </p>
+    </div>
+
+    <!-- Actions row -->
+    <div class="umb-box" style="margin-bottom: 20px;">
+        <div class="umb-box-content">
+            <div class="btn-toolbar" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+
+                <button type="button"
+                        class="btn btn-primary"
+                        ng-click="runExport()"
+                        ng-disabled="loading">
+                    <i class="icon icon-download-alt" ng-if="!loading"></i>
+                    <i class="icon icon-loading" ng-if="loading"></i>
+                    <span ng-if="!loading">Export to YAML</span>
+                    <span ng-if="loading">Exporting&hellip;</span>
+                </button>
+
+                <button type="button"
+                        class="btn btn-default"
+                        ng-click="downloadYaml()"
+                        ng-disabled="!hasExport || loading"
+                        title="Download the exported YAML file">
+                    <i class="icon icon-document"></i>
+                    Download YAML
+                </button>
+
+                <button type="button"
+                        class="btn btn-default"
+                        ng-click="downloadZip()"
+                        ng-disabled="downloadingZip"
+                        title="Download YAML and all media files as a ZIP archive">
+                    <i class="icon icon-zip" ng-if="!downloadingZip"></i>
+                    <i class="icon icon-loading" ng-if="downloadingZip"></i>
+                    <span ng-if="!downloadingZip">Download ZIP (with media)</span>
+                    <span ng-if="downloadingZip">Preparing ZIP&hellip;</span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics grid -->
+    <div ng-if="stats" class="umb-box" style="margin-bottom: 20px;">
+        <div class="umb-box-header">
+            <h3 class="umb-box-header__title">Export Summary</h3>
+            <span class="umb-box-header__description" ng-if="stats.exportDate">
+                Exported on {{stats.exportDate | date:'medium'}}
+                &mdash; Umbraco {{stats.umbracoVersion}}
+                &mdash; {{stats.durationSeconds | number:2}}s
+            </span>
+        </div>
+        <div class="umb-box-content">
+            <div class="s2y-stats-grid">
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Languages</div>
+                    <div class="s2y-stat-value">{{stats.languages}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Data Types</div>
+                    <div class="s2y-stat-value">{{stats.dataTypes}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Document Types</div>
+                    <div class="s2y-stat-value">{{stats.documentTypes}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Media Types</div>
+                    <div class="s2y-stat-value">{{stats.mediaTypes}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Templates</div>
+                    <div class="s2y-stat-value">{{stats.templates}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Content Nodes</div>
+                    <div class="s2y-stat-value">{{stats.content}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Media Items</div>
+                    <div class="s2y-stat-value">{{stats.media}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Dictionary Items</div>
+                    <div class="s2y-stat-value">{{stats.dictionaryItems}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Members</div>
+                    <div class="s2y-stat-value">{{stats.members}}</div>
+                </div>
+
+                <div class="s2y-stat-card">
+                    <div class="s2y-stat-label">Users</div>
+                    <div class="s2y-stat-value">{{stats.users}}</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- YAML preview -->
+    <div ng-if="yamlPreview" class="umb-box">
+        <div class="umb-box-header">
+            <h3 class="umb-box-header__title">YAML Preview</h3>
+            <span ng-if="previewTruncated" class="umb-box-header__description s2y-truncated-badge">
+                Showing first 10 000 characters &mdash; download the file for the full export
+            </span>
+        </div>
+        <div class="umb-box-content" style="padding: 0;">
+            <pre class="s2y-yaml-preview">{{yamlPreview}}<span ng-if="previewTruncated" class="s2y-truncated-note">
+&hellip; (truncated)</span></pre>
+        </div>
+    </div>
+
+    <!-- Inline styles scoped to this dashboard -->
+    <style>
+        .s2y-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .s2y-stat-card {
+            background: #f9f9fb;
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .s2y-stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .s2y-stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1b264f;
+            line-height: 1;
+        }
+
+        .s2y-yaml-preview {
+            margin: 0;
+            padding: 16px;
+            background: #f5f5f5;
+            border: none;
+            border-top: 1px solid #e3e3e3;
+            border-radius: 0 0 3px 3px;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            max-height: 520px;
+            overflow: auto;
+            white-space: pre;
+            word-wrap: normal;
+        }
+
+        .s2y-truncated-badge {
+            font-style: italic;
+            color: #a0522d;
+        }
+
+        .s2y-truncated-note {
+            color: #a0522d;
+            font-style: italic;
+        }
+    </style>
+
+</div>
