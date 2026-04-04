@@ -36,10 +36,6 @@ dataTypes:
     config:
       maxChars: 2000
 
-  - alias: markdownText
-    name: Markdown
-    editorUiAlias: Umbraco.MarkdownEditor
-
   # Media
   - alias: imagePicker
     name: Image Picker
@@ -48,52 +44,12 @@ dataTypes:
       multiple: false
       onlyImages: true
 
-  - alias: multiImagePicker
-    name: Multi Image Picker
-    editorUiAlias: Umbraco.MediaPicker3
-    config:
-      multiple: true
-      onlyImages: true
-
   # Toggle / Boolean
   - alias: toggle
     name: Toggle
     editorUiAlias: Umbraco.TrueFalse
 
   # Dropdowns
-  - alias: ctaStyle
-    name: CTA Style
-    editorUiAlias: Umbraco.DropDown.Flexible
-    config:
-      multiple: false
-      items:
-        - Primary
-        - Secondary
-        - Outline
-        - Ghost
-
-  - alias: pageTheme
-    name: Page Theme
-    editorUiAlias: Umbraco.DropDown.Flexible
-    config:
-      multiple: false
-      items:
-        - Light
-        - Dark
-        - Gradient
-
-  - alias: sectionBackground
-    name: Section Background
-    editorUiAlias: Umbraco.DropDown.Flexible
-    config:
-      multiple: false
-      items:
-        - White
-        - LightGray
-        - LighterGray
-        - Primary
-        - Dark
-
   - alias: ecosystemCategory
     name: Ecosystem Category
     editorUiAlias: Umbraco.DropDown.Flexible
@@ -146,33 +102,6 @@ dataTypes:
         - EscritoriosAdvocacia
         - InvestidoresEstrategicos
         - ConselhoConsultivo
-
-  - alias: revenueType
-    name: Revenue Type
-    editorUiAlias: Umbraco.DropDown.Flexible
-    config:
-      multiple: false
-      items:
-        - AluguelCondominial
-        - Comissoes
-        - Patrocinio
-        - ServicosDigitais
-        - EventosConsultoria
-
-  - alias: contactSubject
-    name: Contact Subject
-    editorUiAlias: Umbraco.DropDown.Flexible
-    config:
-      multiple: false
-      items:
-        - Lojista
-        - Franquia
-        - Investidor
-        - DuvidasGerais
-
-  - alias: tags
-    name: Tags
-    editorUiAlias: Umbraco.Tags
 
   - alias: urlPicker
     name: URL Picker
