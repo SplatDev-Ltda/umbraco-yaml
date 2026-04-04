@@ -8,3 +8,5 @@
 /SplatDev.Umbraco.Plugins.Schema2Yaml/obj
 /SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/bin
 /SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/obj
+build-output.txt
+*.nupkg
