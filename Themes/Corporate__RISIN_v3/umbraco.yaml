@@ -36,10 +36,6 @@ dataTypes:
     config:
       maxChars: 2000
 
-  - alias: richText
-    name: Rich Text
-    editorUiAlias: Umbraco.RichText
-
   - alias: markdownText
     name: Markdown
     editorUiAlias: Umbraco.MarkdownEditor
@@ -292,7 +288,7 @@ documentTypes:
             dataType: textString
           - alias: content
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: image
             name: Image
             dataType: imagePicker
@@ -393,10 +389,6 @@ documentTypes:
             dataType: imagePicker
       - name: Navigation
         properties:
-          - alias: ctaButtonLabel
-            name: Header CTA Button Label
-            dataType: textString
-            description: "Ex: Parcerias Estratégicas"
           - alias: ctaButtonUrl
             name: Header CTA Button URL
             dataType: urlPicker
@@ -411,8 +403,23 @@ documentTypes:
           - alias: ogImage
             name: OG Image
             dataType: imagePicker
+          - alias: faviconIco
+            name: Favicon (.ico)
+            dataType: imagePicker
+          - alias: faviconSvg
+            name: Favicon (SVG)
+            dataType: imagePicker
+          - alias: faviconPng96
+            name: Favicon 96×96 (PNG)
+            dataType: imagePicker
+          - alias: faviconAppleTouch
+            name: Apple Touch Icon
+            dataType: imagePicker
+          - alias: appleMobileWebAppTitle
+            name: Apple Mobile Web App Title
+            dataType: textStringShort
 
-  # ── Base Page (shared fields) ──────────────
+   # ── Base Page (shared fields) ──────────────
   - alias: basePage
     name: Base Page
     icon: icon-document
@@ -461,17 +468,9 @@ documentTypes:
           - alias: heroImage
             name: Hero Image
             dataType: imagePicker
-          - alias: heroPrimaryCtaLabel
-            name: Primary CTA Label
-            dataType: textString
-            description: "Ex: Conheça o Projeto"
           - alias: heroPrimaryCtaUrl
             name: Primary CTA URL
             dataType: urlPicker
-          - alias: heroSecondaryCtaLabel
-            name: Secondary CTA Label
-            dataType: textString
-            description: "Ex: Parcerias Estruturantes"
           - alias: heroSecondaryCtaUrl
             name: Secondary CTA URL
             dataType: urlPicker
@@ -520,10 +519,6 @@ documentTypes:
           - alias: govBlockDescription
             name: Description
             dataType: textArea
-          - alias: govBlockLinkLabel
-            name: Link Label
-            dataType: textString
-            description: "Ex: Conheça a Estrutura de Governança →"
           - alias: govBlockLinkUrl
             name: Link URL
             dataType: urlPicker
@@ -536,10 +531,6 @@ documentTypes:
           - alias: partnersBlockIntro
             name: Intro Text
             dataType: textArea
-          - alias: partnersBlockCtaLabel
-            name: CTA Label
-            dataType: textString
-            description: "Ex: Seja Parceiro Estruturante"
           - alias: partnersBlockCtaUrl
             name: CTA URL
             dataType: urlPicker
@@ -551,7 +542,7 @@ documentTypes:
             description: "Ex: Arquitetura para Evolução em Holding Digital"
           - alias: expansionBlockContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: expansionMapImage
             name: Brazil Map Image
             dataType: imagePicker
@@ -614,7 +605,7 @@ documentTypes:
             description: "Ex: Holding de projetos digitais..."
           - alias: heroIntro
             name: Intro Paragraph
-            dataType: richText
+            dataType: "Richtext Editor"
             description: "Ex: A Risin – Rede de Informações e Serviços na Internet Ltda. é uma empresa..."
           - alias: heroImage
             name: Hero Image
@@ -627,7 +618,7 @@ documentTypes:
             description: "Ex: A Visão Fundadora"
           - alias: foundingVisionText
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
             description: History and founding vision paragraphs
       - name: Structured Project
         properties:
@@ -637,7 +628,7 @@ documentTypes:
             description: "Ex: Projeto em Implantação Estruturada"
           - alias: structuredProjectContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: structuredProjectKeyTerms
             name: Key Terms (bullets)
             dataType: multipleTextString
@@ -669,19 +660,19 @@ documentTypes:
             dataType: textString
           - alias: missionText
             name: Missão – Text
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: visionTitle
             name: Visão – Title
             dataType: textString
           - alias: visionText
             name: Visão – Text
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: valuesTitle
             name: Valores – Title
             dataType: textString
           - alias: valuesText
             name: Valores – Text (bullets)
-            dataType: richText
+            dataType: "Richtext Editor"
       - name: Corporate Structure
         properties:
           - alias: corpStructureTitle
@@ -736,7 +727,7 @@ documentTypes:
             required: true
           - alias: websiteFullDescription
             name: Full Description
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: websiteUrl
             name: External URL
             dataType: urlPicker
@@ -801,7 +792,7 @@ documentTypes:
             description: "Ex: Modelo Regional e Shopping Empresarial Digital"
           - alias: regionalModelLeftContent
             name: Left Column Content
-            dataType: richText
+            dataType: "Richtext Editor"
             description: 3 sectors, 478 regionais, population groupings
           - alias: clikashopSpotlight
             name: Clikashop Spotlight
@@ -812,13 +803,13 @@ documentTypes:
             dataType: textString
           - alias: gEmpresasSpotlightContent
             name: G-Empresas Spotlight – Content
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: agenciaSpotlightTitle
             name: Agência-RISIN Spotlight – Title
             dataType: textString
           - alias: agenciaSpotlightContent
             name: Agência-RISIN Spotlight – Content
-            dataType: richText
+            dataType: "Richtext Editor"
       - name: SEO
         properties:
           - alias: metaTitle
@@ -863,7 +854,7 @@ documentTypes:
             description: "Ex: Estrutura Econômica"
           - alias: economicContent
             name: Revenue Sources
-            dataType: richText
+            dataType: multipleTextString
             description: Aluguéis, comissões, patrocínios, serviços digitais, eventos
       - name: Business Contracts
         properties:
@@ -873,7 +864,7 @@ documentTypes:
             description: "Ex: Contratos Empresariais"
           - alias: contractsContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
             description: Shopkeeper contracts, sponsorship contracts, transparency commitments
           - alias: contractsImage
             name: Illustration Image
@@ -886,7 +877,7 @@ documentTypes:
             description: "Ex: 5.000 Vagas e Sustentabilidade Financeira"
           - alias: vacanciesContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: vacanciesHighlightNumber
             name: Highlight Number
             dataType: textString
@@ -918,14 +909,11 @@ documentTypes:
             description: "Ex: Política Comercial"
           - alias: commercialPolicyContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
       - name: CTA
         properties:
           - alias: ctaTitle
             name: CTA Title
-            dataType: textString
-          - alias: ctaLabel
-            name: CTA Button Label
             dataType: textString
           - alias: ctaUrl
             name: CTA Button URL
@@ -979,11 +967,11 @@ documentTypes:
     icon: icon-shield
     allowAsRoot: false
     allowedChildTypes:
+      - governanceRole
     update: true
     allowedTemplates:
       - governanca
     defaultTemplate: governanca
-      - governanceRole
     tabs:
       - name: Hero
         properties:
@@ -1015,7 +1003,7 @@ documentTypes:
             description: "Ex: Acordo de Sócios e Compromissos"
           - alias: agreementContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
             description: Principles – no percentages or values
           - alias: agreementCommitmentsTitle
             name: Commitments – Title
@@ -1031,7 +1019,7 @@ documentTypes:
             description: "Ex: Compromissos de Governança"
           - alias: complianceContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
             description: Ethics, transparency, information security
           - alias: documentButtonsTitle
             name: Documents Section Title
@@ -1076,7 +1064,8 @@ documentTypes:
             required: true
           - alias: partnerBenefits
             name: Benefits (bullets)
-            dataType: richText
+            dataType: multipleTextString
+            update: true
           - alias: partnerLogo
             name: Logo
             dataType: imagePicker
@@ -1096,11 +1085,11 @@ documentTypes:
     icon: icon-handshake
     allowAsRoot: false
     allowedChildTypes:
+      - partnerItem
     update: true
     allowedTemplates:
       - parceiros
     defaultTemplate: parceiros
-      - partnerItem
     tabs:
       - name: Hero
         properties:
@@ -1123,7 +1112,7 @@ documentTypes:
             description: "Ex: Programa Parceiros RISIN"
           - alias: programContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
       - name: Partner Types
         properties:
           - alias: typesTitle
@@ -1145,9 +1134,6 @@ documentTypes:
             name: CTA Supporting Text
             dataType: textArea
             description: "Ex: Entre em contato com nosso time de parcerias..."
-          - alias: ctaLabel
-            name: CTA Button Label
-            dataType: textString
             description: "Ex: Seja Parceiro Estruturante"
           - alias: ctaUrl
             name: CTA Button URL
@@ -1189,7 +1175,7 @@ documentTypes:
             description: "Ex: SP"
           - alias: regionalDescription
             name: Description
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: regionalImage
             name: Photo / Image
             dataType: imagePicker
@@ -1214,11 +1200,11 @@ documentTypes:
     icon: icon-map
     allowAsRoot: false
     allowedChildTypes:
+      - regionalItem
     update: true
     allowedTemplates:
       - regionais
     defaultTemplate: regionais
-      - regionalItem
     tabs:
       - name: Hero
         properties:
@@ -1254,7 +1240,7 @@ documentTypes:
             description: "Ex: Modelo de Expansão e Implantação Regional"
           - alias: expansionContent
             name: Content (bullets)
-            dataType: richText
+            dataType: multipleTextString
             description: 478 regionais, franquias/arrendamentos, cooperativas
           - alias: expansionMapImage
             name: Brazil Map Image
@@ -1271,9 +1257,6 @@ documentTypes:
           - alias: ctaText
             name: CTA Text
             dataType: textArea
-          - alias: ctaLabel
-            name: CTA Button Label
-            dataType: textString
             description: "Ex: Quero ser Operador Regional"
           - alias: ctaUrl
             name: CTA Button URL
@@ -1311,7 +1294,8 @@ documentTypes:
             description: "Ex: Grandes Empresas"
           - alias: blockContent
             name: Content (bullets)
-            dataType: richText
+            dataType: multipleTextString
+            update: true
           - alias: blockImage
             name: Image
             dataType: imagePicker
@@ -1334,11 +1318,11 @@ documentTypes:
     icon: icon-people
     allowAsRoot: false
     allowedChildTypes:
+      - institutionalBlock
     update: true
     allowedTemplates:
       - relacoesInstitucionais
     defaultTemplate: relacoesInstitucionais
-      - institutionalBlock
     tabs:
       - name: Hero
         properties:
@@ -1432,10 +1416,10 @@ documentTypes:
             description: "Ex: policy, gavel, security"
           - alias: policyContent
             name: Content (summary)
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: policyFullText
             name: Full Policy Text
-            dataType: richText
+            dataType: "Richtext Editor"
           - alias: sortOrder
             name: Sort Order
             dataType: sortOrderField
@@ -1446,11 +1430,11 @@ documentTypes:
     icon: icon-document-dashed-line
     allowAsRoot: false
     allowedChildTypes:
+      - policyItem
     update: true
     allowedTemplates:
       - transparencia
     defaultTemplate: transparencia
-      - policyItem
     tabs:
       - name: Hero
         properties:
@@ -1469,7 +1453,7 @@ documentTypes:
         properties:
           - alias: introContent
             name: Intro Content
-            dataType: richText
+            dataType: "Richtext Editor"
       - name: SEO
         properties:
           - alias: metaTitle
@@ -1532,7 +1516,7 @@ documentTypes:
             description: "Ex: Requisitos Básicos"
           - alias: requirementsContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
             description: CNPJ, documentation, legal compliance, etc.
       - name: CTA
         properties:
@@ -1543,9 +1527,6 @@ documentTypes:
             name: CTA Supporting Text
             dataType: textArea
             description: "Ex: Junte-se a milhares de lojistas..."
-          - alias: ctaLabel
-            name: CTA Button Label
-            dataType: textString
           - alias: ctaUrl
             name: CTA Button URL
             dataType: urlPicker
@@ -1593,7 +1574,7 @@ documentTypes:
             description: "Ex: Modelo de Franquia Regional"
           - alias: franchiseModelContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
             description: Responsibilities vs advantages
       - name: Desired Profile
         properties:
@@ -1603,7 +1584,7 @@ documentTypes:
             description: "Ex: Perfil Desejado"
           - alias: profileContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
       - name: Support Structure
         properties:
           - alias: supportTitle
@@ -1612,7 +1593,7 @@ documentTypes:
             description: "Ex: Estrutura de Apoio"
           - alias: supportContent
             name: Content
-            dataType: richText
+            dataType: "Richtext Editor"
             description: Training, technology, marketing
       - name: CTA
         properties:
@@ -1623,9 +1604,6 @@ documentTypes:
             name: CTA Supporting Text
             dataType: textArea
             description: "Ex: Seja um franqueado RISIN e lidere a transformação..."
-          - alias: ctaLabel
-            name: CTA Button Label
-            dataType: textString
             description: "Ex: Quero ser franqueado / representante regional"
           - alias: ctaUrl
             name: CTA Button URL
@@ -1729,7 +1707,7 @@ documentTypes:
             dataType: imagePicker
           - alias: pageContent
             name: Page Content
-            dataType: richText
+            dataType: "Richtext Editor"
       - name: SEO
         properties:
           - alias: metaTitle
@@ -1759,14 +1737,21 @@ templates:
           var siteEmail = root.Value<string>("siteEmail") ?? "contato@risin.com.br";
           var siteLocation = root.Value<string>("siteLocation") ?? "Niterói, RJ";
           var copyright = root.Value<string>("copyrightText") ?? "© 2026 RISIN. Todos os direitos reservados.";
-          var ctaLabel = root.Value<string>("ctaButtonLabel") ?? "Parcerias Estratégicas";
-          var ctaUrl = root.Value<string>("ctaButtonUrl") ?? "/parceiros";
+          var ctaNavLink = root.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("ctaButtonUrl")?.FirstOrDefault();
+          var ctaLabel = ctaNavLink?.Name ?? "Parcerias Estratégicas";
+          var ctaUrl = ctaNavLink?.Url ?? "/parceiros";
           var currentPath = Context.Request.Path.ToString().TrimEnd('/');
           string NavCls(string href) => currentPath == href || (href != "/" && currentPath.StartsWith(href))
               ? "font-['Manrope'] font-bold tracking-tight text-sm uppercase text-emerald-600 border-b-2 border-emerald-600 pb-1"
               : "font-['Manrope'] font-bold tracking-tight text-sm uppercase text-slate-600 hover:text-emerald-600 transition-colors";
           var metaTitle = Model.Value<string>("metaTitle") ?? Model.Name;
           var metaDesc = Model.Value<string>("metaDescription") ?? root.Value<string>("defaultMetaDescription") ?? "";
+          var siteLogo = root.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("siteLogo");
+          var faviconIco = root.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("faviconIco");
+          var faviconSvg = root.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("faviconSvg");
+          var faviconPng96 = root.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("faviconPng96");
+          var faviconAppleTouch = root.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("faviconAppleTouch");
+          var appleMobileTitle = root.Value<string>("appleMobileWebAppTitle") ?? siteName;
       }
       <!DOCTYPE html>
       <html class="scroll-smooth" lang="pt-BR">
@@ -1778,6 +1763,11 @@ templates:
           {
               <meta name="description" content="@metaDesc">
           }
+          @if (faviconIco != null) { <link rel="icon" href="@faviconIco.Url()" sizes="any"> }
+          @if (faviconSvg != null) { <link rel="icon" href="@faviconSvg.Url()" type="image/svg+xml"> }
+          @if (faviconPng96 != null) { <link rel="icon" href="@faviconPng96.Url()" type="image/png" sizes="96x96"> }
+          @if (faviconAppleTouch != null) { <link rel="apple-touch-icon" href="@faviconAppleTouch.Url()"> }
+          <meta name="apple-mobile-web-app-title" content="@appleMobileTitle">
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
           <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1828,7 +1818,14 @@ templates:
       
           <nav class="fixed top-0 w-full h-[80px] z-50 bg-white/70 backdrop-blur-xl">
               <div class="flex justify-between items-center px-12 max-w-[1440px] mx-auto w-full h-full">
-                  <a href="/" class="text-2xl font-black tracking-tighter text-slate-900">@siteName</a>
+                  @if (siteLogo != null)
+                  {
+                      <a href="/"><img alt="@siteName" class="h-10 w-auto" src="@siteLogo.Url()" /></a>
+                  }
+                  else
+                  {
+                      <a href="/" class="text-2xl font-black tracking-tighter text-slate-900">@siteName</a>
+                  }
                   <div class="hidden md:flex items-center gap-8">
                       <a href="/" class="@NavCls("/")">Home</a>
                       <a href="/a-risin" class="@NavCls("/a-risin")">A RISIN</a>
@@ -1916,18 +1913,21 @@ templates:
                           @(Model.Value<string>("heroSubtitle") ?? "Uma arquitetura robusta integrando 08 portais estratégicos para revolucionar o ecossistema corporativo e de serviços.")
                       </p>
                       <div class="flex gap-4">
-                          <a href="@(Model.Value<string>("heroPrimaryCtaUrl") ?? "/a-risin")" class="bg-primary text-on-primary px-8 py-4 rounded-lg font-bold hover:scale-105 transition-transform flex items-center gap-2">
-                              @(Model.Value<string>("heroPrimaryCtaLabel") ?? "Conheça o Projeto")
+                          @{ var heroLink1 = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("heroPrimaryCtaUrl")?.FirstOrDefault(); }
+                          <a href="@(heroLink1?.Url ?? "/a-risin")" class="bg-primary text-on-primary px-8 py-4 rounded-lg font-bold hover:scale-105 transition-transform flex items-center gap-2">
+                              @(heroLink1?.Name ?? "Conheça o Projeto")
                               <span class="material-symbols-outlined">arrow_forward</span>
                           </a>
-                          <a href="@(Model.Value<string>("heroSecondaryCtaUrl") ?? "/parceiros")" class="bg-secondary text-on-secondary px-8 py-4 rounded-lg font-bold hover:scale-105 transition-transform">
-                              @(Model.Value<string>("heroSecondaryCtaLabel") ?? "Parcerias Estruturantes")
+                          @{ var heroLink2 = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("heroSecondaryCtaUrl")?.FirstOrDefault(); }
+                          <a href="@(heroLink2?.Url ?? "/parceiros")" class="bg-secondary text-on-secondary px-8 py-4 rounded-lg font-bold hover:scale-105 transition-transform">
+                              @(heroLink2?.Name ?? "Parcerias Estruturantes")
                           </a>
                       </div>
                   </div>
                   <div class="relative group">
                       <div class="absolute -inset-4 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all"></div>
-                      <img alt="RISIN Plataforma Digital" class="rounded-2xl shadow-2xl relative z-10 w-full h-[400px] object-cover" src="/images/home-hero.jpg"/>
+                      @{ var heroImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("heroImage"); }
+                      <img alt="RISIN Plataforma Digital" class="rounded-2xl shadow-2xl relative z-10 w-full h-[400px] object-cover" src="@(heroImg != null ? heroImg.Url() : "/media/home-hero.jpg")"/>
                   </div>
               </div>
           </section>
@@ -1942,27 +1942,54 @@ templates:
                       </div>
                       <div class="h-1 w-24 bg-primary rounded-full mb-2 hidden md:block"></div>
                   </div>
+                  @{
+                      var macroPilars = Model.Value<Umbraco.Cms.Core.Models.Blocks.BlockListModel>("macroPilars");
+                      var pilarIcons = new[] { "location_on", "corporate_fare", "hub", "gavel" };
+                      var pilarBorderColors = new[] { "border-primary", "border-secondary", "border-primary", "border-secondary" };
+                      var pilarIconColors = new[] { "text-primary", "text-secondary", "text-primary", "text-secondary" };
+                      int pilarIdx = 0;
+                  }
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                      <div class="p-8 bg-surface-container-low rounded-xl border-l-4 border-primary">
-                          <span class="material-symbols-outlined text-primary text-4xl mb-4">location_on</span>
-                          <h3 class="text-xl font-bold mb-2">@(Model.Value<string>("macroPilar1Title") ?? "2 Regionais Modelo")</h3>
-                          <p class="text-sm text-on-surface-variant">@(Model.Value<string>("macroPilar1Text") ?? "Centros de excelência para validação e escala operacional.")</p>
-                      </div>
-                      <div class="p-8 bg-surface-container-low rounded-xl border-l-4 border-secondary">
-                          <span class="material-symbols-outlined text-secondary text-4xl mb-4">corporate_fare</span>
-                          <h3 class="text-xl font-bold mb-2">@(Model.Value<string>("macroPilar2Title") ?? "5.000 Vagas")</h3>
-                          <p class="text-sm text-on-surface-variant">@(Model.Value<string>("macroPilar2Text") ?? "Oportunidades empresariais geradas pelo ecossistema integrado.")</p>
-                      </div>
-                      <div class="p-8 bg-surface-container-low rounded-xl border-l-4 border-primary">
-                          <span class="material-symbols-outlined text-primary text-4xl mb-4">hub</span>
-                          <h3 class="text-xl font-bold mb-2">@(Model.Value<string>("macroPilar3Title") ?? "Plataforma Integrada")</h3>
-                          <p class="text-sm text-on-surface-variant">@(Model.Value<string>("macroPilar3Text") ?? "Tecnologia de ponta unificando serviços e informações.")</p>
-                      </div>
-                      <div class="p-8 bg-surface-container-low rounded-xl border-l-4 border-secondary">
-                          <span class="material-symbols-outlined text-secondary text-4xl mb-4">gavel</span>
-                          <h3 class="text-xl font-bold mb-2">@(Model.Value<string>("macroPilar4Title") ?? "Governança")</h3>
-                          <p class="text-sm text-on-surface-variant">@(Model.Value<string>("macroPilar4Text") ?? "Transparência e compliance em todas as etapas da implantação.")</p>
-                      </div>
+                      @if (macroPilars != null && macroPilars.Any())
+                      {
+                          @foreach (var pilarItem in macroPilars)
+                          {
+                              var pTitle = pilarItem.Content.Value<string>("title") ?? "";
+                              var pText = pilarItem.Content.Value<string>("text") ?? "";
+                              var pBorder = pilarBorderColors[pilarIdx % 4];
+                              var pIcon = pilarIcons[pilarIdx % 4];
+                              var pIconCls = pilarIconColors[pilarIdx % 4];
+                              <div class="p-8 bg-surface-container-low rounded-xl border-l-4 @pBorder">
+                                  <span class="material-symbols-outlined @pIconCls text-4xl mb-4">@pIcon</span>
+                                  <h3 class="text-xl font-bold mb-2">@pTitle</h3>
+                                  <p class="text-sm text-on-surface-variant">@pText</p>
+                              </div>
+                              pilarIdx++;
+                          }
+                      }
+                      else
+                      {
+                          <div class="p-8 bg-surface-container-low rounded-xl border-l-4 border-primary">
+                              <span class="material-symbols-outlined text-primary text-4xl mb-4">location_on</span>
+                              <h3 class="text-xl font-bold mb-2">2 Regionais Modelo</h3>
+                              <p class="text-sm text-on-surface-variant">Centros de excelência para validação e escala operacional.</p>
+                          </div>
+                          <div class="p-8 bg-surface-container-low rounded-xl border-l-4 border-secondary">
+                              <span class="material-symbols-outlined text-secondary text-4xl mb-4">corporate_fare</span>
+                              <h3 class="text-xl font-bold mb-2">5.000 Vagas</h3>
+                              <p class="text-sm text-on-surface-variant">Oportunidades empresariais geradas pelo ecossistema integrado.</p>
+                          </div>
+                          <div class="p-8 bg-surface-container-low rounded-xl border-l-4 border-primary">
+                              <span class="material-symbols-outlined text-primary text-4xl mb-4">hub</span>
+                              <h3 class="text-xl font-bold mb-2">Plataforma Integrada</h3>
+                              <p class="text-sm text-on-surface-variant">Tecnologia de ponta unificando serviços e informações.</p>
+                          </div>
+                          <div class="p-8 bg-surface-container-low rounded-xl border-l-4 border-secondary">
+                              <span class="material-symbols-outlined text-secondary text-4xl mb-4">gavel</span>
+                              <h3 class="text-xl font-bold mb-2">Governança</h3>
+                              <p class="text-sm text-on-surface-variant">Transparência e compliance em todas as etapas da implantação.</p>
+                          </div>
+                      }
                   </div>
               </div>
           </section>
@@ -2006,7 +2033,16 @@ templates:
                       <h2 class="text-4xl font-bold tracking-tight mb-8">@(Model.Value<string>("economicModelTitle") ?? "Modelo Econômico Estruturado")</h2>
                       @if (Model.HasValue("economicModelBullets"))
                       {
-                          <div class="prose prose-sm text-on-surface-variant">@Html.Raw(Model.Value("economicModelBullets"))</div>
+                          var bulletItems = Model.Value<IEnumerable<string>>("economicModelBullets");
+                          if (bulletItems != null && bulletItems.Any())
+                          {
+                          <div class="space-y-3 text-on-surface-variant">
+                              @foreach (var bullet in bulletItems)
+                              {
+                              <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>@bullet</div>
+                              }
+                          </div>
+                          }
                       }
                       else
                       {
@@ -2063,8 +2099,9 @@ templates:
                           <p class="text-on-surface-variant text-sm leading-relaxed">Auditores e especialistas garantindo compliance e ética corporativa.</p>
                       </div>
                   </div>
-                  <a class="inline-flex items-center gap-2 mt-12 text-primary font-bold hover:underline" href="@(Model.Value<string>("govBlockLinkUrl") ?? "/governanca")">
-                      @(Model.Value<string>("govBlockLinkLabel") ?? "Conheça a Estrutura de Governança") <span class="material-symbols-outlined">arrow_right_alt</span>
+                  @{ var govLink = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("govBlockLinkUrl")?.FirstOrDefault(); }
+                  <a class="inline-flex items-center gap-2 mt-12 text-primary font-bold hover:underline" href="@(govLink?.Url ?? "/governanca")">
+                      @(govLink?.Name ?? "Conheça a Estrutura de Governança") <span class="material-symbols-outlined">arrow_right_alt</span>
                   </a>
               </div>
           </section>
@@ -2097,8 +2134,9 @@ templates:
                           </div>
                       }
                   </div>
-                  <a href="@(Model.Value<string>("partnersBlockCtaUrl") ?? "/parceiros")" class="bg-secondary text-white px-10 py-5 rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-secondary/20 transition-all inline-block">
-                      @(Model.Value<string>("partnersBlockCtaLabel") ?? "Seja Parceiro Estruturante")
+                  @{ var partnersLink = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("partnersBlockCtaUrl")?.FirstOrDefault(); }
+                  <a href="@(partnersLink?.Url ?? "/parceiros")" class="bg-secondary text-white px-10 py-5 rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-secondary/20 transition-all inline-block">
+                      @(partnersLink?.Name ?? "Seja Parceiro Estruturante")
                   </a>
               </div>
           </section>
@@ -2142,12 +2180,14 @@ templates:
                       <p class="text-xl text-on-surface-variant max-w-2xl mx-auto mb-12">@Model@(Model.Value<string>("finalCtaText"))</p>
                   }
                   <div class="flex flex-wrap justify-center gap-6">
-                      <a href="@(Model.Value<string>("finalCtaButton1Url") ?? "/contato")" class="bg-primary text-white px-12 py-5 rounded-lg font-bold text-lg hover:scale-105 transition-all inline-block">
-                          @(Model.Value<string>("finalCtaButton1Label") ?? "Contato Institucional")
+                      @{ var finalLink1 = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("finalCtaButton1Url")?.FirstOrDefault(); }
+                      <a href="@(finalLink1?.Url ?? "/contato")" class="bg-primary text-white px-12 py-5 rounded-lg font-bold text-lg hover:scale-105 transition-all inline-block">
+                          @(finalLink1?.Name ?? "Contato Institucional")
                       </a>
-                      <a href="@(Model.Value<string>("finalCtaButton2Url") ?? "/transparencia")" class="bg-on-surface text-surface px-12 py-5 rounded-lg font-bold text-lg flex items-center gap-3 hover:bg-slate-800 transition-all inline-flex">
+                      @{ var finalLink2 = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("finalCtaButton2Url")?.FirstOrDefault(); }
+                      <a href="@(finalLink2?.Url ?? "/transparencia")" class="bg-on-surface text-surface px-12 py-5 rounded-lg font-bold text-lg flex items-center gap-3 hover:bg-slate-800 transition-all inline-flex">
                           <span class="material-symbols-outlined">download</span>
-                          @(Model.Value<string>("finalCtaButton2Label") ?? "Download Apresentação (PDF)")
+                          @(finalLink2?.Name ?? "Download Apresentação (PDF)")
                       </a>
                   </div>
               </div>
@@ -2188,7 +2228,8 @@ templates:
                   </div>
                   <div class="relative">
                       <div class="absolute -inset-4 bg-primary/5 rounded-3xl blur-2xl"></div>
-                      <img alt="A RISIN" class="rounded-2xl shadow-2xl relative z-10 w-full h-[360px] object-cover grayscale hover:grayscale-0 transition-all duration-700" src="/images/about-hero.jpg" />
+                      @{ var aRisinHeroImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("heroImage"); }
+                      <img alt="A RISIN" class="rounded-2xl shadow-2xl relative z-10 w-full h-[360px] object-cover grayscale hover:grayscale-0 transition-all duration-700" src="@(aRisinHeroImg != null ? aRisinHeroImg.Url() : "/images/about-hero.jpg")" />
                   </div>
               </div>
           </section>
@@ -2213,55 +2254,77 @@ templates:
                   <div>
                       <span class="text-primary font-bold tracking-widest uppercase text-xs">Pilares da Plataforma</span>
                       <div class="space-y-4 mt-6">
-                          <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
-                              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <span class="material-symbols-outlined text-primary">hub</span>
+                              @{ var aRisinPilars = Model.Value<Umbraco.Cms.Core.Models.Blocks.BlockListModel>("pilars"); }
+                              @if (aRisinPilars != null && aRisinPilars.Any())
+                              {
+                                  foreach (var pilarItem in aRisinPilars)
+                                  {
+                                      var pilarIcon = pilarItem.Content.Value<string>("icon") ?? "hub";
+                                      var pilarTitle = pilarItem.Content.Value<string>("title") ?? "Pilar";
+                                      var pilarText = pilarItem.Content.Value<string>("text") ?? "";
+                              <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
+                                  <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                      <span class="material-symbols-outlined text-primary">@pilarIcon</span>
+                                  </div>
+                                  <div>
+                                      <div class="font-bold mb-1">@pilarTitle</div>
+                                      <div class="text-sm text-on-surface-variant">@pilarText</div>
+                                  </div>
                               </div>
-                              <div>
-                                  <div class="font-bold mb-1">@(Model.Value<string>("pilar1Title") ?? "Integração Total")</div>
-                                  <div class="text-sm text-on-surface-variant">@(Model.Value<string>("pilar1Text") ?? "Todos os portais comunicam entre si, criando uma experiência unificada.")</div>
+                                  }
+                              }
+                              else
+                              {
+                              <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
+                                  <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                      <span class="material-symbols-outlined text-primary">hub</span>
+                                  </div>
+                                  <div>
+                                      <div class="font-bold mb-1">Integração Total</div>
+                                      <div class="text-sm text-on-surface-variant">Todos os portais comunicam entre si, criando uma experiência unificada.</div>
+                                  </div>
                               </div>
-                          </div>
-                          <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
-                              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <span class="material-symbols-outlined text-primary">account_balance</span>
+                              <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
+                                  <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                      <span class="material-symbols-outlined text-primary">account_balance</span>
+                                  </div>
+                                  <div>
+                                      <div class="font-bold mb-1">Governança Estruturada</div>
+                                      <div class="text-sm text-on-surface-variant">Presidência, diretoria executiva e conselho consultivo com papéis bem definidos.</div>
+                                  </div>
                               </div>
-                              <div>
-                                  <div class="font-bold mb-1">@(Model.Value<string>("pilar2Title") ?? "Governança Estruturada")</div>
-                                  <div class="text-sm text-on-surface-variant">@(Model.Value<string>("pilar2Text") ?? "Presidência, diretoria executiva e conselho consultivo com papéis bem definidos.")</div>
+                                          <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
+                                              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                  <span class="material-symbols-outlined text-primary">map</span>
+                                              </div>
+                                              <div>
+                                                  <div class="font-bold mb-1">Capilaridade Regional</div>
+                                                  <div class="text-sm text-on-surface-variant">Modelo replicável para 478 regionais em todos os 27 estados.</div>
+                                              </div>
+                                          </div>
+                                          <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
+                                              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                  <span class="material-symbols-outlined text-primary">security</span>
+                                              </div>
+                                              <div>
+                                                  <div class="font-bold mb-1">Compliance e LGPD</div>
+                                                  <div class="text-sm text-on-surface-variant">Conformidade regulatória e proteção de dados em toda a plataforma.</div>
+                                              </div>
+                                          </div>
+                                          <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
+                                              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                  <span class="material-symbols-outlined text-primary">groups</span>
+                                              </div>
+                                              <div>
+                                                  <div class="font-bold mb-1">Cooperativismo Digital</div>
+                                                  <div class="text-sm text-on-surface-variant">Poder coletivo de compras, negociações e visibilidade para todos os membros.</div>
+                                              </div>
+                                          </div>
+                                          }
+                                      </div>
+                                  </div>
                               </div>
-                          </div>
-                          <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
-                              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <span class="material-symbols-outlined text-primary">map</span>
-                              </div>
-                              <div>
-                                  <div class="font-bold mb-1">@(Model.Value<string>("pilar3Title") ?? "Capilaridade Regional")</div>
-                                  <div class="text-sm text-on-surface-variant">@(Model.Value<string>("pilar3Text") ?? "Modelo replicável para 478 regionais em todos os 27 estados.")</div>
-                              </div>
-                          </div>
-                          <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
-                              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <span class="material-symbols-outlined text-primary">security</span>
-                              </div>
-                              <div>
-                                  <div class="font-bold mb-1">@(Model.Value<string>("pilar4Title") ?? "Compliance e LGPD")</div>
-                                  <div class="text-sm text-on-surface-variant">@(Model.Value<string>("pilar4Text") ?? "Conformidade regulatória e proteção de dados em toda a plataforma.")</div>
-                              </div>
-                          </div>
-                          <div class="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low">
-                              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                  <span class="material-symbols-outlined text-primary">groups</span>
-                              </div>
-                              <div>
-                                  <div class="font-bold mb-1">@(Model.Value<string>("pilar5Title") ?? "Cooperativismo Digital")</div>
-                                  <div class="text-sm text-on-surface-variant">@(Model.Value<string>("pilar5Text") ?? "Poder coletivo de compras, negociações e visibilidade para todos os membros.")</div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </section>
+                          </section>
       
           <!-- Timeline -->
           <section class="py-24 bg-surface-container-low">
@@ -2273,47 +2336,71 @@ templates:
                   <div class="relative max-w-3xl mx-auto">
                       <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-secondary to-outline-variant"></div>
                       <div class="space-y-8">
+                          @{ var aRisinTimeline = Model.Value<Umbraco.Cms.Core.Models.Blocks.BlockListModel>("timeline"); }
+                          @if (aRisinTimeline != null && aRisinTimeline.Any())
+                          {
+                              int tlIdx = 1;
+                              foreach (var tlItem in aRisinTimeline)
+                              {
+                                  var tlYear = tlItem.Content.Value<string>("year") ?? "";
+                                  var tlTitle = tlItem.Content.Value<string>("title") ?? "";
+                                  var tlText = tlItem.Content.Value<string>("text") ?? "";
+                                  var tlBg = tlIdx <= 2 ? "bg-primary" : (tlIdx <= 4 ? "bg-secondary" : "bg-outline");
+                                  var tlBadgeBg = tlIdx <= 2 ? "bg-primary/10 text-primary" : (tlIdx <= 4 ? "bg-secondary/10 text-secondary" : "bg-outline/10 text-outline");
+                          <div class="flex gap-8 items-start">
+                              <div class="w-12 h-12 rounded-full @tlBg flex items-center justify-center text-white font-black text-sm flex-shrink-0 relative z-10">@tlIdx</div>
+                              <div class="bg-surface-container-lowest rounded-xl p-6 flex-1 shadow-sm">
+                                  <span class="inline-block px-2 py-0.5 @tlBadgeBg text-xs font-bold rounded-full mb-2">@tlYear</span>
+                                  <h3 class="font-bold text-lg mb-1">@tlTitle</h3>
+                                  <p class="text-sm text-on-surface-variant">@tlText</p>
+                              </div>
+                          </div>
+                                  tlIdx++;
+                              }
+                          }
+                          else
+                          {
                           <div class="flex gap-8 items-start">
                               <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-black text-sm flex-shrink-0 relative z-10">1</div>
                               <div class="bg-surface-container-lowest rounded-xl p-6 flex-1 shadow-sm">
-                                  <span class="inline-block px-2 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">@(Model.Value<string>("timelineItem1Year") ?? "2024")</span>
-                                  <h3 class="font-bold text-lg mb-1">@(Model.Value<string>("timelineItem1Title") ?? "Concepção e Estruturação")</h3>
-                                  <p class="text-sm text-on-surface-variant">@(Model.Value<string>("timelineItem1Text") ?? "Definição do modelo de negócio, arquitetura da plataforma e estrutura de governança corporativa.")</p>
+                                  <span class="inline-block px-2 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">2024</span>
+                                  <h3 class="font-bold text-lg mb-1">Concepção e Estruturação</h3>
+                                  <p class="text-sm text-on-surface-variant">Definição do modelo de negócio, arquitetura da plataforma e estrutura de governança corporativa.</p>
                               </div>
                           </div>
                           <div class="flex gap-8 items-start">
                               <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-black text-sm flex-shrink-0 relative z-10">2</div>
                               <div class="bg-surface-container-lowest rounded-xl p-6 flex-1 shadow-sm">
-                                  <span class="inline-block px-2 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">@(Model.Value<string>("timelineItem2Year") ?? "2025")</span>
-                                  <h3 class="font-bold text-lg mb-1">@(Model.Value<string>("timelineItem2Title") ?? "Implantação das Regionais Modelo")</h3>
-                                  <p class="text-sm text-on-surface-variant">@(Model.Value<string>("timelineItem2Text") ?? "Lançamento das regionais SP e RJ com os 8 portais em operação e captação dos 5.000 Sócios Fundadores.")</p>
+                                  <span class="inline-block px-2 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">2025</span>
+                                  <h3 class="font-bold text-lg mb-1">Implantação das Regionais Modelo</h3>
+                                  <p class="text-sm text-on-surface-variant">Lançamento das regionais SP e RJ com os 8 portais em operação e captação dos 5.000 Sócios Fundadores.</p>
                               </div>
                           </div>
                           <div class="flex gap-8 items-start">
                               <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-white font-black text-sm flex-shrink-0 relative z-10">3</div>
                               <div class="bg-surface-container-lowest rounded-xl p-6 flex-1 shadow-sm">
-                                  <span class="inline-block px-2 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">@(Model.Value<string>("timelineItem3Year") ?? "2026")</span>
-                                  <h3 class="font-bold text-lg mb-1">@(Model.Value<string>("timelineItem3Title") ?? "Expansão Sul e Sudeste")</h3>
-                                  <p class="text-sm text-on-surface-variant">@(Model.Value<string>("timelineItem3Text") ?? "Replicação para BH, Porto Alegre, Florianópolis, Curitiba e Campinas com modelo validado.")</p>
+                                  <span class="inline-block px-2 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">2026</span>
+                                  <h3 class="font-bold text-lg mb-1">Expansão Sul e Sudeste</h3>
+                                  <p class="text-sm text-on-surface-variant">Replicação para BH, Porto Alegre, Florianópolis, Curitiba e Campinas com modelo validado.</p>
                               </div>
                           </div>
                           <div class="flex gap-8 items-start">
                               <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-white font-black text-sm flex-shrink-0 relative z-10">4</div>
                               <div class="bg-surface-container-lowest rounded-xl p-6 flex-1 shadow-sm">
-                                  <span class="inline-block px-2 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">@(Model.Value<string>("timelineItem4Year") ?? "2027–2030")</span>
-                                  <h3 class="font-bold text-lg mb-1">@(Model.Value<string>("timelineItem4Title") ?? "Cobertura Nacional – 478 Regionais")</h3>
-                                  <p class="text-sm text-on-surface-variant">@(Model.Value<string>("timelineItem4Text") ?? "Expansão para todos os 27 estados com 478 regionais ativas e holding digital consolidada.")</p>
+                                  <span class="inline-block px-2 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">2027–2030</span>
+                                  <h3 class="font-bold text-lg mb-1">Cobertura Nacional – 478 Regionais</h3>
+                                  <p class="text-sm text-on-surface-variant">Expansão para todos os 27 estados com 478 regionais ativas e holding digital consolidada.</p>
                               </div>
                           </div>
                           <div class="flex gap-8 items-start">
                               <div class="w-12 h-12 rounded-full bg-outline flex items-center justify-center text-white font-black text-sm flex-shrink-0 relative z-10">5</div>
                               <div class="bg-surface-container-lowest rounded-xl p-6 flex-1 shadow-sm">
-                                  <span class="inline-block px-2 py-0.5 bg-outline/10 text-outline text-xs font-bold rounded-full mb-2">@(Model.Value<string>("timelineItem5Year") ?? "2030+")</span>
-                                  <h3 class="font-bold text-lg mb-1">@(Model.Value<string>("timelineItem5Title") ?? "Hold-Dig – Soberania Digital")</h3>
-                                  <p class="text-sm text-on-surface-variant">@(Model.Value<string>("timelineItem5Text") ?? "Consolidação da holding digital com autossuficiência financeira em todas as regionais.")</p>
+                                  <span class="inline-block px-2 py-0.5 bg-outline/10 text-outline text-xs font-bold rounded-full mb-2">2030+</span>
+                                  <h3 class="font-bold text-lg mb-1">Hold-Dig – Soberania Digital</h3>
+                                  <p class="text-sm text-on-surface-variant">Consolidação da holding digital com autossuficiência financeira em todas as regionais.</p>
                               </div>
                           </div>
-                      </div>
+                          }
                   </div>
               </div>
           </section>
@@ -2381,34 +2468,65 @@ templates:
                       <p class="text-on-surface-variant mt-4 max-w-xl mx-auto">@(Model.Value<string>("corpStructureDescription") ?? "A RISIN opera com uma estrutura executiva completa, cada diretoria responsável por uma área estratégica da plataforma.")</p>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-                      <div class="bg-primary p-8 rounded-xl text-center text-white md:col-span-1">
-                          <span class="material-symbols-outlined text-4xl text-white/90 mb-4">account_balance</span>
-                          <div class="font-bold text-lg mb-2">@(Model.Value<string>("presidenciaTitle") ?? "Presidência")</div>
-                          <div class="text-sm text-white/80">@(Model.Value<string>("presidenciaText") ?? "Direção estratégica e representação institucional")</div>
-                      </div>
-                      <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
-                          <span class="material-symbols-outlined text-primary text-4xl mb-4">computer</span>
-                          <div class="font-bold mb-2">@(Model.Value<string>("dirTiTitle") ?? "Diretoria de TI")</div>
-                          <div class="text-sm text-on-surface-variant">@(Model.Value<string>("dirTiText") ?? "Infraestrutura tecnológica, desenvolvimento e segurança da plataforma.")</div>
-                      </div>
-                      <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
-                          <span class="material-symbols-outlined text-primary text-4xl mb-4">account_balance_wallet</span>
-                          <div class="font-bold mb-2">@(Model.Value<string>("dirFinanceiraTitle") ?? "Diretoria Financeira")</div>
-                          <div class="text-sm text-on-surface-variant">@(Model.Value<string>("dirFinanceiraText") ?? "Gestão financeira, controladoria e relações com investidores.")</div>
-                      </div>
-                      <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
-                          <span class="material-symbols-outlined text-primary text-4xl mb-4">campaign</span>
-                          <div class="font-bold mb-2">@(Model.Value<string>("dirMarketingTitle") ?? "Diretoria de Marketing")</div>
-                          <div class="text-sm text-on-surface-variant">@(Model.Value<string>("dirMarketingText") ?? "Comunicação institucional, branding e estratégias de crescimento.")</div>
-                      </div>
-                      <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
-                          <span class="material-symbols-outlined text-primary text-4xl mb-4">handshake</span>
-                          <div class="font-bold mb-2">@(Model.Value<string>("dirComercialTitle") ?? "Diretoria Comercial")</div>
-                          <div class="text-sm text-on-surface-variant">@(Model.Value<string>("dirComercialText") ?? "Vendas, parcerias estratégicas e expansão de base de clientes.")</div>
-                      </div>
-                  </div>
-              </div>
-          </section>
+                       @{ var corpPositions = Model.Value<Umbraco.Cms.Core.Models.Blocks.BlockListModel>("corpPositions"); }
+                       @if (corpPositions != null && corpPositions.Any())
+                       {
+                           bool cpFirst = true;
+                           foreach (var cpItem in corpPositions)
+                           {
+                               var cpIcon = cpItem.Content.Value<string>("icon") ?? "account_balance";
+                               var cpTitle = cpItem.Content.Value<string>("title") ?? "";
+                               var cpText = cpItem.Content.Value<string>("text") ?? "";
+                               if (cpFirst)
+                               {
+                           <div class="bg-primary p-8 rounded-xl text-center text-white md:col-span-1">
+                               <span class="material-symbols-outlined text-4xl text-white/90 mb-4">@cpIcon</span>
+                               <div class="font-bold text-lg mb-2">@cpTitle</div>
+                               <div class="text-sm text-white/80">@cpText</div>
+                           </div>
+                                   cpFirst = false;
+                               }
+                               else
+                               {
+                           <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
+                               <span class="material-symbols-outlined text-primary text-4xl mb-4">@cpIcon</span>
+                               <div class="font-bold mb-2">@cpTitle</div>
+                               <div class="text-sm text-on-surface-variant">@cpText</div>
+                           </div>
+                               }
+                           }
+                       }
+                       else
+                       {
+                       <div class="bg-primary p-8 rounded-xl text-center text-white md:col-span-1">
+                           <span class="material-symbols-outlined text-4xl text-white/90 mb-4">account_balance</span>
+                           <div class="font-bold text-lg mb-2">Presidência</div>
+                           <div class="text-sm text-white/80">Direção estratégica e representação institucional</div>
+                       </div>
+                       <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
+                           <span class="material-symbols-outlined text-primary text-4xl mb-4">computer</span>
+                           <div class="font-bold mb-2">Diretoria de TI</div>
+                           <div class="text-sm text-on-surface-variant">Infraestrutura tecnológica, desenvolvimento e segurança da plataforma.</div>
+                       </div>
+                       <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
+                           <span class="material-symbols-outlined text-primary text-4xl mb-4">account_balance_wallet</span>
+                           <div class="font-bold mb-2">Diretoria Financeira</div>
+                           <div class="text-sm text-on-surface-variant">Gestão financeira, controladoria e relações com investidores.</div>
+                       </div>
+                       <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
+                           <span class="material-symbols-outlined text-primary text-4xl mb-4">campaign</span>
+                           <div class="font-bold mb-2">Diretoria de Marketing</div>
+                           <div class="text-sm text-on-surface-variant">Comunicação institucional, branding e estratégias de crescimento.</div>
+                       </div>
+                       <div class="bg-surface-container-lowest p-8 rounded-xl text-center shadow-sm">
+                           <span class="material-symbols-outlined text-primary text-4xl mb-4">handshake</span>
+                           <div class="font-bold mb-2">Diretoria Comercial</div>
+                           <div class="text-sm text-on-surface-variant">Vendas, parcerias estratégicas e expansão de base de clientes.</div>
+                       </div>
+                       }
+                   </div>
+               </div>
+           </section>
       
       </main>
 
@@ -2465,7 +2583,8 @@ templates:
                   </div>
                   <div class="relative">
                       <div class="rounded-2xl overflow-hidden shadow-2xl relative">
-                          <img alt="Ecossistema Digital" class="w-full h-[380px] object-cover" src="/images/ecosystem-hero.jpg" />
+                          @{ var ecossistemaHeroImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("heroImage"); }
+                          <img alt="Ecossistema Digital" class="w-full h-[380px] object-cover" src="@(ecossistemaHeroImg != null ? ecossistemaHeroImg.Url() : "/images/ecosystem-hero.jpg")" />
                           <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent flex items-end p-6">
                               <span class="text-white font-bold text-lg">08 Portais Estratégicos Integrados</span>
                           </div>
@@ -2656,11 +2775,18 @@ templates:
                           <h2 class="text-4xl font-bold tracking-tight mt-2">@(Model.Value<string>("economicTitle") ?? "Modelo de Receita Múltiplo")</h2>
                       </div>
                       @if (Model.HasValue("economicContent"))
-                      {
-                          <div class="prose prose-sm max-w-none text-on-surface-variant">
-                              @Html.Raw(Model.Value("economicContent"))
-                          </div>
-                      }
+                          {
+                              var econItems = Model.Value<IEnumerable<string>>("economicContent");
+                              if (econItems != null && econItems.Any())
+                              {
+                              <div class="space-y-3 text-on-surface-variant">
+                                  @foreach (var econItem in econItems)
+                                  {
+                                  <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>@econItem</div>
+                                  }
+                              </div>
+                              }
+                          }
                   }
                   else
                   {
@@ -2728,7 +2854,8 @@ templates:
               <div class="max-w-[1440px] mx-auto px-12 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                   <div class="relative">
                       <div class="rounded-2xl overflow-hidden shadow-2xl">
-                          <img alt="Modelo de Negócio" class="w-full h-[420px] object-cover" src="@(Model.Value<string>("contractsImage") ?? "/images/business-contract.jpg")" />
+                          @{ var contractImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("heroImage"); }
+                          <img alt="Modelo de Negócio" class="w-full h-[420px] object-cover" src="@(contractImg != null ? contractImg.Url() : "/media/business-contract.jpg")" />
                       </div>
                       <div class="absolute -bottom-6 -right-6 bg-surface-container-lowest rounded-xl p-6 shadow-xl max-w-xs">
                           <div class="text-3xl font-black text-primary">Hold-Dig</div>
@@ -2820,7 +2947,8 @@ templates:
                       </div>
                   </div>
                   <div class="text-center mt-12">
-                      <a href="@(Model.Value<string>("foundersCtaUrl") ?? "/parceiros")" class="inline-block bg-primary text-white px-12 py-5 rounded-xl font-bold text-lg hover:scale-105 transition-all">
+                      @{ var foundersCtaLink = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("foundersCtaUrl")?.FirstOrDefault(); }
+                      <a href="@(foundersCtaLink?.Url ?? "/parceiros")" class="inline-block bg-primary text-white px-12 py-5 rounded-xl font-bold text-lg hover:scale-105 transition-all">
                           @(Model.Value<string>("foundersCtaLabel") ?? "Garanta sua Vaga como Sócio Fundador")
                       </a>
                   </div>
@@ -2863,7 +2991,8 @@ templates:
                   </div>
                   <div class="relative">
                       <div class="absolute -inset-4 bg-secondary/5 rounded-3xl blur-2xl"></div>
-                      <img alt="Governança Corporativa" class="rounded-2xl shadow-2xl relative z-10 w-full h-[360px] object-cover" src="/images/governance-hero.jpg" />
+                      @{ var govHeroImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("heroImage"); }
+                      <img alt="Governança Corporativa" class="rounded-2xl shadow-2xl relative z-10 w-full h-[360px] object-cover" src="@(govHeroImg != null ? govHeroImg.Url() : "/media/governance-hero.jpg")" />
                   </div>
               </div>
           </section>
@@ -3141,7 +3270,8 @@ templates:
           <!-- Hero with bg image + gradient overlay -->
           <section class="relative min-h-[480px] flex items-center overflow-hidden">
               <div class="absolute inset-0">
-                  <img alt="Parceiros RISIN" class="w-full h-full object-cover" src="/images/partners-hero.jpg" />
+                  @{ var parcHeroImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("heroImage"); }
+                  <img alt="Parceiros RISIN" class="w-full h-full object-cover" src="@(parcHeroImg != null ? parcHeroImg.Url() : "/media/partners-hero.jpg")" />
                   <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-transparent"></div>
               </div>
               <div class="relative z-10 max-w-[1440px] mx-auto px-12 py-24">
@@ -3203,9 +3333,16 @@ templates:
                                               <p class="text-sm text-on-surface-variant leading-relaxed mb-6">@(item.Value<string>("partnerDescription") ?? "")</p>
                                               @if (item.HasValue("partnerBenefits"))
                                               {
+                                                  var benefitItems = item.Value<IEnumerable<string>>("partnerBenefits");
+                                                  if (benefitItems != null && benefitItems.Any())
+                                                  {
                                                   <div class="space-y-2 text-sm text-on-surface-variant">
-                                                      @Html.Raw(item.Value("partnerBenefits"))
+                                                      @foreach (var benefit in benefitItems)
+                                                      {
+                                                      <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>@benefit</div>
+                                                      }
                                                   </div>
+                                                  }
                                               }
                                           </div>
                                           @if (imageOnRight)
@@ -3229,9 +3366,16 @@ templates:
                                       <p class="text-sm text-on-surface-variant leading-relaxed mb-6">@(item.Value<string>("partnerDescription") ?? "")</p>
                                       @if (item.HasValue("partnerBenefits"))
                                       {
+                                          var benefitItems = item.Value<IEnumerable<string>>("partnerBenefits");
+                                          if (benefitItems != null && benefitItems.Any())
+                                          {
                                           <div class="space-y-2 text-sm text-on-surface-variant">
-                                              @Html.Raw(item.Value("partnerBenefits"))
+                                              @foreach (var benefit in benefitItems)
+                                              {
+                                              <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>@benefit</div>
+                                              }
                                           </div>
+                                          }
                                       }
                                   </div>
                               }
@@ -3260,7 +3404,8 @@ templates:
                                       </div>
                                   </div>
                                   <div class="hidden md:block relative">
-                                      <img alt="Tecnologia" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" src="@(Model.Value<string>("partnerTechImage") ?? "/images/partners-tech.jpg")" />
+                                      @{ var partnerTechImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("partnerTechImage"); }
+                                      <img alt="Tecnologia" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" src="@(partnerTechImg != null ? partnerTechImg.Url() : "/media/partners-tech.jpg")" />
                                   </div>
                               </div>
                           </div>
@@ -3299,7 +3444,8 @@ templates:
                               <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-secondary"></div>
                               <div class="grid grid-cols-1 md:grid-cols-2 h-full">
                                   <div class="hidden md:block relative">
-                                      <img alt="Institucional" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" src="@(Model.Value<string>("partnerInstitutionalImage") ?? "/images/partners-institutional.jpg")" />
+                                      @{ var partnerInstitutionalImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("partnerInstitutionalImage"); }
+                                      <img alt="Institucional" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" src="@(partnerInstitutionalImg != null ? partnerInstitutionalImg.Url() : "/media/partners-institutional.jpg")" />
                                   </div>
                                   <div class="p-8">
                                       <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
@@ -3396,7 +3542,8 @@ templates:
                   </div>
                   <!-- Brazil map with animate-ping dots -->
                   <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-slate-900 aspect-video flex items-center justify-center">
-                      <img alt="Mapa de Expansão Brasil" class="absolute inset-0 w-full h-full object-cover opacity-40 map-container" src="@(Model.Value<string>("expansionMapImage") ?? "/images/expansion-map.jpg")" />
+                      @{ var expansionMapImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("expansionMapImage"); }
+                      <img alt="Mapa de Expansão Brasil" class="absolute inset-0 w-full h-full object-cover opacity-40 map-container" src="@(expansionMapImg != null ? expansionMapImg.Url() : "/media/expansion-map.jpg")" />
                       <!-- SP dot -->
                       <div class="absolute" style="bottom: 42%; right: 28%;">
                           <div class="relative flex items-center justify-center">
@@ -3436,7 +3583,8 @@ templates:
                           {
                               var code = regional.Value<string>("regionalCode") ?? "##";
                               var colorClass = regionColors[rIdx % regionColors.Length];
-                              var imgSrc = regional.HasValue("regionalImage") ? regional.Value<string>("regionalImage") : $"/images/expansion-{code.ToLower()}.jpg";
+                              var regionalImg = regional.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("regionalImage");
+                              var imgSrc = regionalImg != null ? regionalImg.Url() : $"/media/expansion-{code.ToLower()}.jpg";
                               var badgeNum = (rIdx + 1).ToString("D2");
                               <div class="rounded-2xl overflow-hidden shadow-lg group relative">
                                   <img alt="@(regional.Value<string>("regionalName") ?? regional.Name) Regional" class="w-full h-[300px] object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="@imgSrc" />
@@ -3461,7 +3609,7 @@ templates:
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                           <!-- SP -->
                           <div class="rounded-2xl overflow-hidden shadow-lg group relative">
-                              <img alt="São Paulo Regional" class="w-full h-[300px] object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="/images/expansion-sp.jpg" />
+                              <img alt="São Paulo Regional" class="w-full h-[300px] object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="/media/expansion-sp.jpg" />
                               <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                               <div class="absolute bottom-0 left-0 right-0 p-6">
                                   <div class="flex items-center gap-3 mb-3">
@@ -3482,7 +3630,7 @@ templates:
                           </div>
                           <!-- RJ -->
                           <div class="rounded-2xl overflow-hidden shadow-lg group relative">
-                              <img alt="Rio de Janeiro Regional" class="w-full h-[300px] object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="/images/expansion-rj.jpg" />
+                              <img alt="Rio de Janeiro Regional" class="w-full h-[300px] object-cover grayscale group-hover:grayscale-0 transition-all duration-700" src="/media/expansion-rj.jpg" />
                               <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                               <div class="absolute bottom-0 left-0 right-0 p-6">
                                   <div class="flex items-center gap-3 mb-3">
@@ -3515,9 +3663,16 @@ templates:
                           <h2 class="text-4xl font-bold tracking-tight mt-2 mb-6">@(Model.Value<string>("expansionTitle") ?? "Roadmap de Crescimento Nacional")</h2>
                           @if (Model.HasValue("expansionContent"))
                           {
-                              <div class="text-on-surface-variant leading-relaxed mb-8">
-                                  @Html.Raw(Model.Value("expansionContent"))
+                              var expansionItems = Model.Value<IEnumerable<string>>("expansionContent");
+                              if (expansionItems != null && expansionItems.Any())
+                              {
+                              <div class="space-y-3 text-on-surface-variant leading-relaxed mb-8">
+                                  @foreach (var item in expansionItems)
+                                  {
+                                  <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>@item</div>
+                                  }
                               </div>
+                              }
                           }
                           else
                           {
@@ -3600,9 +3755,10 @@ templates:
                       @(Model.Value<string>("ctaText") ?? "Seja um operador regional da RISIN e lidere a transformação digital empresarial da sua cidade. Modelo validado, suporte completo e todo o poder do ecossistema nacional.")
                   </p>
                   <div class="flex flex-wrap justify-center gap-4">
-                      <a href="@(Model.Value<string>("ctaUrl") ?? "/parceiros")" class="inline-flex items-center gap-2 bg-primary text-white px-10 py-4 rounded-xl font-bold hover:scale-105 transition-transform">
+                      @{ var ctaLink = Model.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("ctaUrl")?.FirstOrDefault(); }
+                      <a href="@(ctaLink?.Url ?? "/parceiros")" class="inline-flex items-center gap-2 bg-primary text-white px-10 py-4 rounded-xl font-bold hover:scale-105 transition-transform">
                           <span class="material-symbols-outlined">rocket_launch</span>
-                          @(Model.Value<string>("ctaLabel") ?? "Quero ser Operador Regional")
+                          @(ctaLink?.Name ?? "Quero ser Operador Regional")
                       </a>
                       <a href="/a-risin" class="inline-flex items-center gap-2 border-2 border-primary text-primary px-10 py-4 rounded-xl font-bold hover:bg-primary/5 transition-colors">
                           Saiba mais sobre a RISIN
@@ -3654,7 +3810,8 @@ templates:
                   <!-- Glassmorphic image card -->
                   <div class="relative">
                       <div class="bg-white/70 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl p-2">
-                          <img alt="Relações Institucionais" class="rounded-xl w-full h-[340px] object-cover grayscale hover:grayscale-0 transition-all duration-700" src="/images/relations-hero.jpg" />
+                          @{ var relHeroImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("heroImage"); }
+                          <img alt="Relações Institucionais" class="rounded-xl w-full h-[340px] object-cover grayscale hover:grayscale-0 transition-all duration-700" src="@(relHeroImg != null ? relHeroImg.Url() : "/media/relations-hero.jpg")" />
                       </div>
                       <div class="absolute -bottom-4 -right-4 bg-surface-container-lowest rounded-xl p-4 shadow-xl">
                           <div class="flex items-center gap-2">
@@ -3699,14 +3856,27 @@ templates:
                                       <div class="text-sm text-white/80 leading-relaxed">
                                           @if (block.HasValue("blockContent"))
                                           {
-                                              @Html.Raw(block.Value("blockContent"))
+                                              var contentItems = block.Value<IEnumerable<string>>("blockContent");
+                                              if (contentItems != null && contentItems.Any())
+                                              {
+                                              <div class="space-y-2">
+                                                  @foreach (var contentItem in contentItems)
+                                                  {
+                                                  <div class="flex items-center gap-2 text-sm text-white/80"><div class="w-1.5 h-1.5 bg-white/60 rounded-full flex-shrink-0"></div>@contentItem</div>
+                                                  }
+                                              </div>
+                                              }
                                           }
                                       </div>
                                       @if (block.HasValue("blockCtaLabel") && block.HasValue("blockCtaUrl"))
                                       {
-                                          <a href="@(block.Value<string>("blockCtaUrl"))" class="inline-flex items-center gap-2 mt-6 bg-white text-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-surface-container-lowest transition-colors">
+                                          var blockCtaLink = block.Value<IEnumerable<Umbraco.Cms.Core.Models.Link>>("blockCtaUrl")?.FirstOrDefault();
+                                          @if (blockCtaLink != null)
+                                          {
+                                          <a href="@blockCtaLink.Url" class="inline-flex items-center gap-2 mt-6 bg-white text-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-surface-container-lowest transition-colors">
                                               @(block.Value<string>("blockCtaLabel"))
                                           </a>
+                                          }
                                       }
                                   </div>
                               }
@@ -3726,7 +3896,16 @@ templates:
                                               <div class="text-sm text-on-surface-variant leading-relaxed">
                                                   @if (block.HasValue("blockContent"))
                                                   {
-                                                      @Html.Raw(block.Value("blockContent"))
+                                                      var contentItems = block.Value<IEnumerable<string>>("blockContent");
+                                                      if (contentItems != null && contentItems.Any())
+                                                      {
+                                                      <div class="space-y-2">
+                                                          @foreach (var contentItem in contentItems)
+                                                          {
+                                                          <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>@contentItem</div>
+                                                          }
+                                                      </div>
+                                                      }
                                                   }
                                               </div>
                                           </div>
@@ -3753,7 +3932,16 @@ templates:
                                       <div class="text-sm text-on-surface-variant leading-relaxed">
                                           @if (block.HasValue("blockContent"))
                                           {
-                                              @Html.Raw(block.Value("blockContent"))
+                                              var contentItems = block.Value<IEnumerable<string>>("blockContent");
+                                              if (contentItems != null && contentItems.Any())
+                                              {
+                                              <div class="space-y-2">
+                                                  @foreach (var contentItem in contentItems)
+                                                  {
+                                                  <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>@contentItem</div>
+                                                  }
+                                              </div>
+                                              }
                                           }
                                       </div>
                                   </div>
@@ -3832,7 +4020,8 @@ templates:
                                       </div>
                                   </div>
                                   <div class="hidden md:block relative">
-                                      <img alt="Conselho Consultivo" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" src="@(Model.Value<string>("councilImage") ?? "/images/relations-council.jpg")" />
+                                      @{ var councilImg = Model.Value<Umbraco.Cms.Core.Models.MediaWithCrops>("councilImage"); }
+                                      <img alt="Conselho Consultivo" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" src="@(councilImg != null ? councilImg.Url() : "/media/relations-council.jpg")" />
                                   </div>
                               </div>
                           </div>
@@ -4529,6 +4718,114 @@ templates:
       </main>
 
 # ─────────────────────────────────────────────
+# MEDIA
+# ─────────────────────────────────────────────
+media:
+  - alias: siteImages
+    name: "Site Images"
+    mediaType: Folder
+    children:
+      - alias: about-hero
+        name: "RISIN – Sobre Nós"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/about-hero.jpg"
+
+      - alias: ecosystem-hero
+        name: "RISIN – Ecossistema Digital"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/ecosystem-hero.jpg"
+
+      - alias: ecosystem-clikashop
+        name: "RISIN – Ecossistema Clikashop"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/ecosystem-clikashop.jpg"
+
+      - alias: home-hero
+        name: "RISIN – Home Hero"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/home-hero.jpg"
+
+      - alias: home-map
+        name: "RISIN – Mapa Home"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/home-map.jpg"
+
+      - alias: governance-hero
+        name: "RISIN – Governança"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/governance-hero.jpg"
+
+      - alias: relations-hero
+        name: "RISIN – Relações Institucionais"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/relations-hero.jpg"
+
+      - alias: expansion-map
+        name: "RISIN – Mapa de Expansão"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-map.jpg"
+
+      - alias: expansion-sp
+        name: "RISIN – Regional São Paulo"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-sp.jpg"
+
+      - alias: expansion-rj
+        name: "RISIN – Regional Rio de Janeiro"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-rj.jpg"
+
+      - alias: partners-hero
+        name: "RISIN – Parceiros"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-hero.jpg"
+
+      - alias: partners-tech
+        name: "RISIN – Parceiro Tecnologia"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-tech.jpg"
+
+      - alias: partners-institutional
+        name: "RISIN – Parceiro Institucional"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-institutional.jpg"
+
+      - alias: business-contract
+        name: "RISIN – Modelo de Negócio Contrato"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/business-contract.jpg"
+
+      - alias: relations-council
+        name: "RISIN – Conselho Consultivo"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/relations-council.jpg"
+
+      - alias: site-logo
+        name: "RISIN – Logo"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/logo.png"
+
+      - alias: favicon-ico
+        name: "RISIN – Favicon ICO"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/favicons/favicon.ico"
+
+      - alias: favicon-svg
+        name: "RISIN – Favicon SVG"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/favicons/favicon.svg"
+
+      - alias: favicon-png96
+        name: "RISIN – Favicon 96x96"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/favicons/favicon-96x96.png"
+
+      - alias: favicon-apple-touch
+        name: "RISIN – Apple Touch Icon"
+        mediaType: Image
+        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/favicons/apple-touch-icon.png"
+
+# ─────────────────────────────────────────────
 # CONTENT
 # ─────────────────────────────────────────────
 content:
@@ -4543,24 +4840,35 @@ content:
       siteEmail: "contato@risin.com.br"
       siteLocation: "Niterói, RJ - Brasil"
       copyrightText: "© 2026 RISIN – Rede de Informações e Serviços na Internet Ltda. Todos os direitos reservados."
-      ctaButtonLabel: "Parcerias Estratégicas"
-      ctaButtonUrl: "/parceiros"
+      ctaButtonUrl:
+        url: "/parceiros"
+        title: "Parcerias Estratégicas"
       heroTitle: "RISIN – Plataforma Empresarial Digital em Implantação Estruturada"
+      siteLogo: "RISIN – Logo"
+      faviconIco: "RISIN – Favicon ICO"
+      faviconSvg: "RISIN – Favicon SVG"
+      faviconPng96: "RISIN – Favicon 96x96"
+      faviconAppleTouch: "RISIN – Apple Touch Icon"
+      appleMobileWebAppTitle: "RISIN"
     children:
 
       # ── Home ────────────────────────────────
       - alias: home
         name: Home
         documentType: homePage
+        update: true
         isPublished: true
         sortOrder: 0
         properties:
           heroTitle: "RISIN – Plataforma Empresarial Digital em Implantação Estruturada"
           heroSubtitle: "Integração de 08 websites sob um ecossistema tecnológico único, com modelo regional estruturado e governança progressiva para escalar empresas com segurança."
-          heroPrimaryCtaLabel: "Conheça o Projeto"
-          heroPrimaryCtaUrl: "/a-risin"
-          heroSecondaryCtaLabel: "Parcerias Estruturantes"
-          heroSecondaryCtaUrl: "/parceiros"
+          heroImage: "RISIN – Home Hero"
+          heroPrimaryCtaUrl:
+            url: "/a-risin"
+            title: "Conheça o Projeto"
+          heroSecondaryCtaUrl:
+            url: "/parceiros"
+            title: "Parcerias Estruturantes"
           macroTitle: "Visão Macro do Projeto"
           macroDescription: "Projeto concebido para nascer estruturado, evoluir para grupo empresarial digital, com foco em escala, governança e modelo regional."
           macroPilars:
@@ -4587,12 +4895,14 @@ content:
           economicModelHighlight: "Modelo projetado para sustentabilidade, escalabilidade e previsibilidade financeira."
           govBlockTitle: "Governança desde a Implantação"
           govBlockDescription: "RISIN nasce com presidência executiva, diretorias, conselho consultivo em formação e políticas de compliance."
-          govBlockLinkLabel: "Conheça a Estrutura de Governança →"
-          govBlockLinkUrl: "/governanca"
+          govBlockLinkUrl:
+            url: "/governanca"
+            title: "Conheça a Estrutura de Governança →"
           partnersBlockTitle: "Programa Parceiros RISIN"
           partnersBlockIntro: "Convite a escritórios jurídicos, integradores de tecnologia, desenvolvedores de lojas virtuais, marketing/publicidade e parcerias corporativas para serem parceiros estruturantes do ecossistema."
-          partnersBlockCtaLabel: "Seja Parceiro Estruturante"
-          partnersBlockCtaUrl: "/parceiros"
+          partnersBlockCtaUrl:
+            url: "/parceiros"
+            title: "Seja Parceiro Estruturante"
           expansionBlockTitle: "Arquitetura para Evolução em Holding Digital"
           expansionBlockContent: |
             <ul>
@@ -4619,7 +4929,8 @@ content:
         properties:
           heroTitle: "A RISIN"
           heroSubtitle: "Holding de projetos digitais que estrutura um ecossistema empresarial integrado, com foco em mercado B2B, B2C e B2B2C."
-          heroIntro: "<p>A Risin – Rede de Informações e Serviços na Internet Ltda. é uma empresa legalizada, com história desde os anos 90, detentora de PI de projetos e domínios que compõem a Rede do Portal RISIN.</p>"
+          heroImage: "RISIN – Sobre Nós"
+          heroIntro:
           foundingVisionTitle: "A Visão Fundadora"
           foundingVisionText: |
             <p>A <strong>RISIN – Plataforma Empresarial Digital</strong> nasceu da visão de criar um ecossistema integrado que conectasse empresas, profissionais e consumidores em uma única plataforma robusta e governada.</p>
@@ -4720,7 +5031,8 @@ content:
         properties:
           heroTitle: "Plataforma Integrada"
           heroSubtitle: "Integração dos 8 websites sob uma mesma plataforma tecnológica. Métricas centralizadas, inteligência comercial, dados compartilhados com segurança."
-          websitesSectionTitle: "Os 08 Websites da Rede"
+          heroImage: "RISIN – Ecossistema Digital"
+          websitesSectionTitle:
           regionalModelTitle: "Modelo Regional e Shopping Empresarial Digital"
           regionalModelLeftContent: |
             <ul>
@@ -4732,7 +5044,6 @@ content:
             - $type: clikashopItemElement
               title: "Clikashop – Shopping Digital Regional"
               content: "<p>Plataforma de e-commerce regional com lojas virtuais para os 3 setores da economia. Conecta consumidores locais com empresas da região.</p>"
-              image: ""
           gEmpresasSpotlightTitle: "G-Empresas"
           gEmpresasSpotlightContent: |
             <p>Painel de controle central para gestão de negócios com dados de toda a plataforma RISIN.</p>
@@ -4867,15 +5178,14 @@ content:
         properties:
           heroTitle: "Modelo de Negócio"
           heroSubtitle: "Estrutura econômica projetada para sustentabilidade, escalabilidade e previsibilidade financeira."
-          economicTitle: "Estrutura Econômica"
-          economicContent: |
-            <ul>
-              <li>Aluguéis e condomínios dos shoppings Clikashop (3 setores).</li>
-              <li>Comissões sobre vendas (políticas diferenciadas por planos).</li>
-              <li>Patrocínios e publicidades (banners, planos Ouro/Prata/Bronze/Básico).</li>
-              <li>Serviços digitais integrados (cooperativas, guias, agência, TV, etc.).</li>
-              <li>Eventos, consultorias e serviços B2B (futuro).</li>
-            </ul>
+          heroImage: "RISIN – Modelo de Negócio Contrato"
+          economicTitle:
+          economicContent:
+            - "Aluguéis e condomínios dos shoppings Clikashop (3 setores)."
+            - "Comissões sobre vendas (políticas diferenciadas por planos)."
+            - "Patrocínios e publicidades (banners, planos Ouro/Prata/Bronze/Básico)."
+            - "Serviços digitais integrados (cooperativas, guias, agência, TV, etc.)."
+            - "Eventos, consultorias e serviços B2B (futuro)."
           contractsTitle: "Contratos Empresariais"
           contractsContent: |
             <p>Contratos de Lojistas: caução equivalente a 3 meses, aluguéis condominiais, comissões escalonadas por plano. Transparência e segurança jurídica desde o início.</p>
@@ -4894,8 +5204,9 @@ content:
           commercialPolicyContent: |
             <p>Política comercial baseada em transparência, contratos padronizados e respeito ao lojista parceiro. Planos diferenciados por setor e tamanho de empresa, com condições claras de entrada, permanência e saída.</p>
           ctaTitle: "Quer fazer parte do modelo?"
-          ctaLabel: "Fale com a RISIN"
-          ctaUrl: "/contato"
+          ctaUrl:
+            url: "/contato"
+            title: "Fale com a RISIN"
           metaTitle: "Modelo de Negócio RISIN – Estrutura Econômica e Contratos"
           metaDescription: "Entenda a estrutura econômica da RISIN: aluguéis, comissões, patrocínios, 5.000 vagas e sustentabilidade financeira."
 
@@ -4908,7 +5219,8 @@ content:
         properties:
           heroTitle: "Governança"
           heroSubtitle: "RISIN nasce com presidência executiva, diretorias, conselho consultivo em formação e políticas de compliance desde a implantação."
-          structureTitle: "Estrutura de Governança"
+          heroImage: "RISIN – Governança"
+          structureTitle:
           structureDescription: "Estrutura pensada para garantir solidez, transparência e escalabilidade desde o início do projeto."
           agreementTitle: "Acordo de Sócios e Compromissos"
           agreementContent: |
@@ -5005,15 +5317,17 @@ content:
         properties:
           heroTitle: "Parceiros RISIN"
           heroSubtitle: "Seja parte da estruturação de um ecossistema empresarial digital com modelo regional, governança e escalabilidade."
-          programTitle: "Programa Parceiros RISIN"
+          heroImage: "RISIN – Parceiros"
+          programTitle:
           programContent: |
             <p>O Programa Parceiros RISIN convida escritórios jurídicos, integradores de tecnologia, desenvolvedores de lojas virtuais, agências de marketing e empresas corporativas a comporem o ecossistema como Parceiros Estruturantes.</p>
             <p>Parceiros Estruturantes participam da construção do projeto desde a base, com visibilidade, co-branding e condições diferenciadas de participação.</p>
           typesTitle: "Tipos de Parceiros e Benefícios"
           ctaTitle: "Seja um Parceiro Estruturante"
           ctaText: "Entre em contato com nosso time de parcerias e descubra qual categoria melhor se encaixa ao perfil da sua empresa. Juntos construiremos a maior plataforma empresarial digital do Brasil."
-          ctaLabel: "Seja Parceiro Estruturante"
-          ctaUrl: "/contato"
+          ctaUrl:
+            url: "/contato"
+            title: "Seja Parceiro Estruturante"
           partnerEmail: "parcerias@risin.com.br"
           metaTitle: "Parceiros RISIN – Programa de Parcerias Estruturantes"
           metaDescription: "Conheça o Programa Parceiros RISIN: jurídico, tecnologia, marketing, desenvolvimento de lojas virtuais e parcerias corporativas."
@@ -5027,12 +5341,10 @@ content:
               partnerName: "Parceiros Jurídicos"
               partnerSegment: "Juridico"
               partnerDescription: "Escritórios de advocacia especializados em direito empresarial, contratos, PI e compliance."
-              partnerBenefits: |
-                <ul>
-                  <li>Co-branding no portal RISIN e ecossistema.</li>
-                  <li>Participação em comitê jurídico consultivo.</li>
-                  <li>Visibilidade junto a 5.000+ lojistas parceiros.</li>
-                </ul>
+              partnerBenefits:
+                - "Co-branding no portal RISIN e ecossistema."
+                - "Participação em comitê jurídico consultivo."
+                - "Visibilidade junto a 5.000+ lojistas parceiros."
               sortOrder: 0
           - alias: parcTecnologia
             name: Tecnologia & Integração
@@ -5043,12 +5355,10 @@ content:
               partnerName: "Tecnologia & Integração"
               partnerSegment: "Tecnologia"
               partnerDescription: "Empresas de TI, integradores de sistemas e desenvolvedores de plataformas digitais."
-              partnerBenefits: |
-                <ul>
-                  <li>Integração técnica preferencial com a plataforma RISIN.</li>
-                  <li>Participação em roadmap tecnológico.</li>
-                  <li>Acesso antecipado a APIs e integrações.</li>
-                </ul>
+              partnerBenefits:
+                - "Integração técnica preferencial com a plataforma RISIN."
+                - "Participação em roadmap tecnológico."
+                - "Acesso antecipado a APIs e integrações."
               sortOrder: 1
           - alias: parcLojas
             name: Desenvolvimento de Lojas Virtuais
@@ -5059,12 +5369,10 @@ content:
               partnerName: "Desenvolvimento de Lojas Virtuais"
               partnerSegment: "DesenvolvimentoLojas"
               partnerDescription: "Agências e profissionais especializados em criar e configurar lojas virtuais dentro do ecossistema Clikashop."
-              partnerBenefits: |
-                <ul>
-                  <li>Canal de indicação direto com lojistas do ecossistema.</li>
-                  <li>Treinamento e certificação RISIN.</li>
-                  <li>Listagem preferencial no programa de parceiros.</li>
-                </ul>
+              partnerBenefits:
+                - "Canal de indicação direto com lojistas do ecossistema."
+                - "Treinamento e certificação RISIN."
+                - "Listagem preferencial no programa de parceiros."
               sortOrder: 2
           - alias: parcMarketing
             name: Marketing & Publicidade
@@ -5075,12 +5383,10 @@ content:
               partnerName: "Marketing & Publicidade"
               partnerSegment: "MarketingPublicidade"
               partnerDescription: "Agências de marketing digital, publicidade, mídia e branding para compor o ecossistema de comunicação da RISIN."
-              partnerBenefits: |
-                <ul>
-                  <li>Gestão de campanhas regionais e nacionais no ecossistema.</li>
-                  <li>Co-autoria em projetos de mídia e publicidade.</li>
-                  <li>Presença na Agência-RISIN como parceiro estratégico.</li>
-                </ul>
+              partnerBenefits:
+                - "Gestão de campanhas regionais e nacionais no ecossistema."
+                - "Co-autoria em projetos de mídia e publicidade."
+                - "Presença na Agência-RISIN como parceiro estratégico."
               sortOrder: 3
           - alias: parcCorporativo
             name: Parcerias Corporativas
@@ -5091,12 +5397,10 @@ content:
               partnerName: "Parcerias Corporativas"
               partnerSegment: "ParceriasCorporativas"
               partnerDescription: "Grandes empresas, federações e associações que desejam integrar seus serviços ao ecossistema regional RISIN."
-              partnerBenefits: |
-                <ul>
-                  <li>Acesso ao modelo de distribuição regional em 478 regionais.</li>
-                  <li>Participação em eventos e programas corporativos RISIN.</li>
-                  <li>Visibilidade no G-Empresas, TV-RISIN e Agência-RISIN.</li>
-                </ul>
+              partnerBenefits:
+                - "Acesso ao modelo de distribuição regional em 478 regionais."
+                - "Participação em eventos e programas corporativos RISIN."
+                - "Visibilidade no G-Empresas, TV-RISIN e Agência-RISIN."
               sortOrder: 4
 
       # ── Regionais ────────────────────────────
@@ -5108,22 +5412,22 @@ content:
         properties:
           heroTitle: "Regionais"
           heroSubtitle: "2 Regionais Modelo em implantação estruturada. 478 regionais planejadas para todo o Brasil."
-          heroStatNumber: 478
+          heroImage: "RISIN – Mapa de Expansão"
+          heroStatNumber:
           modelRegionalsTitle: "Regionais Modelo"
           modelRegionalsDescription: "As primeiras duas regionais (SP e RJ) servem como modelo operacional, tecnológico e comercial para validar processos, métricas, atendimento e escalabilidade antes da expansão nacional."
           expansionTitle: "Modelo de Expansão e Implantação Regional"
-          expansionContent: |
-            <ul>
-              <li>478 regionais planejadas no Brasil, agrupando cidades e bairros por população.</li>
-              <li>Uso de franquias ou arrendamentos para operar os shoppings regionais.</li>
-              <li>Conexão com cooperativas (Cooper-Translog, Coop-Supri) e logística regional.</li>
-              <li>Grupos populacionais de ~800 mil a 2,5 milhões por regional.</li>
-            </ul>
+          expansionContent:
+            - "478 regionais planejadas no Brasil, agrupando cidades e bairros por população."
+            - "Uso de franquias ou arrendamentos para operar os shoppings regionais."
+            - "Conexão com cooperativas (Cooper-Translog, Coop-Supri) e logística regional."
+            - "Grupos populacionais de ~800 mil a 2,5 milhões por regional."
           animatedMapEnabled: true
           ctaTitle: "Leve a RISIN para sua Região"
           ctaText: "Seja um operador regional da RISIN e lidere a transformação digital empresarial da sua cidade. Modelo validado, suporte completo e todo o poder do ecossistema nacional."
-          ctaLabel: "Quero ser Operador Regional"
-          ctaUrl: "/parceiros"
+          ctaUrl:
+            url: "/parceiros"
+            title: "Quero ser Operador Regional"
           metaTitle: "Regionais RISIN – Expansão para 478 Regionais no Brasil"
           metaDescription: "Conheça o modelo de expansão regional da RISIN: 2 regionais modelo (SP e RJ) e 478 regionais planejadas para todo o Brasil."
         children:
@@ -5135,7 +5439,8 @@ content:
             properties:
               regionalName: "Regional São Paulo"
               regionalCode: "SP"
-              regionalDescription: |
+              heroImage: "RISIN – Regional São Paulo"
+              regionalDescription:
                 <p>Primeira regional modelo da RISIN. São Paulo representa o maior polo empresarial do Brasil, com alto potencial de vagas e lojistas para o Clikashop.</p>
               isModelRegional: true
               populationRange: "~20 milhões (Grande SP)"
@@ -5148,7 +5453,8 @@ content:
             properties:
               regionalName: "Regional Rio de Janeiro"
               regionalCode: "RJ"
-              regionalDescription: |
+              heroImage: "RISIN – Regional Rio de Janeiro"
+              regionalDescription:
                 <p>Segunda regional modelo da RISIN, sede da empresa. Rio de Janeiro oferece um mercado diversificado nos 3 setores da economia com forte presença B2B e B2C.</p>
               isModelRegional: true
               populationRange: "~7 milhões (Grande RJ)"
@@ -5163,7 +5469,8 @@ content:
         properties:
           heroTitle: "Relações Institucionais"
           heroSubtitle: "RISIN dialoga com grandes empresas, escritórios de advocacia, investidores estratégicos e conselheiros consultivos."
-          audienceSectionTitle: "Nossos Públicos Institucionais"
+          heroImage: "RISIN – Relações Institucionais"
+          audienceSectionTitle:
           presentationTitle: "Apresentação Institucional"
           presentationContent: "Acesse a apresentação completa com modelo de negócio, arquitetura operacional, projeções financeiras e oportunidades de parceria."
           downloadLabel: "Download Apresentação Completa (PDF)"
@@ -5182,13 +5489,11 @@ content:
             properties:
               audienceType: "GrandesEmpresas"
               blockTitle: "Grandes Empresas"
-              blockContent: |
-                <ul>
-                  <li>Integração de serviços corporativos ao ecossistema regional RISIN.</li>
-                  <li>Patrocínio e presença de marca nas 478 regionais.</li>
-                  <li>Parcerias para fornecimento às cooperativas (Coop-Supri, Cooper-Translog).</li>
-                  <li>Acesso a base de lojistas e empresas regionais.</li>
-                </ul>
+              blockContent:
+                - "Integração de serviços corporativos ao ecossistema regional RISIN."
+                - "Patrocínio e presença de marca nas 478 regionais."
+                - "Parcerias para fornecimento às cooperativas (Coop-Supri, Cooper-Translog)."
+                - "Acesso a base de lojistas e empresas regionais."
               isFeatured: true
               sortOrder: 0
           - alias: escritoriosAdvocacia
@@ -5199,12 +5504,10 @@ content:
             properties:
               audienceType: "EscritoriosAdvocacia"
               blockTitle: "Escritórios de Advocacia"
-              blockContent: |
-                <ul>
-                  <li>Parceria jurídica para contratos de lojistas, franquias e parcerias.</li>
-                  <li>Assessoria em PI, compliance e estruturação societária.</li>
-                  <li>Participação no Programa Parceiros RISIN – segmento jurídico.</li>
-                </ul>
+              blockContent:
+                - "Parceria jurídica para contratos de lojistas, franquias e parcerias."
+                - "Assessoria em PI, compliance e estruturação societária."
+                - "Participação no Programa Parceiros RISIN – segmento jurídico."
               isFeatured: false
               sortOrder: 1
           - alias: investidores
@@ -5215,12 +5518,10 @@ content:
             properties:
               audienceType: "InvestidoresEstrategicos"
               blockTitle: "Investidores Estratégicos"
-              blockContent: |
-                <ul>
-                  <li>Projeto com modelo econômico estruturado e receita recorrente projetada.</li>
-                  <li>Ecossistema escalável para 478 regionais com governança desde a base.</li>
-                  <li>Oportunidade de entrada em fase de implantação estruturada.</li>
-                </ul>
+              blockContent:
+                - "Projeto com modelo econômico estruturado e receita recorrente projetada."
+                - "Ecossistema escalável para 478 regionais com governança desde a base."
+                - "Oportunidade de entrada em fase de implantação estruturada."
               isFeatured: true
               sortOrder: 2
           - alias: conselhoInstitucional
@@ -5231,12 +5532,10 @@ content:
             properties:
               audienceType: "ConselhoConsultivo"
               blockTitle: "Conselho Consultivo"
-              blockContent: |
-                <ul>
-                  <li>Participação em decisões estratégicas de alto impacto.</li>
-                  <li>Perfil desejado: lideranças empresariais, jurídicas e de tecnologia.</li>
-                  <li>Conselho em formação — candidaturas abertas.</li>
-                </ul>
+              blockContent:
+                - "Participação em decisões estratégicas de alto impacto."
+                - "Perfil desejado: lideranças empresariais, jurídicas e de tecnologia."
+                - "Conselho em formação — candidaturas abertas."
               isFeatured: false
               sortOrder: 3
 
@@ -5345,8 +5644,9 @@ content:
             </ul>
           ctaTitle: "Pronto para Crescer com a RISIN?"
           ctaText: "Junte-se a milhares de lojistas que já fazem parte do maior ecossistema empresarial digital do Brasil."
-          ctaLabel: "Quero Ser Lojista RISIN"
-          ctaUrl: "/contato"
+          ctaUrl:
+            url: "/contato"
+            title: "Quero Ser Lojista RISIN"
           metaTitle: "Para Lojistas RISIN – Seja um Parceiro Fundador"
           metaDescription: "Saiba como se tornar lojista no Shopping Empresarial Digital da RISIN: benefícios, como funciona e requisitos."
 
@@ -5381,8 +5681,9 @@ content:
             </ul>
           ctaTitle: "Quer operar uma regional RISIN?"
           ctaText: "Seja um franqueado RISIN e lidere a transformação digital empresarial da sua cidade. Modelo validado, suporte completo e todo o poder do ecossistema nacional."
-          ctaLabel: "Quero ser franqueado / representante regional"
-          ctaUrl: "/contato"
+          ctaUrl:
+            url: "/contato"
+            title: "Quero ser franqueado / representante regional"
           metaTitle: "Franquias RISIN – Opere uma Regional Empresarial Digital"
           metaDescription: "Seja um franqueado ou representante regional da RISIN. Modelo com suporte tecnológico, comercial e de marketing."
 
@@ -5402,102 +5703,3 @@ content:
           contactLocation: "Niterói, RJ - Brasil"
           metaTitle: "Contato RISIN – Fale Conosco"
           metaDescription: "Entre em contato com a RISIN para parcerias, franquias, informações sobre lojistas ou dúvidas gerais."
-
-# ─────────────────────────────────────────────
-# MEDIA
-# ─────────────────────────────────────────────
-media:
-  - alias: siteImages
-    name: "Site Images"
-    mediaType: Folder
-    children:
-      - alias: about-hero
-        name: "RISIN – Sobre Nós"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/about-hero.jpg"
-        update: true
-
-      - alias: ecosystem-hero
-        name: "RISIN – Ecossistema Digital"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/ecosystem-hero.jpg"
-        update: true
-
-      - alias: ecosystem-clikashop
-        name: "RISIN – Ecossistema Clikashop"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/ecosystem-clikashop.jpg"
-        update: true
-
-      - alias: home-hero
-        name: "RISIN – Home Hero"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/home-hero.jpg"
-        update: true
-
-      - alias: home-map
-        name: "RISIN – Mapa Home"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/home-map.jpg"
-        update: true
-
-      - alias: governance-hero
-        name: "RISIN – Governança"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/governance-hero.jpg"
-        update: true
-
-      - alias: relations-hero
-        name: "RISIN – Relações Institucionais"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/relations-hero.jpg"
-        update: true
-
-      - alias: expansion-map
-        name: "RISIN – Mapa de Expansão"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-map.jpg"
-        update: true
-
-      - alias: expansion-sp
-        name: "RISIN – Regional São Paulo"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-sp.jpg"
-        update: true
-
-      - alias: expansion-rj
-        name: "RISIN – Regional Rio de Janeiro"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/expansion-rj.jpg"
-        update: true
-
-      - alias: partners-hero
-        name: "RISIN – Parceiros"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-hero.jpg"
-        update: true
-
-      - alias: partners-tech
-        name: "RISIN – Parceiro Tecnologia"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-tech.jpg"
-        update: true
-
-      - alias: partners-institutional
-        name: "RISIN – Parceiro Institucional"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/partners-institutional.jpg"
-        update: true
-
-      - alias: business-contract
-        name: "RISIN – Modelo de Negócio Contrato"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/business-contract.jpg"
-        update: true
-
-      - alias: relations-council
-        name: "RISIN – Conselho Consultivo"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN/relations-council.jpg"
-        update: true
-

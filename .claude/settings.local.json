@@ -64,7 +64,8 @@
       "Bash(git --version)",
       "Bash(find /c/Users/elder/.nuget/packages/umbraco.cms.core/17.2.2 -name *.dll)",
       "Bash(cd /c/Users/elder/.nuget/packages/umbraco.cms.core/17.2.2/lib/net10.0 && powershell -Command \"\\\\$asm = [System.Reflection.Assembly]::LoadFrom\\(\\(Get-Location\\).Path + '/Umbraco.Core.dll'\\); \\\\$t = \\\\$asm.GetTypes\\(\\) | Where-Object {\\\\$_.Name -eq 'IContentService'}; \\\\$t.GetMethods\\(\\) | Where-Object {\\\\$_.Name -match 'Children|Root'} | ForEach-Object {\\\\$_.ToString\\(\\)}\" 2>&1 | head -20)",
-      "Bash(find /c/Users/elder/.nuget/packages/umbraco.cms.core/17.2.2 -name \"*.xml\" 2>/dev/null | head -3)"
+      "Bash(find /c/Users/elder/.nuget/packages/umbraco.cms.core/17.2.2 -name \"*.xml\" 2>/dev/null | head -3)",
+      "Skill(commit-commands:commit-push-pr)"
     ]
   }
 }
