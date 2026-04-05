@@ -26,6 +26,12 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Initial release. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to YAML. Supports Umbraco 13-17.</PackageReleaseNotes>
+
+    <!-- Umbraco Marketplace metadata -->
+    <PackageType>Dependency</PackageType>
+    <DevelopmentDependency>false</DevelopmentDependency>
+
     <!-- Suppress transitive vulnerability warnings from Umbraco's own dependencies (MimeKit, Lucene) -->
     <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
   </PropertyGroup>
@@ -65,9 +71,14 @@
     <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <!-- Include App_Plugins in the NuGet package -->
+  <!-- Include App_Plugins in the NuGet package via contentFiles (modern NuGet convention) -->
   <ItemGroup>
-    <Content Include="App_Plugins\**\*" Pack="true" PackagePath="content\App_Plugins\" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="App_Plugins\**\*" Pack="true" PackagePath="contentFiles\any\any\App_Plugins\" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Include buildTransitive targets for reliable App_Plugins delivery -->
+  <ItemGroup>
+    <None Include="buildTransitive\**\*.targets" Pack="true" PackagePath="buildTransitive\" />
   </ItemGroup>
 
 </Project>
