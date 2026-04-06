@@ -263,10 +263,12 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             const match = cd.match(/filename[^;=\n]*=["']?([^"';\n]+)/i);
             a.download = match ? match[1].trim() : 'umbraco-export';
             a.href = objectUrl;
-            document.body.appendChild(a);
+
+            // Prevent the History API / anchor error in Umbraco 14+ by NOT appending to document body
+            // A simple click() on the detached anchor element triggers the download in modern browsers
             a.click();
-            URL.revokeObjectURL(objectUrl);
-            document.body.removeChild(a);
+
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 100);
         } catch (e) {
             this._notify('danger', 'Download failed', e.message ?? 'Could not download file.');
         }
@@ -363,7 +365,7 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
                     look="secondary"
                     color="default"
                     label=${this._downloadingZip ? 'Preparing ZIP…' : 'Download ZIP (with media)'}
-                    ?disabled=${this._downloadingZip}
+                    ?disabled=${this._downloadingZip || !this._hasExport}
                     @click=${this._downloadZip}>
                     ${this._downloadingZip ? html`<uui-loader-circle></uui-loader-circle>` : nothing}
                     ${this._downloadingZip ? 'Preparing ZIP…' : 'Download ZIP (with media)'}
