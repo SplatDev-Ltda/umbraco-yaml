@@ -67,11 +67,6 @@ public class DataTypeExporter
     /// </summary>
     private string GetEditorAlias(IDataType dataType)
     {
-#if NET8_0
-        // net8.0 compiles against Umbraco 13 whose IDataType does not expose EditorUiAlias.
-        // Fall back to EditorAlias for all v13/v14 installs on this TFM.
-        return dataType.EditorAlias;
-#else
         if (_versionDetector.SupportsEditorUiAlias())
         {
             return dataType.EditorUiAlias ?? dataType.EditorAlias;
@@ -80,7 +75,6 @@ public class DataTypeExporter
         {
             return dataType.EditorAlias;
         }
-#endif
     }
 
     /// <summary>
@@ -90,12 +84,7 @@ public class DataTypeExporter
     {
         var config = new Dictionary<string, object>();
 
-#if NET8_0
-        // Umbraco 13: configuration is exposed via Configuration; renamed to ConfigurationObject in v14.
-        var configObj = dataType.Configuration;
-#else
         var configObj = dataType.ConfigurationObject;
-#endif
 
         if (configObj == null)
         {
@@ -192,3 +181,5 @@ public class DataTypeExporter
         return char.ToLowerInvariant(alias[0]) + alias.Substring(1);
     }
 }
+
+

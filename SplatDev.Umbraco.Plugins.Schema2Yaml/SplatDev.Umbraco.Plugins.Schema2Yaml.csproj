@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!--
-      net8.0  → Umbraco 13 (13.x) and Umbraco 14 (14.x)
+      net8.0  → Umbraco 14 (14.x)
       net9.0  → Umbraco 15 (15.x) and Umbraco 16 (16.x)
       net10.0 → Umbraco 17 (17.x)
     -->
@@ -13,11 +13,11 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Schema2Yaml</PackageId>
-    <Version>1.0.7</Version>
+    <Version>2.0.0</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
-    <Description>An Umbraco plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file. Supports Umbraco 13–17.</Description>
+    <Description>An Umbraco plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file. Supports Umbraco 14–17. For Umbraco 13, use v1.x.</Description>
     <PackageTags>umbraco yaml infrastructure-as-code cms content-management export schema document-types data-types templates media languages dictionary members users umbraco-marketplace</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -26,7 +26,7 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v1.0.7: Add Umbraco 13 support (net8.0 TFM now targets Umbraco 13.x; previously required 14.x). The package now covers Umbraco 13–17 across all three TFMs.</PackageReleaseNotes>
+    <PackageReleaseNotes>v2.0.0: Breaking change — dropped Umbraco 13 support. net8.0 now targets Umbraco 14.x minimum. For Umbraco 13 use v1.0.8.</PackageReleaseNotes>
 
     <!-- Umbraco Marketplace metadata -->
     <PackageType>Dependency</PackageType>
@@ -41,10 +41,10 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <!-- Umbraco 13 / 14  (net8.0) -->
+  <!-- Umbraco 14  (net8.0) -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="14.0.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="14.0.0" />
   </ItemGroup>
 
   <!-- Umbraco 15 / 16  (net9.0) -->
@@ -83,3 +83,4 @@
   </ItemGroup>
 
 </Project>
+

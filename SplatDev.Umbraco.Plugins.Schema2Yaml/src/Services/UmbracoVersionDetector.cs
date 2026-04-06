@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 
 /// <summary>
-/// Supported Umbraco versions for export.
+/// Supported Umbraco versions for export (Umbraco 14–17).
+/// For Umbraco 13 support use v1.x (support/umbraco-13 branch).
 /// </summary>
 public enum UmbracoVersion
 {
-    V13,
     V14,
     V15,
     V16,
@@ -48,7 +48,6 @@ public class UmbracoVersionDetector
 
         _cachedVersion = version.Major switch
         {
-            13 => UmbracoVersion.V13,
             14 => UmbracoVersion.V14,
             15 => UmbracoVersion.V15,
             16 => UmbracoVersion.V16,
@@ -59,7 +58,7 @@ public class UmbracoVersionDetector
         if (_cachedVersion == UmbracoVersion.Unknown)
         {
             _logger.LogWarning(
-                "Umbraco version {Version} is not explicitly supported. Export may have compatibility issues.",
+                "Umbraco version {Version} is not supported. This package supports Umbraco 14–17. For Umbraco 13 use v1.x.",
                 version);
         }
         else
@@ -80,18 +79,13 @@ public class UmbracoVersionDetector
 
     /// <summary>
     /// Determines if the current version supports the new editor UI alias format (V14+).
+    /// Always true on this Umbraco 14–17 branch.
     /// </summary>
-    public bool SupportsEditorUiAlias()
-    {
-        var version = GetVersion();
-        return version is UmbracoVersion.V14 or UmbracoVersion.V15 or UmbracoVersion.V16 or UmbracoVersion.V17;
-    }
+    public bool SupportsEditorUiAlias() => true;
 
     /// <summary>
     /// Determines if the current version uses legacy property editor aliases (V13).
+    /// Always false on this Umbraco 14–17 branch.
     /// </summary>
-    public bool UsesLegacyEditorAlias()
-    {
-        return GetVersion() == UmbracoVersion.V13;
-    }
+    public bool UsesLegacyEditorAlias() => false;
 }
