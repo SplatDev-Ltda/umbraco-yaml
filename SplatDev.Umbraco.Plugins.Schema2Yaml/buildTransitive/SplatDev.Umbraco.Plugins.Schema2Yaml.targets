@@ -11,10 +11,10 @@
 
   <Target Name="CopySchema2YamlAppPlugins" AfterTargets="Build">
     <ItemGroup>
-      <_Schema2YamlPluginFiles Include="$(_Schema2YamlPkgRoot)contentFiles\any\any\App_Plugins\**\*" />
+      <_Schema2YamlPluginFiles Include="$(_Schema2YamlPkgRoot)App_Plugins_Package\**\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(_Schema2YamlPluginFiles)"
-          DestinationFolder="$(MSBuildProjectDirectory)\App_Plugins\Schema2Yaml\%(RecursiveDir)"
+          DestinationFolder="$(MSBuildProjectDirectory)\wwwroot\App_Plugins\Schema2Yaml\%(RecursiveDir)"
           SkipUnchangedFiles="true" />
   </Target>
 </Project>
