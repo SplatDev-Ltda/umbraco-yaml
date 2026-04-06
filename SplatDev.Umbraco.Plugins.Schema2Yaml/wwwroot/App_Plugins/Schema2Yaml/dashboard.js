@@ -261,12 +261,19 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             // Derive filename from Content-Disposition header if present
             const cd = res.headers.get('Content-Disposition') ?? '';
             const match = cd.match(/filename[^;=\n]*=["']?([^"';\n]+)/i);
-            a.download = match ? match[1].trim() : 'umbraco-export';
+            let fallbackName = 'umbraco-export';
+            if (url.toLowerCase().includes('zip')) fallbackName += '.zip';
+            else if (url.toLowerCase().includes('yaml')) fallbackName += '.yml';
+            a.download = match ? match[1].trim() : fallbackName;
             a.href = objectUrl;
 
-            // Prevent the History API / anchor error in Umbraco 14+ by NOT appending to document body
-            // A simple click() on the detached anchor element triggers the download in modern browsers
+            // Ensure the anchor is appended for Firefox/Safari to execute .click()
+            // Using target="_blank" prevents the Umbraco SPA router from intercepting
+            a.target = '_blank';
+            a.style.display = 'none';
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
 
             setTimeout(() => URL.revokeObjectURL(objectUrl), 100);
         } catch (e) {
