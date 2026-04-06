@@ -10,3 +10,5 @@
 /SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/obj
 build-output.txt
 *.nupkg
+
+CREDENTIALS.txt
