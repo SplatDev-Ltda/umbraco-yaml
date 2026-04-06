@@ -35,6 +35,6 @@ public class Schema2YamlComposer : IComposer
         // Register orchestration service
         builder.Services.AddScoped<ISchemaExportService, SchemaExportService>();
 
-        // Dashboard is registered via App_Plugins/Schema2Yaml/umbraco-package.json (Umbraco 14+)
+        // Dashboard is registered via App_Plugins/Schema2Yaml/package.manifest (Umbraco 13)
     }
 }
