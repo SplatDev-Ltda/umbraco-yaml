@@ -2,6 +2,21 @@
 // Registered as a custom element; referenced from umbraco-package.json.
 // Uses UMB_AUTH_CONTEXT for authenticated API calls.
 
+// Guard: Umbraco's @web/router listens to the Navigation API and tries to call
+// history.pushState for every navigate event — including those triggered by
+// showSaveFilePicker and <a download href="blob:"> clicks — which causes a
+// SecurityError because blob: URLs cannot be pushed to the history stack.
+// Installing a capturing listener here (before the router registers its own)
+// lets us call navigateEvent.preventDefault() for blob: destinations, which
+// tells the browser "this navigation is handled" and suppresses the pushState.
+if (typeof window !== 'undefined' && window.navigation) {
+    window.navigation.addEventListener('navigate', (e) => {
+        if (e.destination?.url?.startsWith('blob:')) {
+            e.preventDefault();
+        }
+    }, { capture: true });
+}
+
 import { LitElement, html, css, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
@@ -246,7 +261,11 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
     }
 
     async _triggerDownload(url) {
-        // Use authenticated fetch → blob → object URL download
+        // Fetch the file with authentication, then save it client-side.
+        // A module-level capture listener on window.navigation (top of this file) cancels
+        // any navigate event whose destination is a blob: URL before @web/router sees it,
+        // preventing the SecurityError that would otherwise occur when the router tries to
+        // call history.pushState with a blob: URL.
         try {
             const res = await this._fetchAuthenticated(url.replace(API_BASE, ''));
 
@@ -255,8 +274,6 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             }
 
             const blob = await res.blob();
-            const objectUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
 
             // Derive filename from Content-Disposition header if present
             const cd = res.headers.get('Content-Disposition') ?? '';
@@ -264,17 +281,37 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             let fallbackName = 'umbraco-export';
             if (url.toLowerCase().includes('zip')) fallbackName += '.zip';
             else if (url.toLowerCase().includes('yaml')) fallbackName += '.yml';
-            a.download = match ? match[1].trim() : fallbackName;
-            a.href = objectUrl;
+            const filename = match ? match[1].trim() : fallbackName;
 
-            // Ensure the anchor is appended for Firefox/Safari to execute .click()
-            // Using target="_blank" prevents the Umbraco SPA router from intercepting
-            a.target = '_blank';
+            // Preferred: File System Access API (Chrome 86+, Edge 86+).
+            if (typeof window.showSaveFilePicker === 'function') {
+                const ext = filename.split('.').pop();
+                const types = ext === 'zip'
+                    ? [{ description: 'ZIP archive', accept: { 'application/zip': ['.zip'] } }]
+                    : [{ description: 'YAML file',   accept: { 'application/x-yaml': ['.yml', '.yaml'] } }];
+                try {
+                    const handle = await window.showSaveFilePicker({ suggestedName: filename, types });
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    return;
+                } catch (pickerErr) {
+                    if (pickerErr.name === 'AbortError') return; // User cancelled.
+                    // Picker unavailable — fall through to anchor fallback.
+                }
+            }
+
+            // Fallback: programmatic anchor download.
+            // Safe because the module-level navigate guard prevents the router from
+            // intercepting the blob: URL navigation.
+            const objectUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = objectUrl;
+            a.download = filename;
             a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-
             setTimeout(() => URL.revokeObjectURL(objectUrl), 100);
         } catch (e) {
             this._notify('danger', 'Download failed', e.message ?? 'Could not download file.');
