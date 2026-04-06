@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/umbraco-package.json",
   "name": "Schema2Yaml",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "extensions": [
     {
       "type": "dashboard",

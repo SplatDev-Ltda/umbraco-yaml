@@ -26,7 +26,7 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Initial release. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to YAML. Supports Umbraco 13-17.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.7: Add Umbraco 13 support (net8.0 TFM now targets Umbraco 13.x; previously required 14.x). The package now covers Umbraco 13–17 across all three TFMs.</PackageReleaseNotes>
 
     <!-- Umbraco Marketplace metadata -->
     <PackageType>Dependency</PackageType>
@@ -65,10 +65,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
-  <!-- Include README and icon in the NuGet package -->
+  <!-- Include README, icon, and Umbraco Marketplace metadata in the NuGet package -->
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="umbraco-marketplace.json" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <!-- Include App_Plugins in the NuGet package via contentFiles (modern NuGet convention) -->

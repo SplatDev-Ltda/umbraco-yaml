@@ -1,4 +1,4 @@
-# SplatDev Umbraco YAML Plugin
+# SplatDev.Umbraco.Plugins.Yaml2Schema
 
 [![NuGet](https://img.shields.io/nuget/v/SplatDev.Umbraco.Plugins.Yaml2Schema.svg)](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Yaml2Schema)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
