@@ -73,7 +73,7 @@
 
   <!-- Include App_Plugins in the NuGet package via contentFiles (modern NuGet convention) -->
   <ItemGroup>
-    <Content Include="App_Plugins\**\*" Pack="true" PackagePath="contentFiles\any\any\App_Plugins\" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="wwwroot\App_Plugins\**\*" Pack="true" PackagePath="contentFiles\any\any\App_Plugins\" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <!-- Include buildTransitive targets for reliable App_Plugins delivery -->
