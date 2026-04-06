@@ -44,8 +44,13 @@ public class DataTypeExporterTests
     {
         var mockDataType = new Mock<IDataType>();
         mockDataType.Setup(dt => dt.Name).Returns("Textstring");
+#if NET8_0
+        mockDataType.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.TextBox");
+        mockDataType.Setup(dt => dt.Configuration).Returns(null as object);
+#else
         mockDataType.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.TextBox");
         mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
+#endif
         mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Ntext);
 
         _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
@@ -62,8 +67,13 @@ public class DataTypeExporterTests
     {
         var mockDataType = new Mock<IDataType>();
         mockDataType.Setup(dt => dt.Name).Returns("Rich Text Editor");
+#if NET8_0
+        mockDataType.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.TinyMce");
+        mockDataType.Setup(dt => dt.Configuration).Returns(null as object);
+#else
         mockDataType.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.TinyMce");
         mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
+#endif
         mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Ntext);
 
         _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
@@ -79,14 +89,24 @@ public class DataTypeExporterTests
     {
         var mockDt1 = new Mock<IDataType>();
         mockDt1.Setup(dt => dt.Name).Returns("Textstring");
+#if NET8_0
+        mockDt1.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.TextBox");
+        mockDt1.Setup(dt => dt.Configuration).Returns(null as object);
+#else
         mockDt1.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.TextBox");
         mockDt1.Setup(dt => dt.ConfigurationObject).Returns(null as object);
+#endif
         mockDt1.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Nvarchar);
 
         var mockDt2 = new Mock<IDataType>();
         mockDt2.Setup(dt => dt.Name).Returns("Numeric");
+#if NET8_0
+        mockDt2.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.Integer");
+        mockDt2.Setup(dt => dt.Configuration).Returns(null as object);
+#else
         mockDt2.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.Integer");
         mockDt2.Setup(dt => dt.ConfigurationObject).Returns(null as object);
+#endif
         mockDt2.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Integer);
 
         _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDt1.Object, mockDt2.Object]);
@@ -103,8 +123,13 @@ public class DataTypeExporterTests
     {
         var mockDataType = new Mock<IDataType>();
         mockDataType.Setup(dt => dt.Name).Returns("Number");
+#if NET8_0
+        mockDataType.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.Integer");
+        mockDataType.Setup(dt => dt.Configuration).Returns(null as object);
+#else
         mockDataType.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.Integer");
         mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
+#endif
         mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Integer);
 
         _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
