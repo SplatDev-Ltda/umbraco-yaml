@@ -303,6 +303,13 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
                 }
 
                 _logger.LogInformation("YamlInitializationHandler: YAML initialization completed successfully.");
+
+                // Rename the processed YAML file to *.done so it is not re-imported on the next startup.
+                var doneFilePath = Path.ChangeExtension(configPath, ".done");
+                File.Move(configPath, doneFilePath, overwrite: true);
+                _logger.LogInformation(
+                    "YamlInitializationHandler: Renamed '{ConfigPath}' to '{DonePath}'.",
+                    configPath, doneFilePath);
             }
             catch (FileNotFoundException ex)
             {
