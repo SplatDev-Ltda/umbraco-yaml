@@ -8,12 +8,12 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
 {
     /// <summary>
     /// Smoke tests that parse the actual web project YAML config and verify its structure.
-    /// The file is linked in the .csproj as fixtures/web-config.yaml.
+    /// The file is linked in the .csproj as fixtures/web-config.yml.
     /// </summary>
     public class WebProjectConfigTests
     {
         private readonly string _webConfigPath = Path.Combine(
-            AppContext.BaseDirectory, "fixtures", "web-config.yaml");
+            AppContext.BaseDirectory, "fixtures", "web-config.yml");
 
         private UmbracoConfig Parse()
         {

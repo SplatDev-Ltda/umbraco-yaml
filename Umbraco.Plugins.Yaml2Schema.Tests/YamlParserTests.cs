@@ -12,7 +12,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
         private readonly string _testFixturePath = Path.Combine(
             AppContext.BaseDirectory,
             "fixtures",
-            "sample.yaml"
+            "sample.yml"
         );
 
         [Fact]
@@ -51,7 +51,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
         public void ParseYaml_ShouldThrowOnMissingFile()
         {
             var parser = new YamlParser();
-            var missingFilePath = "/nonexistent/path/to/missing.yaml";
+            var missingFilePath = "/nonexistent/path/to/missing.yml";
 
             var exception = Assert.Throws<FileNotFoundException>(() =>
                 parser.ParseYaml(missingFilePath)
@@ -67,7 +67,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
             var invalidYamlPath = Path.Combine(
                 AppContext.BaseDirectory,
                 "fixtures",
-                "invalid.yaml"
+                "invalid.yml"
             );
 
             // Create invalid YAML file temporarily

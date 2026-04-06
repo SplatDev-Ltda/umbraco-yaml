@@ -81,7 +81,7 @@ public class SchemaExportController : UmbracoApiController
             var yaml = await _exportService.ExportToYamlAsync();
             var bytes = Encoding.UTF8.GetBytes(yaml);
 
-            return File(bytes, "application/x-yaml", $"umbraco-{DateTime.UtcNow:yyyyMMdd-HHmmss}.yaml");
+            return File(bytes, "application/x-yaml", $"umbraco-{DateTime.UtcNow:yyyyMMdd-HHmmss}.yml");
         }
         catch (Exception ex)
         {

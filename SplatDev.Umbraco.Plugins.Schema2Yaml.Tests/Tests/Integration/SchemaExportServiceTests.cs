@@ -98,7 +98,7 @@ public class SchemaExportServiceTests : IDisposable
     [Fact]
     public async Task ExportToFileAsync_WritesFileToPath()
     {
-        var filePath = Path.Combine(Path.GetTempPath(), $"schema2yaml_test_{Guid.NewGuid():N}.yaml");
+        var filePath = Path.Combine(Path.GetTempPath(), $"schema2yaml_test_{Guid.NewGuid():N}.yml");
 
         try
         {
@@ -119,7 +119,7 @@ public class SchemaExportServiceTests : IDisposable
     public async Task ExportToFileAsync_CreatesDirectoryIfNotExists()
     {
         var dir = Path.Combine(Path.GetTempPath(), $"schema2yaml_{Guid.NewGuid():N}");
-        var filePath = Path.Combine(dir, "export.yaml");
+        var filePath = Path.Combine(dir, "export.yml");
 
         try
         {
@@ -150,7 +150,7 @@ public class SchemaExportServiceTests : IDisposable
         using var stream = new MemoryStream(zipBytes);
         using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
 
-        Assert.Contains(archive.Entries, e => e.Name == "umbraco.yaml");
+        Assert.Contains(archive.Entries, e => e.Name == "umbraco.yml");
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class SchemaExportServiceTests : IDisposable
         using var stream = new MemoryStream(zipBytes);
         using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
 
-        var entry = archive.Entries.First(e => e.Name == "umbraco.yaml");
+        var entry = archive.Entries.First(e => e.Name == "umbraco.yml");
         using var reader = new StreamReader(entry.Open());
         var content = await reader.ReadToEndAsync();
 

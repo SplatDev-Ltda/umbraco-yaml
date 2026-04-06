@@ -28,7 +28,7 @@ No further registration is required — the plugin self-registers via an Umbraco
 ## Quick Start
 
 1. Install the package
-2. Create `config/umbraco.yaml` in your project root
+2. Create `config/umbraco.yml` in your project root
 3. Run your Umbraco application
 
 All structures defined in the YAML file are created automatically on startup. Existing items (matched by alias/name/email) are skipped — restarts are safe.
@@ -42,7 +42,7 @@ Override the default config file path in `appsettings.json`:
 ```json
 {
   "UmbracoYaml": {
-    "ConfigPath": "config/umbraco.yaml"
+    "ConfigPath": "config/umbraco.yml"
   }
 }
 ```
@@ -622,11 +622,11 @@ Umbraco.Plugins.Yaml2Schema/       NuGet package (source)
     Models/                        YAML model classes
     Services/                      Creator services
 Umbraco.Plugins.Yaml2Schema.Tests/ xUnit test project
-  fixtures/                        sample.yaml, web-config.yaml
+  fixtures/                        sample.yml, web-config.yml
 UmbracoYaml.Web/                   Demo Umbraco 17 website
-  config/umbraco.yaml              Live configuration example
+  config/umbraco.yml              Live configuration example
 Themes/                            Example YAML configurations
-  Corporate__RISIN/umbraco.yaml    RISIN Corporate site schema
+  Corporate__RISIN/umbraco.yml    RISIN Corporate site schema
 ```
 
 ---

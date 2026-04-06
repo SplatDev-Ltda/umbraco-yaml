@@ -26,7 +26,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Tests
         private readonly string _testFixturePath = Path.Combine(
             AppContext.BaseDirectory,
             "fixtures",
-            "sample.yaml"
+            "sample.yml"
         );
 
         private Mock<IShortStringHelper> CreateShortStringHelper()

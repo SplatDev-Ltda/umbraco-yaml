@@ -193,7 +193,7 @@ public class SchemaExportService : ISchemaExportService
         using (var archive = new ZipArchive(memStream, ZipArchiveMode.Create, true))
         {
             // Add YAML file
-            var yamlEntry = archive.CreateEntry("umbraco.yaml", CompressionLevel.Optimal);
+            var yamlEntry = archive.CreateEntry("umbraco.yml", CompressionLevel.Optimal);
             using (var entryStream = yamlEntry.Open())
             using (var writer = new StreamWriter(entryStream, Encoding.UTF8))
             {

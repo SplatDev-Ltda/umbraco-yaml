@@ -100,7 +100,7 @@ namespace Umbraco.Plugins.Yaml2Schema.Handlers
             try
             {
                 // Get config path from IConfiguration or use default; resolve relative paths against the content root
-                var configPath = _configuration["UmbracoYaml:ConfigPath"] ?? "config/umbraco.yaml";
+                var configPath = _configuration["UmbracoYaml:ConfigPath"] ?? "config/umbraco.yml";
                 if (!Path.IsPathRooted(configPath))
                 {
                     configPath = Path.Combine(_hostEnvironment.ContentRootPath, configPath);

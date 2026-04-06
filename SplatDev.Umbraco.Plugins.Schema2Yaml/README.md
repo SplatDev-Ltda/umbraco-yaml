@@ -88,7 +88,7 @@ No further registration is required — the plugin self-registers via `Schema2Ya
 The ZIP archive structure:
 ```
 umbraco-export.zip
-├── umbraco.yaml           # Complete schema + content file
+├── umbraco.yml           # Complete schema + content file
 └── media/                 # Media files in Umbraco folder structure
     ├── images/
     │   └── logo.png
@@ -116,7 +116,7 @@ public class MyController : Controller
         var yaml = await _exportService.ExportToYamlAsync();
 
         // Export to file on disk
-        await _exportService.ExportToFileAsync("exports/umbraco.yaml");
+        await _exportService.ExportToFileAsync("exports/umbraco.yml");
 
         // Export to ZIP with media files
         var zipBytes = await _exportService.ExportToZipAsync();
@@ -145,7 +145,7 @@ Override defaults in `appsettings.json`:
 ```json
 {
   "UmbracoSchema2Yaml": {
-    "ExportPath": "exports/umbraco.yaml",
+    "ExportPath": "exports/umbraco.yml",
     "IncludeMedia": true,
     "MediaPath": "exports/media",
     "IncludeContent": true,
@@ -159,7 +159,7 @@ Override defaults in `appsettings.json`:
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `ExportPath` | `exports/umbraco.yaml` | Default YAML export file path |
+| `ExportPath` | `exports/umbraco.yml` | Default YAML export file path |
 | `IncludeMedia` | `true` | Include media items and file downloads |
 | `MediaPath` | `exports/media` | Media files download location |
 | `IncludeContent` | `true` | Include content nodes |
@@ -241,7 +241,7 @@ umbraco:
 Source Site (Umbraco 13–17)
        │
        ▼  Schema2Yaml (this plugin)
-  umbraco.yaml + media files
+  umbraco.yml + media files
        │
        ▼  Git / file transfer
 Target Site (Umbraco 13–17)
@@ -280,7 +280,7 @@ Target Site (Umbraco 13–17)
 - Disable content export for **structure-only** exports: `"IncludeContent": false`
 
 ### Team Collaboration
-- Commit `umbraco.yaml` to version control for shared environments
+- Commit `umbraco.yml` to version control for shared environments
 - Don't commit media files unless the library is small — use a CDN or shared storage instead
 - Use `Yaml2Schema` on local/staging environments to bootstrap from the shared YAML
 
@@ -410,7 +410,7 @@ No further registration is required — the plugin self-registers via an Umbraco
 The ZIP archive includes:
 ```
 umbraco-export.zip
-├── umbraco.yaml           # Main schema file
+├── umbraco.yml           # Main schema file
 └── media/                 # Media files in Umbraco folder structure
     ├── folder1/
     │   └── image.jpg
@@ -438,7 +438,7 @@ public class MyController : Controller
         var yaml = await _exportService.ExportToYamlAsync();
 
         // Export to file
-        await _exportService.ExportToFileAsync("exports/umbraco.yaml");
+        await _exportService.ExportToFileAsync("exports/umbraco.yml");
 
         // Export to ZIP with media
         var zipBytes = await _exportService.ExportToZipAsync();
@@ -454,7 +454,7 @@ Override export settings in `appsettings.json`:
 ```json
 {
   "UmbracoSchema2Yaml": {
-    "ExportPath": "exports/umbraco.yaml",
+    "ExportPath": "exports/umbraco.yml",
     "IncludeMedia": true,
     "MediaPath": "exports/media",
     "IncludeContent": true,
@@ -466,7 +466,7 @@ Override export settings in `appsettings.json`:
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `ExportPath` | `exports/umbraco.yaml` | Default YAML export file path |
+| `ExportPath` | `exports/umbraco.yml` | Default YAML export file path |
 | `IncludeMedia` | `true` | Include media items in export |
 | `MediaPath` | `exports/media` | Media files download location |
 | `IncludeContent` | `true` | Include content nodes in export |
@@ -477,7 +477,7 @@ Override export settings in `appsettings.json`:
 
 ## Generated YAML Structure
 
-The plugin generates a single `umbraco.yaml` file with all your site structure:
+The plugin generates a single `umbraco.yml` file with all your site structure:
 
 ```yaml
 umbraco:
@@ -598,7 +598,7 @@ This plugin supports **Umbraco 13, 14, 15, 16, and 17**. The export process auto
 2. **Export**: Use dashboard to generate YAML + media ZIP
 3. **Target site** (any version 13-17): Create new Umbraco installation
 4. **Import**: Install `SplatDev.Umbraco.Plugins.Yaml2Schema`
-5. **Deploy**: Place `umbraco.yaml` in `config/` folder and media files in appropriate location
+5. **Deploy**: Place `umbraco.yml` in `config/` folder and media files in appropriate location
 6. **Bootstrap**: Start application — structure is created automatically
 
 ---
@@ -612,7 +612,7 @@ This export plugin is designed to work seamlessly with [SplatDev.Umbraco.Plugins
 ```
 Source Site (Umbraco 13-17)
   ↓ Schema2Yaml Export
-umbraco.yaml + media files
+umbraco.yml + media files
   ↓ Version Control (Git)
 New Site (Umbraco 13-17)
   ↓ Yaml2Schema Import
@@ -666,7 +666,7 @@ The export dashboard provides:
 
 ### Team Collaboration
 
-- **Commit `umbraco.yaml`** to version control for team sharing
+- **Commit `umbraco.yml`** to version control for team sharing
 - **Don't commit media files** unless necessary (use CDN or separate media storage)
 - **Use Yaml2Schema** on local environments to bootstrap from the shared YAML
 

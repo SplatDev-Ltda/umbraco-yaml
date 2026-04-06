@@ -564,11 +564,11 @@ New optional field on `dataTypes` entries. Accepted values: `NVARCHAR` (default)
 - `DocumentTypeCreatorTests` — refactored to class-level fixtures; added REMOVE, UPDATE (additive merge), create-when-update-target-missing, and null list guard tests.
 - `ContentCreatorTests` — refactored to shared `Build()` helper; added REMOVE, no-throw when remove target missing, UPDATE, and create-when-update-target-missing tests.
 - `YamlStartupComposerTests` — added assertion that `StaticAssetCreator` is registered in the DI container.
-- `WebProjectConfigTests` — new smoke-test class that parses the web project's live `config/umbraco.yaml` (linked as `fixtures/web-config.yaml`) and verifies structure, counts, aliases, nesting, and absence of accidental REMOVE/UPDATE flags.
+- `WebProjectConfigTests` — new smoke-test class that parses the web project's live `config/umbraco.yml` (linked as `fixtures/web-config.yml`) and verifies structure, counts, aliases, nesting, and absence of accidental REMOVE/UPDATE flags.
 
 ### Fixed
-- `fixtures/sample.yaml` had an `umbraco:` root wrapper that caused all parser-based integration tests to silently produce empty collections (`YamlParser.ParseYaml` deserialises directly to `UmbracoConfig`, not `YamlRoot`). The wrapper and extra indentation have been removed.
-- `fixtures/sample.yaml` used incorrect YAML keys: `editor:` → `editorUiAlias:`, `type:` → `documentType:`, `published:` → `isPublished:`, `values:` → `properties:`. All keys now match the `[YamlMember]` annotations in the model.
+- `fixtures/sample.yml` had an `umbraco:` root wrapper that caused all parser-based integration tests to silently produce empty collections (`YamlParser.ParseYaml` deserialises directly to `UmbracoConfig`, not `YamlRoot`). The wrapper and extra indentation have been removed.
+- `fixtures/sample.yml` used incorrect YAML keys: `editor:` → `editorUiAlias:`, `type:` → `documentType:`, `published:` → `isPublished:`, `values:` → `properties:`. All keys now match the `[YamlMember]` annotations in the model.
 - `IntegrationTests` count assertions updated from 2 to 4 DataTypes to reflect the addition of `update:true` and `remove:true` fixture entries; config assertion offset corrected from `DataTypes[0]` to `DataTypes[2]`.
 
 ---

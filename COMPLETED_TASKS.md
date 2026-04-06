@@ -23,11 +23,11 @@
 - `DocumentTypeCreatorTests` — refactored to class-level fixtures; REMOVE, UPDATE, create-when-update-missing tests
 - `ContentCreatorTests` — refactored to shared `Build()` helper; REMOVE, UPDATE, create-when-update-missing tests
 - `YamlStartupComposerTests` — `StaticAssetCreator` registration assertion added
-- `WebProjectConfigTests` — 13 smoke tests against the live web project `config/umbraco.yaml`
+- `WebProjectConfigTests` — 13 smoke tests against the live web project `config/umbraco.yml`
 - `IntegrationTests` — updated for new model counts, new section assertions (languages, dictionaryItems, mediaTypes, media, members, users, Razor content in templates)
 - `YamlParserTests` — updated template count assertion
 
 ## Documentation
 
 - `CHANGELOG.md` — full changelog covering v1.0.0, v1.0.1, v1.0.2, and v1.0.3 (unreleased)
-- `fixtures/sample.yaml` — updated with examples of all new sections
+- `fixtures/sample.yml` — updated with examples of all new sections
