@@ -13,36 +13,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SplatDev.Umbraco.Plugins.Schema2Yaml\SplatDev.Umbraco.Plugins.Schema2Yaml.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
 		<PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
 		<RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Update="wwwroot\App_Plugins\Schema2Yaml\dashboard.html">
-	    <PackagePath>App_Plugins_Package\</PackagePath>
-	    <Pack>true</Pack>
-	  </Content>
-	  <Content Update="wwwroot\App_Plugins\Schema2Yaml\Lang\en-US.xml">
-	    <PackagePath>App_Plugins_Package\</PackagePath>
-	    <Pack>true</Pack>
-	  </Content>
-	  <Content Update="wwwroot\App_Plugins\Schema2Yaml\package.manifest">
-	    <PackagePath>App_Plugins_Package\</PackagePath>
-	    <Pack>true</Pack>
-	  </Content>
-	  <Content Update="wwwroot\App_Plugins\Schema2Yaml\schemaExport.controller.js">
-	    <PackagePath>App_Plugins_Package\</PackagePath>
-	    <Pack>true</Pack>
-	  </Content>
-	  <Content Update="wwwroot\App_Plugins\Schema2Yaml\schemaExport.resource.js">
-	    <PackagePath>App_Plugins_Package\</PackagePath>
-	    <Pack>true</Pack>
-	  </Content>
 	</ItemGroup>
 
 	<PropertyGroup>
