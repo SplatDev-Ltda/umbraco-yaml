@@ -13,7 +13,7 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Schema2Yaml</PackageId>
-    <Version>2.0.1</Version>
+    <Version>2.0.2</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
@@ -26,8 +26,8 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v2.0.1: Supports Umbraco 14–17 (net8.0/net9.0/net10.0). README and metadata updated.
-v2.0.0: net8.0 now targets Umbraco 14.x minimum.</PackageReleaseNotes>
+    <PackageReleaseNotes>v2.0.2: Documentation update — Umbraco 13 users directed to v1.x branch. Supports Umbraco 14–17 (net8.0/net9.0/net10.0).
+v2.0.0: net8.0 now targets Umbraco 14.x minimum. For Umbraco 13, use v1.0.9.</PackageReleaseNotes>
 
     <!-- Umbraco Marketplace metadata -->
     <PackageType>Dependency</PackageType>
