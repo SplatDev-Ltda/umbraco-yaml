@@ -13,3 +13,4 @@ build-output.txt
 
 CREDENTIALS.txt
 /SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/bin
+/SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/obj
