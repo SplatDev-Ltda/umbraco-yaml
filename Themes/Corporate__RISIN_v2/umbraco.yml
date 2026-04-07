@@ -3089,106 +3089,12 @@ media:
     name: "Site Images"
     mediaType: Folder
     children:
-      - alias: about-hero
-        name: "RISIN – Sobre Nós"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/about-hero.jpg"
-
-      - alias: ecosystem-hero
-        name: "RISIN – Ecossistema Digital"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/ecosystem-hero.jpg"
-
-      - alias: ecosystem-clikashop
-        name: "RISIN – Ecossistema Clikashop"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/ecosystem-clikashop.jpg"
-
-      - alias: home-hero
-        name: "RISIN – Home Hero"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/home-hero.jpg"
-
-      - alias: home-map
-        name: "RISIN – Mapa Home"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/home-map.jpg"
-
-      - alias: governance-hero
-        name: "RISIN – Governança"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/governance-hero.jpg"
-
-      - alias: relations-hero
-        name: "RISIN – Relações Institucionais"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/relations-hero.jpg"
-
-      - alias: expansion-map
-        name: "RISIN – Mapa de Expansão"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/expansion-map.jpg"
-
-      - alias: expansion-sp
-        name: "RISIN – Regional São Paulo"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/expansion-sp.jpg"
-
-      - alias: expansion-rj
-        name: "RISIN – Regional Rio de Janeiro"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/expansion-rj.jpg"
-
-      - alias: partners-hero
-        name: "RISIN – Parceiros"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/partners-hero.jpg"
-
-      - alias: partners-tech
-        name: "RISIN – Parceiro Tecnologia"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/partners-tech.jpg"
-
-      - alias: partners-institutional
-        name: "RISIN – Parceiro Institucional"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/partners-institutional.jpg"
-
-      - alias: business-contract
-        name: "RISIN – Modelo de Negócio Contrato"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/business-contract.jpg"
-
-      - alias: relations-council
-        name: "RISIN – Conselho Consultivo"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/relations-council.jpg"
-
-      - alias: site-logo
+      - alias: logo
         name: "RISIN – Logo"
         mediaType: Image
         url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/logo.png"
 
-      - alias: favicon-ico
-        name: "RISIN – Favicon ICO"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/favicons/favicon.ico"
-
-      - alias: favicon-svg
-        name: "RISIN – Favicon SVG"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/favicons/favicon.svg"
-
-      - alias: favicon-png96
-        name: "RISIN – Favicon 96x96"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/favicons/favicon-96x96.png"
-
-      - alias: favicon-apple-touch
-        name: "RISIN – Apple Touch Icon"
-        mediaType: Image
-        url: "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/master/Themes/Corporate__RISIN_v2/favicons/apple-touch-icon.png"
-
+      
 # ─────────────────────────────────────────────
 # CONTENT
 # ─────────────────────────────────────────────
