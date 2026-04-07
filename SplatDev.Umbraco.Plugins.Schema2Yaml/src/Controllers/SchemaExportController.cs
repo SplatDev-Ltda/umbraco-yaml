@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
-using Umbraco.Cms.Web.Common.Controllers;
-using Umbraco.Cms.Web.Common.Authorization;
+using Umbraco.Cms.Web.BackOffice.Controllers;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using System.Text;
 
@@ -10,9 +8,9 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Controllers;
 
 /// <summary>
 /// API controller for Schema2Yaml dashboard operations.
+/// Routes to: ~/Umbraco/backoffice/Api/SchemaExport/{action}
 /// </summary>
-[Authorize(Policy = AuthorizationPolicies.SectionAccessSettings)]
-public class SchemaExportController : UmbracoApiController
+public class SchemaExportController : UmbracoAuthorizedApiController
 {
     private readonly ISchemaExportService _exportService;
     private readonly ILogger<SchemaExportController> _logger;
