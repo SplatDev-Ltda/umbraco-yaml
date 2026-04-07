@@ -35,7 +35,7 @@ dotnet add package SplatDev.Umbraco.Plugins.Schema2Yaml
 
 | Umbraco | .NET TFM |
 |---------|----------|
-| 13.x    | net8.0 — use [v1.x](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Schema2Yaml/1.0.8) |
+| 13.x    | net8.0 — use [v1.x](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Schema2Yaml/1.0.9) |
 | 14.x    | net8.0   |
 | 15.x    | net9.0   |
 | 16.x    | net9.0   |
