@@ -87,7 +87,7 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Handlers
         public async Task HandleAsync(UmbracoApplicationStartedNotification notification, CancellationToken cancellationToken)
         {
             // Only run when Umbraco is fully installed and running — skip during installer/upgrade
-            if (_runtimeState.Level != Umbraco.Cms.Core.RuntimeLevel.Run)
+            if (_runtimeState.Level != global::Umbraco.Cms.Core.RuntimeLevel.Run)
             {
                 _logger.LogInformation(
                     "YamlInitializationHandler: Skipping YAML initialization — runtime level is {Level} (requires Run).",
