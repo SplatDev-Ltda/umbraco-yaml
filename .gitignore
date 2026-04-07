@@ -13,3 +13,6 @@ build-output.txt
 
 CREDENTIALS.txt
 /.claude/settings.local.json
+/SplatDev.Umbraco.Plugins.Yaml2Schema/obj/Debug/net10.0
+/SplatDev.Umbraco.Plugins.Yaml2Schema/obj
+/SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/bin/Debug/net10.0
