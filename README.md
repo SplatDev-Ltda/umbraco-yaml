@@ -25,6 +25,7 @@ A pair of complementary **Infrastructure-as-Code** plugins that let you export a
 [![NuGet Downloads](https://img.shields.io/nuget/dt/SplatDev.Umbraco.Plugins.Schema2Yaml.svg)](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Schema2Yaml)
 
 Exports your existing Umbraco site structure to YAML. Adds a **Schema Export** dashboard in the Settings section. One click produces a ZIP with a complete `umbraco.yml` and all media files.
+_For Umbraco 13, use v1.x._
 
 ```bash
 dotnet add package SplatDev.Umbraco.Plugins.Schema2Yaml
@@ -34,7 +35,7 @@ dotnet add package SplatDev.Umbraco.Plugins.Schema2Yaml
 
 | Umbraco | .NET TFM |
 |---------|----------|
-| 13.x    | net8.0   |
+| 13.x    | net8.0 — use [v1.x](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Schema2Yaml/1.0.8) |
 | 14.x    | net8.0   |
 | 15.x    | net9.0   |
 | 16.x    | net9.0   |

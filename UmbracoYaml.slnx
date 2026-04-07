@@ -1,7 +1,11 @@
 <Solution>
-  <Project Path="SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.csproj" />
-  <Project Path="SplatDev.Umbraco.Plugins.Schema2Yaml/SplatDev.Umbraco.Plugins.Schema2Yaml.csproj" />
-  <Project Path="Umbraco.Plugins.Yaml2Schema.Tests/Umbraco.Plugins.Yaml2Schema.Tests.csproj" />
-  <Project Path="Umbraco.Plugins.Yaml2Schema/Umbraco.Plugins.Yaml2Schema.csproj" />
-  <Project Path="UmbracoYaml.Web/UmbracoYaml.Web.csproj" />
+  <Folder Name="/Schema2Yaml/">
+    <Project Path="SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.csproj" />
+    <Project Path="SplatDev.Umbraco.Plugins.Schema2Yaml/SplatDev.Umbraco.Plugins.Schema2Yaml.csproj" />
+  </Folder>
+  <Folder Name="/Yaml2Schema/">
+    <Project Path="SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/SplatDev.Umbraco.Plugins.Yaml2Schema.Tests.csproj" />
+    <Project Path="SplatDev.Umbraco.Plugins.Yaml2Schema/SplatDev.Umbraco.Plugins.Yaml2Schema.csproj" />
+  </Folder>
+  <Project Path="Umbraco.Web/Umbraco.Web.csproj" />
 </Solution>

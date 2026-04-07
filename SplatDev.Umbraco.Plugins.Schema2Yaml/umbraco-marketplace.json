@@ -3,7 +3,7 @@
   "Description": "Export your entire Umbraco site structure to YAML — DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users. One click in the Settings dashboard produces a portable YAML + media ZIP you can version-control and replay anywhere using the companion Yaml2Schema package. Supports Umbraco 14–17. For Umbraco 13, use v1.x.",
   "Category": "Developer Tools",
   "PackageType": "Package",
-  "LicenseTypes": ["Free"],
+  "LicenseTypes": [ "Free" ],
   "DocumentationUrl": "https://github.com/SplatDev-Ltda/umbraco-yaml/blob/main/SplatDev.Umbraco.Plugins.Schema2Yaml/README.md",
   "IssueTrackerUrl": "https://github.com/SplatDev-Ltda/umbraco-yaml/issues",
   "AuthorDetails": {
