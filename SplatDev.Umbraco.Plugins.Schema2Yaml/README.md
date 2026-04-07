@@ -5,7 +5,9 @@
 [![CI](https://github.com/SplatDev-Ltda/umbraco-yaml/actions/workflows/ci.yml/badge.svg)](https://github.com/SplatDev-Ltda/umbraco-yaml/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A migration and Infrastructure-as-Code tool for **Umbraco 14–17** that exports your entire Umbraco site structure to YAML format. Export once, version-control it, and import anywhere using the companion [SplatDev.Umbraco.Plugins.Yaml2Schema](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Yaml2Schema) plugin.
+A migration and Infrastructure-as-Code tool for **Umbraco 13–17** that exports your entire Umbraco site structure to YAML format. Export once, version-control it, and import anywhere using the companion [SplatDev.Umbraco.Plugins.Yaml2Schema](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Yaml2Schema) plugin.
+
+> **Umbraco 13 users:** install [v1.x](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Schema2Yaml/1.0.10) of this package.
 
 Perfect for:
 - **Migrating** between Umbraco versions (14 → 15 → 16 → 17)
@@ -18,14 +20,15 @@ Perfect for:
 
 ## Umbraco Version Compatibility
 
-| Umbraco | .NET | Dashboard | NuGet TFM |
-|---------|------|-----------|-----------|
-| 14.x | net8.0 | Lit web component | `net8.0` |
-| 15.x | net9.0 | Lit web component | `net9.0` |
-| 16.x | net9.0 | Lit web component | `net9.0` |
-| 17.x | net10.0 | Lit web component | `net10.0` |
+| Umbraco | .NET | Dashboard | NuGet package |
+|---------|------|-----------|---------------|
+| 13.x | net8.0 | AngularJS dashboard | [v1.x](https://www.nuget.org/packages/SplatDev.Umbraco.Plugins.Schema2Yaml/1.0.10) |
+| 14.x | net8.0 | Lit web component | v2.x (latest) |
+| 15.x | net9.0 | Lit web component | v2.x (latest) |
+| 16.x | net9.0 | Lit web component | v2.x (latest) |
+| 17.x | net10.0 | Lit web component | v2.x (latest) |
 
-The NuGet package ships **all three TFMs** in a single package — NuGet automatically selects the right one at install time.
+The v2.x NuGet package ships **all three TFMs** (net8.0 / net9.0 / net10.0) in a single package — NuGet automatically selects the right one at install time.
 
 ---
 
@@ -51,8 +54,8 @@ The NuGet package ships **all three TFMs** in a single package — NuGet automat
 ### Export Features
 - 📦 **Single ZIP Download** — All YAML + media bundled in one archive
 - 📊 **Export Statistics** — Live counts per entity type with duration
-- 🖥️ **Dashboard UI** — Settings section dashboard (Lit web component)
-- 🔄 **Version Detection** — Automatic API compatibility for Umbraco 14–17
+- 🖥️ **Dashboard UI** — Settings section dashboard (AngularJS for Umbraco 13, Lit web component for Umbraco 14–17)
+- 🔄 **Version Detection** — Automatic API compatibility for Umbraco 13–17
 - 📁 **Folder Structure** — Media files maintain Umbraco's original folder hierarchy
 
 ---
@@ -237,13 +240,13 @@ umbraco:
 ## Migration Workflow
 
 ```
-Source Site (Umbraco 14–17)
+Source Site (Umbraco 13–17)
        │
        ▼  Schema2Yaml (this plugin)
   umbraco.yml + media files
        │
        ▼  Git / file transfer
-Target Site (Umbraco 14–17)
+Target Site (Umbraco 13–17)
        │
        ▼  Yaml2Schema companion plugin
   Replicated Site Structure
@@ -302,9 +305,9 @@ Check file permissions on the `wwwroot/media` folder and verify there is enough 
 ## Roadmap
 
 - [x] Core export — all 10 entity types
-- [x] Dashboard UI — Lit web component (Umbraco 14–17)
+- [x] Dashboard UI — AngularJS (Umbraco 13) + Lit web component (Umbraco 14–17)
 - [x] ZIP download with media
-- [x] Multi-version support (Umbraco 14–17, net8/9/10)
+- [x] Multi-version support (Umbraco 13–17, net8/9/10)
 - [x] CI/CD — GitHub Actions for build, test, and NuGet publish
 - [ ] Selective export (choose specific types or subtrees)
 - [ ] Incremental exports (only changes since last export)
