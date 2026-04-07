@@ -617,7 +617,6 @@ Tests/
     FullExportTests.cs
     ZipCreationTests.cs
   Version/
-    Umbraco13ExportTests.cs
     Umbraco17ExportTests.cs
 ```
 
@@ -670,7 +669,7 @@ builder.Services.Configure<Schema2YamlOptions>(
 - ✅ Media files downloaded and structured correctly
 - ✅ ZIP contains all YAML + media files
 - ✅ Dashboard UI functional and user-friendly
-- ✅ Supports Umbraco 13-17 with version detection
+- ✅ Supports Umbraco 14-17 with version detection
 - ✅ Unit tests cover all exporters
 - ✅ Documentation complete in README.md
 - ✅ Published to NuGet
@@ -709,6 +708,4 @@ builder.Services.Configure<Schema2YamlOptions>(
 
 
 ## Important
-- Generate a angularjs dashboard for the export functionality for Umbraco 13.
-- Dashboard for versions 14-17 are to be implemented in Lit, but the AngularJS dashboard should be implemented first as it will serve as a reference for the Lit implementation.
 - NuGet API key: store in a secure secrets manager (e.g., environment variable or GitHub Actions secret), never commit to source control

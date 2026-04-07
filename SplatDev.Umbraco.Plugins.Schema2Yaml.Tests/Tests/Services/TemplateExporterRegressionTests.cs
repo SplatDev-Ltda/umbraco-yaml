@@ -9,7 +9,7 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 /// <summary>
 /// Regression tests for TemplateExporter.
 /// Template export has no TFM-specific compile guards; tests run identically on net8.0–net10.0,
-/// covering Umbraco 13–17.
+/// covering Umbraco 14–17.
 /// </summary>
 public class TemplateExporterRegressionTests
 {

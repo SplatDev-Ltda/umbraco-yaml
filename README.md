@@ -77,7 +77,7 @@ dotnet add package SplatDev.Umbraco.Plugins.Yaml2Schema
 
 ```
 umbraco-yaml/
-├── SplatDev.Umbraco.Plugins.Schema2Yaml/          # Exporter package (Umbraco 13–17)
+├── SplatDev.Umbraco.Plugins.Schema2Yaml/          # Exporter package (Umbraco 14–17)
 ├── SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/    # Tests (net8.0 / net9.0 / net10.0)
 ├── Umbraco.Plugins.Yaml2Schema/                   # Importer package (Umbraco 17)
 ├── Umbraco.Plugins.Yaml2Schema.Tests/             # Tests (net10.0)

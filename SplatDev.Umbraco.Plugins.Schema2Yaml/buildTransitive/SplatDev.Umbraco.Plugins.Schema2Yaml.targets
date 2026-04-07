@@ -2,8 +2,7 @@
   <!--
     Copy App_Plugins from the NuGet package into the consuming project's
     wwwroot/App_Plugins directory at build time. This ensures Umbraco 14+
-    discovers the backoffice extension, and Umbraco 13 picks it up from
-    App_Plugins via package.manifest.
+    discovers the backoffice extension.
   -->
   <PropertyGroup>
     <_Schema2YamlPkgRoot>$(MSBuildThisFileDirectory)..\</_Schema2YamlPkgRoot>
