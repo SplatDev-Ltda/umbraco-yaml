@@ -9,7 +9,7 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Schema2Yaml</PackageId>
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
@@ -22,7 +22,7 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v1.0.11: Fix dashboard 404 — use UmbracoAuthorizedApiController for correct backoffice routing; add dashboard localization.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.12: Update dashboard UI improvements.</PackageReleaseNotes>
 
     <!-- Umbraco Marketplace metadata -->
     <PackageType>Dependency</PackageType>
