@@ -31,11 +31,7 @@ public class DocumentTypeExporterRegressionTests
     [Fact]
     public async Task ExportAsync_MapsAllowedChildTypes_WhenPresent()
     {
-#if NET8_0
-        var allowedChild = new ContentTypeSort(1, 0) { Alias = "article" };
-#else
-        var allowedChild = new ContentTypeSort(Guid.NewGuid(), 0, "article");
-#endif
+var allowedChild = new ContentTypeSort(Guid.NewGuid(), 0, "article");
         var ct = CreateMinimalContentType("page", "Page");
         ct.Setup(c => c.AllowedContentTypes).Returns([allowedChild]);
         _mockContentTypeService.Setup(s => s.GetAll()).Returns([ct.Object]);

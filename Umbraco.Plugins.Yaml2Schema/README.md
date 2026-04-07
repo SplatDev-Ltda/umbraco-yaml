@@ -28,10 +28,12 @@ No further registration is required — the plugin self-registers via an Umbraco
 ## Quick Start
 
 1. Install the package
-2. Create `config/umbraco.yaml` in your project root
+2. Create `config/umbraco.yml` in your project root
 3. Run your Umbraco application
 
 All structures defined in the YAML file are created automatically on startup. Existing items (matched by alias/name/email) are skipped — restarts are safe.
+
+> **One-shot import**: After a successful import the YAML file is automatically renamed to `*.done` (e.g. `config/umbraco.yml.done`). This prevents the file from being re-processed on the next startup. To re-run an import, rename the file back to `*.yml` (or `*.yaml`).
 
 ---
 
@@ -42,12 +44,14 @@ Override the default config file path in `appsettings.json`:
 ```json
 {
   "UmbracoYaml": {
-    "ConfigPath": "config/umbraco.yaml"
+    "ConfigPath": "config/umbraco.yml"
   }
 }
 ```
 
 The path is relative to the application content root. Absolute paths are also accepted.
+
+After a successful import the file is renamed to `*.done` in the same directory. On the next startup the plugin looks for the original path; because the file has been renamed it will not be processed again. Rename it back to re-run the import.
 
 ---
 
@@ -620,6 +624,7 @@ Each list item's `$type` value is the element type alias. All other keys map to 
 ## Behaviour
 
 - **Idempotent**: Items already present are skipped — safe across restarts
+- **One-shot**: After a successful import the YAML file is renamed to `*.done` so it is not re-processed on the next startup; rename it back to re-run
 - **Ordered**: Languages → DataTypes → DocumentTypes → MediaTypes → Scripts/Stylesheets → Templates → **Media** → **Content** → DictionaryItems → Members → Users
 - **Media before Content**: Ensures `Umbraco.MediaPicker3` name lookups resolve correctly during content seeding
 - **Template assignment**: New content nodes receive the document type's default template explicitly; missing templates are backfilled on `[UPDATE]`

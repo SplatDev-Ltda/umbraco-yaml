@@ -34,23 +34,19 @@ public class DataTypeExporterRegressionTests
         var mock = new Mock<IDataType>();
         mock.Setup(dt => dt.Name).Returns(name);
         mock.Setup(dt => dt.DatabaseType).Returns(dbType);
-#if NET8_0
-        mock.Setup(dt => dt.EditorAlias).Returns(editorAlias);
-        mock.Setup(dt => dt.Configuration).Returns(null as object);
-#else
         mock.Setup(dt => dt.EditorUiAlias).Returns(editorAlias);
         mock.Setup(dt => dt.ConfigurationObject).Returns(null as object);
-#endif
         return mock;
     }
 
     // ── TFM × Umbraco version matrix ────────────────────────────────────────
 
-    #if NET8_0
     [Theory]
-    [InlineData(13)]
     [InlineData(14)]
-    public async Task ExportAsync_OnNet8TFM_ReadsEditorAlias_ForUmbraco13And14(int umbracoMajor)
+    [InlineData(15)]
+    [InlineData(16)]
+    [InlineData(17)]
+    public async Task ExportAsync_ReadsEditorUiAlias_ForAllSupportedUmbracoVersions(int umbracoMajor)
     {
         var (sut, mockService) = CreateSut(umbracoMajor);
         var dt = BuildDataType("Textstring", "Umb.PropertyEditorUi.TextBox", ValueStorageType.Nvarchar);
@@ -61,29 +57,11 @@ public class DataTypeExporterRegressionTests
         Assert.Single(result);
         Assert.Equal("Umb.PropertyEditorUi.TextBox", result[0].EditorUiAlias);
     }
-#endif
-
-#if !NET8_0
-    [Theory]
-    [InlineData(15)]
-    [InlineData(16)]
-    [InlineData(17)]
-    public async Task ExportAsync_OnNet9OrNet10TFM_ReadsEditorUiAlias_ForUmbraco15To17(int umbracoMajor)
-    {
-        var (sut, mockService) = CreateSut(umbracoMajor);
-        var dt = BuildDataType("Rich Text", "Umb.PropertyEditorUi.TinyMce", ValueStorageType.Ntext);
-        mockService.Setup(s => s.GetAll()).Returns([dt.Object]);
-
-        var result = await sut.ExportAsync();
-
-        Assert.Single(result);
-        Assert.Equal("Umb.PropertyEditorUi.TinyMce", result[0].EditorUiAlias);
-    }
 
     [Fact]
-    public async Task ExportAsync_OnNet9OrNet10TFM_FallsBackToEditorAlias_WhenEditorUiAliasIsNull()
+    public async Task ExportAsync_FallsBackToEditorAlias_WhenEditorUiAliasIsNull()
     {
-        var (sut, mockService) = CreateSut(13);
+        var (sut, mockService) = CreateSut(17);
         var dt = new Mock<IDataType>();
         dt.Setup(d => d.Name).Returns("Legacy Editor");
         dt.Setup(d => d.DatabaseType).Returns(ValueStorageType.Ntext);
@@ -97,7 +75,6 @@ public class DataTypeExporterRegressionTests
         Assert.Single(result);
         Assert.Equal("Umbraco.TinyMCE", result[0].EditorUiAlias);
     }
-#endif
 
     // ── Alias generation regression ──────────────────────────────────────────
 
@@ -162,13 +139,8 @@ public class DataTypeExporterRegressionTests
         var dt = new Mock<IDataType>();
         dt.Setup(d => d.Name).Returns("Validated Text");
         dt.Setup(d => d.DatabaseType).Returns(ValueStorageType.Nvarchar);
-#if NET8_0
-        dt.Setup(d => d.EditorAlias).Returns("Umb.PropertyEditorUi.TextBox");
-        dt.Setup(d => d.Configuration).Returns(config);
-#else
         dt.Setup(d => d.EditorUiAlias).Returns("Umb.PropertyEditorUi.TextBox");
         dt.Setup(d => d.ConfigurationObject).Returns(config);
-#endif
         mockService.Setup(s => s.GetAll()).Returns([dt.Object]);
 
         var result = await sut.ExportAsync();
@@ -189,13 +161,8 @@ public class DataTypeExporterRegressionTests
         var broken = new Mock<IDataType>();
         broken.Setup(d => d.Name).Returns("Broken");
         broken.Setup(d => d.DatabaseType).Throws(new InvalidOperationException("DB error"));
-#if NET8_0
-        broken.Setup(d => d.EditorAlias).Returns("Umb.PropertyEditorUi.TextBox");
-        broken.Setup(d => d.Configuration).Returns(null as object);
-#else
         broken.Setup(d => d.EditorUiAlias).Returns("Umb.PropertyEditorUi.TextBox");
         broken.Setup(d => d.ConfigurationObject).Returns(null as object);
-#endif
 
         var good = BuildDataType("Textstring", "Umb.PropertyEditorUi.TextBox", ValueStorageType.Nvarchar);
 

@@ -19,7 +19,6 @@ public class UmbracoVersionDetectorTests
     // ── GetVersion ──────────────────────────────────────────────────────────
 
     [Theory]
-    [InlineData(13, UmbracoVersion.V13)]
     [InlineData(14, UmbracoVersion.V14)]
     [InlineData(15, UmbracoVersion.V15)]
     [InlineData(16, UmbracoVersion.V16)]
@@ -35,6 +34,7 @@ public class UmbracoVersionDetectorTests
 
     [Theory]
     [InlineData(12)]
+    [InlineData(13)]
     [InlineData(18)]
     [InlineData(99)]
     public void GetVersion_ReturnsUnknown_ForUnsupportedMajors(int major)
@@ -88,24 +88,24 @@ public class UmbracoVersionDetectorTests
     }
 
     [Theory]
-    [InlineData(13, false)]
-    [InlineData(12, false)]
-    [InlineData(18, false)]
-    public void SupportsEditorUiAlias_ReturnsFalse_ForV13AndUnknown(int major, bool expected)
+    [InlineData(12)]
+    [InlineData(13)]
+    [InlineData(18)]
+    public void SupportsEditorUiAlias_ReturnsTrue_ForAllVersions_BecausePackageTargets14Plus(int major)
     {
         var sut = CreateDetector(major);
 
-        Assert.Equal(expected, sut.SupportsEditorUiAlias());
+        Assert.True(sut.SupportsEditorUiAlias());
     }
 
     // ── UsesLegacyEditorAlias ────────────────────────────────────────────────
 
     [Fact]
-    public void UsesLegacyEditorAlias_ReturnsTrue_ForV13()
+    public void UsesLegacyEditorAlias_ReturnsFalse_ForAllVersions_BecausePackageTargets14Plus()
     {
         var sut = CreateDetector(13);
 
-        Assert.True(sut.UsesLegacyEditorAlias());
+        Assert.False(sut.UsesLegacyEditorAlias());
     }
 
     [Theory]
