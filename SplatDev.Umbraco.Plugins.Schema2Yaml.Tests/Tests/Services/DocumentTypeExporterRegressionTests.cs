@@ -7,9 +7,7 @@ using Umbraco.Cms.Core.Services;
 namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 
 /// <summary>
-/// Regression tests for DocumentTypeExporter.
-/// DocumentType export has no TFM-specific compile guards, so these tests run identically
-/// across net8.0, net9.0, and net10.0 (Umbraco 13–17).
+/// Regression tests for DocumentTypeExporter on the Umbraco 13 branch.
 /// </summary>
 public class DocumentTypeExporterRegressionTests
 {
@@ -31,11 +29,8 @@ public class DocumentTypeExporterRegressionTests
     [Fact]
     public async Task ExportAsync_MapsAllowedChildTypes_WhenPresent()
     {
-#if NET8_0
+        // Umbraco 13 ContentTypeSort constructor: (int id, int sortOrder)
         var allowedChild = new ContentTypeSort(1, 0) { Alias = "article" };
-#else
-        var allowedChild = new ContentTypeSort(Guid.NewGuid(), 0, "article");
-#endif
         var ct = CreateMinimalContentType("page", "Page");
         ct.Setup(c => c.AllowedContentTypes).Returns([allowedChild]);
         _mockContentTypeService.Setup(s => s.GetAll()).Returns([ct.Object]);
@@ -183,7 +178,6 @@ public class DocumentTypeExporterRegressionTests
         var ct = CreateMinimalContentType("page", "Page");
         var group1 = new PropertyGroup(new PropertyTypeCollection(true, [])) { Alias = "seo",     Name = "SEO",     SortOrder = 10 };
         var group2 = new PropertyGroup(new PropertyTypeCollection(true, [])) { Alias = "content", Name = "Content", SortOrder = 0 };
-        // The exporter orders by SortOrder; pass groups in reverse order to verify sorting.
         ct.Setup(c => c.PropertyGroups).Returns(new PropertyGroupCollection([group1, group2]));
         _mockContentTypeService.Setup(s => s.GetAll()).Returns([ct.Object]);
 
@@ -198,8 +192,6 @@ public class DocumentTypeExporterRegressionTests
     [Fact]
     public async Task ExportAsync_SkipsFailingContentType_AndContinuesExport()
     {
-        // Throw on Icon (inside the try block); Name is used by the catch logger so
-        // throwing there would cause the exception to escape the catch.
         var broken = new Mock<IContentType>();
         broken.Setup(c => c.Name).Returns("Broken");
         broken.Setup(c => c.Icon).Throws(new InvalidOperationException("DB timeout"));

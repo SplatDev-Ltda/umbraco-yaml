@@ -69,7 +69,7 @@ public class ContentExporter
         {
             var export = new ExportContent
             {
-                Name = content.Name,
+                Name = content.Name ?? string.Empty,
                 DocumentType = content.ContentType.Alias,
                 Template = GetTemplateName(content),
                 SortOrder = content.SortOrder,

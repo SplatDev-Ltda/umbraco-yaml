@@ -41,7 +41,7 @@ public class DocumentTypeExporter
                 var export = new ExportDocumentType
                 {
                     Alias = contentType.Alias,
-                    Name = contentType.Name,
+                    Name = contentType.Name ?? string.Empty,
                     Icon = contentType.Icon,
                     IsElement = contentType.IsElement,
                     AllowAsRoot = contentType.AllowedAsRoot,
@@ -84,9 +84,9 @@ public class DocumentTypeExporter
         {
             var tab = new ExportTab
             {
-                Name = group.Name,
+                Name = group.Name ?? string.Empty,
                 SortOrder = group.SortOrder,
-                Properties = ExportProperties(group.PropertyTypes)
+                Properties = ExportProperties(group.PropertyTypes ?? Enumerable.Empty<IPropertyType>())
             };
 
             tabs.Add(tab);

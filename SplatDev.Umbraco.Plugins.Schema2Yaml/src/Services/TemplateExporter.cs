@@ -37,7 +37,7 @@ public class TemplateExporter
                 var export = new ExportTemplate
                 {
                     Alias = template.Alias,
-                    Name = template.Name,
+                    Name = template.Name ?? string.Empty,
                     MasterTemplate = template.MasterTemplateAlias,
                     Content = template.Content
                 };

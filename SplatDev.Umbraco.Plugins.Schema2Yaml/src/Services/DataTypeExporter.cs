@@ -42,8 +42,8 @@ public class DataTypeExporter
             {
                 var export = new ExportDataType
                 {
-                    Alias = GenerateAlias(dataType.Name),
-                    Name = dataType.Name,
+                    Alias = GenerateAlias(dataType.Name ?? string.Empty),
+                    Name = dataType.Name ?? string.Empty,
                     EditorUiAlias = GetEditorAlias(dataType),
                     Config = ExtractConfiguration(dataType),
                     ValueType = dataType.DatabaseType.ToString()

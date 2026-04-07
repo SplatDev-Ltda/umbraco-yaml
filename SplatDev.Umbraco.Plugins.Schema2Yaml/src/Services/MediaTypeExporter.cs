@@ -41,7 +41,7 @@ public class MediaTypeExporter
                 var export = new ExportMediaType
                 {
                     Alias = mediaType.Alias,
-                    Name = mediaType.Name,
+                    Name = mediaType.Name ?? string.Empty,
                     Icon = mediaType.Icon,
                     AllowedAtRoot = mediaType.AllowedAsRoot,
                     Tabs = ExportTabs(mediaType)
@@ -72,9 +72,9 @@ public class MediaTypeExporter
         {
             var tab = new ExportTab
             {
-                Name = group.Name,
+                Name = group.Name ?? string.Empty,
                 SortOrder = group.SortOrder,
-                Properties = ExportProperties(group.PropertyTypes)
+                Properties = ExportProperties(group.PropertyTypes ?? Enumerable.Empty<IPropertyType>())
             };
 
             tabs.Add(tab);

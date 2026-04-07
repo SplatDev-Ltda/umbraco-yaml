@@ -4,7 +4,6 @@ using Moq;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Configuration;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using Umbraco.Cms.Core;
-using Umbraco.Cms.Core.Hosting;
 using Umbraco.Cms.Core.Services;
 using System.IO.Compression;
 
@@ -209,11 +208,11 @@ public class SchemaExportServiceTests : IDisposable
         var mockUserService = new Mock<IUserService>();
         mockUserService.Setup(s => s.GetAll(0, int.MaxValue, out total)).Returns([]);
 
-        var mockHostingEnv = new Mock<IHostingEnvironment>();
-        mockHostingEnv.Setup(h => h.MapPathWebRoot(It.IsAny<string>())).Returns(string.Empty);
+        var mockHostingEnv = new Mock<Microsoft.AspNetCore.Hosting.IWebHostEnvironment>();
+        mockHostingEnv.Setup(h => h.WebRootPath).Returns(Path.GetTempPath());
 
         var mockUmbracoVersion = new Mock<IUmbracoVersion>();
-        mockUmbracoVersion.Setup(v => v.Version).Returns(new Version(17, 0, 0));
+        mockUmbracoVersion.Setup(v => v.Version).Returns(new Version(13, 0, 0));
 
         var versionDetector = new UmbracoVersionDetector(
             mockUmbracoVersion.Object,

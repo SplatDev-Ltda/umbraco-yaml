@@ -10,8 +10,6 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 public class DataTypeExporterTests
 {
     private readonly Mock<IDataTypeService> _mockDataTypeService;
-    private readonly Mock<IUmbracoVersion> _mockUmbracoVersion;
-    private readonly Mock<ILogger<UmbracoVersionDetector>> _mockVersionLogger;
     private readonly Mock<ILogger<DataTypeExporter>> _mockLogger;
     private readonly UmbracoVersionDetector _versionDetector;
     private readonly DataTypeExporter _sut;
@@ -19,14 +17,24 @@ public class DataTypeExporterTests
     public DataTypeExporterTests()
     {
         _mockDataTypeService = new Mock<IDataTypeService>();
-        _mockUmbracoVersion = new Mock<IUmbracoVersion>();
-        _mockVersionLogger = new Mock<ILogger<UmbracoVersionDetector>>();
         _mockLogger = new Mock<ILogger<DataTypeExporter>>();
 
-        _mockUmbracoVersion.Setup(v => v.Version).Returns(new Version(17, 0, 0));
-        _versionDetector = new UmbracoVersionDetector(_mockUmbracoVersion.Object, _mockVersionLogger.Object);
+        var mockUmbracoVersion = new Mock<IUmbracoVersion>();
+        mockUmbracoVersion.Setup(v => v.Version).Returns(new Version(13, 0, 0));
+        var mockVersionLogger = new Mock<ILogger<UmbracoVersionDetector>>();
+        _versionDetector = new UmbracoVersionDetector(mockUmbracoVersion.Object, mockVersionLogger.Object);
 
         _sut = new DataTypeExporter(_mockDataTypeService.Object, _versionDetector, _mockLogger.Object);
+    }
+
+    private static Mock<IDataType> BuildDataType(string name, string editorAlias, ValueStorageType dbType, object? config = null)
+    {
+        var mock = new Mock<IDataType>();
+        mock.Setup(dt => dt.Name).Returns(name);
+        mock.Setup(dt => dt.EditorAlias).Returns(editorAlias);
+        mock.Setup(dt => dt.Configuration).Returns(config);
+        mock.Setup(dt => dt.DatabaseType).Returns(dbType);
+        return mock;
     }
 
     [Fact]
@@ -42,40 +50,20 @@ public class DataTypeExporterTests
     [Fact]
     public async Task ExportAsync_MapsNameAndEditorAlias()
     {
-        var mockDataType = new Mock<IDataType>();
-        mockDataType.Setup(dt => dt.Name).Returns("Textstring");
-#if NET8_0
-        mockDataType.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.TextBox");
-        mockDataType.Setup(dt => dt.Configuration).Returns(null as object);
-#else
-        mockDataType.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.TextBox");
-        mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
-#endif
-        mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Ntext);
-
+        var mockDataType = BuildDataType("Textstring", "Umbraco.TextBox", ValueStorageType.Ntext);
         _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
 
         var result = await _sut.ExportAsync();
 
         Assert.Single(result);
         Assert.Equal("Textstring", result[0].Name);
-        Assert.Equal("Umb.PropertyEditorUi.TextBox", result[0].EditorUiAlias);
+        Assert.Equal("Umbraco.TextBox", result[0].EditorUiAlias);
     }
 
     [Fact]
     public async Task ExportAsync_GeneratesAlias_AsCamelCase()
     {
-        var mockDataType = new Mock<IDataType>();
-        mockDataType.Setup(dt => dt.Name).Returns("Rich Text Editor");
-#if NET8_0
-        mockDataType.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.TinyMce");
-        mockDataType.Setup(dt => dt.Configuration).Returns(null as object);
-#else
-        mockDataType.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.TinyMce");
-        mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
-#endif
-        mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Ntext);
-
+        var mockDataType = BuildDataType("Rich Text Editor", "Umbraco.TinyMCE", ValueStorageType.Ntext);
         _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
 
         var result = await _sut.ExportAsync();
@@ -87,28 +75,8 @@ public class DataTypeExporterTests
     [Fact]
     public async Task ExportAsync_ExportsMultipleDataTypes()
     {
-        var mockDt1 = new Mock<IDataType>();
-        mockDt1.Setup(dt => dt.Name).Returns("Textstring");
-#if NET8_0
-        mockDt1.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.TextBox");
-        mockDt1.Setup(dt => dt.Configuration).Returns(null as object);
-#else
-        mockDt1.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.TextBox");
-        mockDt1.Setup(dt => dt.ConfigurationObject).Returns(null as object);
-#endif
-        mockDt1.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Nvarchar);
-
-        var mockDt2 = new Mock<IDataType>();
-        mockDt2.Setup(dt => dt.Name).Returns("Numeric");
-#if NET8_0
-        mockDt2.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.Integer");
-        mockDt2.Setup(dt => dt.Configuration).Returns(null as object);
-#else
-        mockDt2.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.Integer");
-        mockDt2.Setup(dt => dt.ConfigurationObject).Returns(null as object);
-#endif
-        mockDt2.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Integer);
-
+        var mockDt1 = BuildDataType("Textstring", "Umbraco.TextBox", ValueStorageType.Nvarchar);
+        var mockDt2 = BuildDataType("Numeric", "Umbraco.Integer", ValueStorageType.Integer);
         _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDt1.Object, mockDt2.Object]);
 
         var result = await _sut.ExportAsync();
@@ -121,17 +89,7 @@ public class DataTypeExporterTests
     [Fact]
     public async Task ExportAsync_SetsValueType_FromDatabaseType()
     {
-        var mockDataType = new Mock<IDataType>();
-        mockDataType.Setup(dt => dt.Name).Returns("Number");
-#if NET8_0
-        mockDataType.Setup(dt => dt.EditorAlias).Returns("Umb.PropertyEditorUi.Integer");
-        mockDataType.Setup(dt => dt.Configuration).Returns(null as object);
-#else
-        mockDataType.Setup(dt => dt.EditorUiAlias).Returns("Umb.PropertyEditorUi.Integer");
-        mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
-#endif
-        mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Integer);
-
+        var mockDataType = BuildDataType("Number", "Umbraco.Integer", ValueStorageType.Integer);
         _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
 
         var result = await _sut.ExportAsync();

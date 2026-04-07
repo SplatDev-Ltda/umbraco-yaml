@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Umbraco.Extensions;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Hosting;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Models;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Configuration;
 using SystemFile = System.IO.File;
@@ -15,18 +16,18 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 public class MediaExporter
 {
     private readonly IMediaService _mediaService;
-    private readonly IHostingEnvironment _hostingEnvironment;
+    private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly Schema2YamlOptions _options;
     private readonly ILogger<MediaExporter> _logger;
 
     public MediaExporter(
         IMediaService mediaService,
-        IHostingEnvironment hostingEnvironment,
+        IWebHostEnvironment webHostEnvironment,
         IOptions<Schema2YamlOptions> options,
         ILogger<MediaExporter> logger)
     {
         _mediaService = mediaService ?? throw new ArgumentNullException(nameof(mediaService));
-        _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+        _webHostEnvironment = webHostEnvironment ?? throw new ArgumentNullException(nameof(webHostEnvironment));
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -80,7 +81,7 @@ public class MediaExporter
         {
             var export = new ExportMedia
             {
-                Name = media.Name,
+                Name = media.Name ?? string.Empty,
                 MediaType = media.ContentType.Alias,
                 Folder = folder,
                 Properties = ExportProperties(media),
@@ -102,7 +103,7 @@ public class MediaExporter
 
             // Export children recursively
             var children = _mediaService.GetPagedChildren(media.Id, 0, int.MaxValue, out _);
-            var childFolder = string.IsNullOrEmpty(folder) ? media.Name : $"{folder}/{media.Name}";
+            var childFolder = string.IsNullOrEmpty(folder) ? media.Name ?? string.Empty : $"{folder}/{media.Name}";
 
             foreach (var child in children.OrderBy(c => c.SortOrder))
             {
@@ -135,7 +136,7 @@ public class MediaExporter
                 return;
             }
 
-            var physicalPath = _hostingEnvironment.MapPathWebRoot(filePath);
+            var physicalPath = _webHostEnvironment.MapPathWebRoot(filePath);
 
             if (SystemFile.Exists(physicalPath))
             {
