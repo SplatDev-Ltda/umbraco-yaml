@@ -9,7 +9,7 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 /// <summary>
 /// Regression tests for DocumentTypeExporter.
 /// DocumentType export has no TFM-specific compile guards, so these tests run identically
-/// across net8.0, net9.0, and net10.0 (Umbraco 13–17).
+/// across net8.0, net9.0, and net10.0 (Umbraco 14–17).
 /// </summary>
 public class DocumentTypeExporterRegressionTests
 {

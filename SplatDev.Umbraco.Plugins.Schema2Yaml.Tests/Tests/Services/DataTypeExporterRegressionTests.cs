@@ -9,10 +9,8 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 
 /// <summary>
 /// Regression tests for DataTypeExporter.
-/// On net8.0 the exporter compiles against Umbraco 13 which exposes EditorAlias / Configuration.
-/// On net9.0/net10.0 it compiles against Umbraco 16/17 which expose EditorUiAlias / ConfigurationObject.
-/// These tests assert correct behaviour for every TFM and guard against regressions when
-/// switching Umbraco major versions.
+/// All TFMs (net8.0, net9.0, net10.0) target Umbraco 14+ which exposes EditorUiAlias / ConfigurationObject.
+/// These tests guard against regressions when switching Umbraco major versions (14–17).
 /// </summary>
 public class DataTypeExporterRegressionTests
 {
