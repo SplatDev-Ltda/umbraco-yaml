@@ -3,4 +3,5 @@
     <Project Path="SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.csproj" />
     <Project Path="SplatDev.Umbraco.Plugins.Schema2Yaml/SplatDev.Umbraco.Plugins.Schema2Yaml.csproj" />
   </Folder>
+  <Project Path="Umbraco.Web/Umbraco.Web.csproj" />
 </Solution>
