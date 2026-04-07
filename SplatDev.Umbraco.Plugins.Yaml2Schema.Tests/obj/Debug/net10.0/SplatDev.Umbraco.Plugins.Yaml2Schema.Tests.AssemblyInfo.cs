@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SplatDev.Umbraco.Plugins.Yaml2Schema.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bd4ee1bed7f2e8c184d1835949152b47b8e27233")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39a139df4176d8d886fc09f842e748f0583c4e78")]
 [assembly: System.Reflection.AssemblyProductAttribute("SplatDev.Umbraco.Plugins.Yaml2Schema.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SplatDev.Umbraco.Plugins.Yaml2Schema.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
