@@ -1,18 +1,21 @@
 .worktrees/
 /.vs
-/Umbraco.Plugins.Yaml2Schema.Tests/bin
-/Umbraco.Plugins.Yaml2Schema.Tests/obj
 /Umbraco.Plugins.Yaml2Schema/bin
 /Umbraco.Plugins.Yaml2Schema/obj
+/Umbraco.Plugins.Yaml2Schema.Tests/bin
+/Umbraco.Plugins.Yaml2Schema.Tests/obj
 /SplatDev.Umbraco.Plugins.Schema2Yaml/bin
 /SplatDev.Umbraco.Plugins.Schema2Yaml/obj
 /SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/bin
 /SplatDev.Umbraco.Plugins.Schema2Yaml.Tests/obj
+/SplatDev.Umbraco.Plugins.Yaml2Schema/bin
+/SplatDev.Umbraco.Plugins.Yaml2Schema/obj
+/SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/bin
+/SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/obj
+/Umbraco.Web/bin
+/Umbraco.Web/obj
 build-output.txt
 *.nupkg
 
 CREDENTIALS.txt
 /.claude/settings.local.json
-/SplatDev.Umbraco.Plugins.Yaml2Schema/obj/Debug/net10.0
-/SplatDev.Umbraco.Plugins.Yaml2Schema/obj
-/SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/bin/Debug/net10.0
