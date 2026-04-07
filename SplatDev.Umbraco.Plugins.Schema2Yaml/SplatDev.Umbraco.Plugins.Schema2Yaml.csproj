@@ -13,7 +13,7 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Schema2Yaml</PackageId>
-    <Version>2.0.3</Version>
+    <Version>2.0.4</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
@@ -26,7 +26,7 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v2.0.3: Fix CI workflows, update marketplace metadata. Supports Umbraco 14–17 (net8.0/net9.0/net10.0). For Umbraco 13, use v1.0.9.</PackageReleaseNotes>
+    <PackageReleaseNotes>v2.0.4: Add strict upper-bound version ranges on Umbraco dependencies so NuGet correctly falls back to v1.x on Umbraco 13 projects. Supports Umbraco 14–17. For Umbraco 13, use v1.x.</PackageReleaseNotes>
 
     <!-- Umbraco Marketplace metadata -->
     <PackageType>Dependency</PackageType>
@@ -43,20 +43,20 @@
 
   <!-- Umbraco 14  (net8.0) -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="Umbraco.Cms.Core" Version="14.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="14.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="[14.0.0, 15.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="[14.0.0, 15.0.0)" />
   </ItemGroup>
 
   <!-- Umbraco 15 / 16  (net9.0) -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="Umbraco.Cms.Core" Version="16.3.0" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="16.3.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="[15.0.0, 17.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="[15.0.0, 17.0.0)" />
   </ItemGroup>
 
   <!-- Umbraco 17  (net10.0) -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <PackageReference Include="Umbraco.Cms.Core" Version="17.2.2" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.2.2" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="[17.0.0, 18.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="[17.0.0, 18.0.0)" />
   </ItemGroup>
 
   <!-- Version-independent packages -->
