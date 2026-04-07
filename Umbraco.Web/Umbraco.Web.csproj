@@ -8,6 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="SplatDev.Umbraco.Plugins.Schema2Yaml" Version="1.0.12" />
 		<PackageReference Include="Umbraco.Cms" Version="13.7.2" />
 		<PackageReference Include="Umbraco.TheStarterKit" Version="13.*" />
 	</ItemGroup>
