@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `SplatDev.Umbraco.Plugins.Yaml2Schema` are documented here.
+All notable changes to `SplatDev.Umbraco.Plugins.Schema2Yaml` (Umbraco 13 branch) are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,6 +8,38 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ---
 
 ## [Unreleased]
+
+## [1.0.9] - 2026-04-06
+
+### Fixed
+- Resolve all nullable reference warnings (CS8601/CS8604) across all exporters
+- Replace obsolete `IHostingEnvironment.MapPathWebRoot` with `IWebHostEnvironment` + Umbraco extension method
+- Fix test project for Umbraco 13 — remove V14-V17 enum references, `#if NET8_0` guards, and wrong API calls
+- Default export path changed from `.yaml` to `.yml` extension
+
+### Added
+- 17 complex schema export integration tests covering compositions, deep hierarchies, all property editor types, multi-language dictionaries, template master hierarchies, members, and users
+- Umbraco.Web test site project (Umbraco 13.7.2 + Starter Kit) with Schema2Yaml project reference
+- SQLite connection string and `UmbracoSchema2Yaml` config section in Umbraco.Web appsettings
+
+### Changed
+- Test project targets net10.0 (matches available runtime) while referencing net8.0 Schema2Yaml library
+- Suppress NU1902 known Umbraco package vulnerability warnings in Umbraco.Web
+
+## [1.0.8] - 2026-04-05
+
+### Changed
+- Dedicated Umbraco 13 branch (`support/umbraco-13`) — supports only Umbraco 13.x on net8.0
+- Version detector simplified to V13/Unknown enum only
+- `SupportsEditorUiAlias()` always returns false, `UsesLegacyEditorAlias()` always returns true
+- DataType exporter uses `EditorAlias` and `Configuration` (Umbraco 13 API)
+
+---
+
+> Earlier changelog entries below are from the `master` branch (Yaml2Schema / multi-version).
+> They are preserved for historical reference but do not apply to this Umbraco 13 branch.
+
+---
 
 ## [1.0.32] - 2026-04-03
 

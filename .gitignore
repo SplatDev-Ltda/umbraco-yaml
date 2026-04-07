@@ -12,3 +12,4 @@ build-output.txt
 *.nupkg
 
 CREDENTIALS.txt
+/.claude/settings.local.json

@@ -13,7 +13,7 @@ public class Schema2YamlOptions
     /// <summary>
     /// Default YAML export file path (relative to content root).
     /// </summary>
-    public string ExportPath { get; set; } = "exports/umbraco.yaml";
+    public string ExportPath { get; set; } = "exports/umbraco.yml";
 
     /// <summary>
     /// Include media items in export.
