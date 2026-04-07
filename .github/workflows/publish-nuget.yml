@@ -122,14 +122,16 @@ jobs:
             10.x
 
       - name: Restore
-        run: dotnet restore Umbraco.Plugins.Yaml2Schema/Umbraco.Plugins.Yaml2Schema.csproj
+        run: |
+          dotnet restore SplatDev.Umbraco.Plugins.Yaml2Schema/SplatDev.Umbraco.Plugins.Yaml2Schema.csproj
+          dotnet restore SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/SplatDev.Umbraco.Plugins.Yaml2Schema.Tests.csproj
 
       - name: Build
         run: >
           dotnet build
           --no-restore
           --configuration Release
-          Umbraco.Plugins.Yaml2Schema/Umbraco.Plugins.Yaml2Schema.csproj
+          SplatDev.Umbraco.Plugins.Yaml2Schema/SplatDev.Umbraco.Plugins.Yaml2Schema.csproj
 
       - name: Test
         run: >
@@ -137,7 +139,7 @@ jobs:
           --no-restore
           --configuration Release
           --logger "console;verbosity=minimal"
-          Umbraco.Plugins.Yaml2Schema.Tests/Umbraco.Plugins.Yaml2Schema.Tests.csproj
+          SplatDev.Umbraco.Plugins.Yaml2Schema.Tests/SplatDev.Umbraco.Plugins.Yaml2Schema.Tests.csproj
 
       - name: Extract version from tag
         id: version
@@ -154,7 +156,7 @@ jobs:
           --configuration Release
           -p:PackageVersion=${{ steps.version.outputs.version }}
           --output ./nupkgs
-          Umbraco.Plugins.Yaml2Schema/Umbraco.Plugins.Yaml2Schema.csproj
+          SplatDev.Umbraco.Plugins.Yaml2Schema/SplatDev.Umbraco.Plugins.Yaml2Schema.csproj
 
       - name: Push to NuGet
         run: >

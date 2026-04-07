@@ -16,14 +16,14 @@
   "RelatedPackages": [
     {
       "PackageId": "SplatDev.Umbraco.Plugins.Schema2Yaml",
-      "Description": "Companion package — exports your existing Umbraco site structure to YAML. Supports Umbraco 14–17."
+      "Description": "Companion package — exports your existing Umbraco site structure to YAML. v2.x supports Umbraco 14-17, v1.x supports Umbraco 13.",
       "GroupTitle": "Umbraco YAML Toolkit"
     }
   ],
   "Screenshots": [
     {
       "ImageUrl": "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/main/docs/images/hero-banner.png",
-      "Caption": "YAML configuration → Umbraco structures, created automatically at startup"
+      "Caption": "YAML configuration — Umbraco structures, created automatically at startup"
     },
     {
       "ImageUrl": "https://raw.githubusercontent.com/SplatDev-Ltda/umbraco-yaml/main/docs/images/demo-how-it-works.png",
