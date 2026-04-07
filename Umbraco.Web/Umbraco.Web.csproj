@@ -6,6 +6,33 @@
 		<!-- Suppress transitive vulnerability warnings from Umbraco's own dependencies -->
 		<NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Content Include="umbraco\Data\TEMP\DistCache\dabd2e24842be93d0b0b077f0b0c39c7b868239b-lastsynced.txt" />
+	  <Content Include="umbraco\Data\TEMP\Install\install_3cdb8aa1515c457580825995873cde0a.txt" />
+	  <Content Include="umbraco\Logs\UmbracoTraceLog.MOBILE-OFFICE.20260407.json" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\ExternalIndex\segments.gen" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\ExternalIndex\segments_2" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\ExternalIndex\write.lock" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\ExternalIndex\_0.cfe" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\ExternalIndex\_0.cfs" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\ExternalIndex\_0.si" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\InternalIndex\segments.gen" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\InternalIndex\segments_2" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\InternalIndex\write.lock" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\InternalIndex\_0.cfe" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\InternalIndex\_0.cfs" />
+	  <None Include="umbraco\Data\TEMP\ExamineIndexes\InternalIndex\_0.si" />
+	  <None Include="umbraco\Data\TEMP\MainDom_afbe81488e294d711bf248066f334b2048611087.lock" />
+	  <None Include="umbraco\Data\TEMP\NuCache\NuCache.Content.db" />
+	  <None Include="umbraco\Data\TEMP\NuCache\NuCache.Content.tlog" />
+	  <None Include="umbraco\Data\TEMP\NuCache\NuCache.Media.db" />
+	  <None Include="umbraco\Data\TEMP\NuCache\NuCache.Media.tlog" />
+	  <None Include="umbraco\Data\Umbraco.sqlite.db" />
+	  <None Include="umbraco\Data\Umbraco.sqlite.db-shm" />
+	  <None Include="umbraco\Data\Umbraco.sqlite.db-wal" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="SplatDev.Umbraco.Plugins.Schema2Yaml" Version="1.0.12" />
@@ -17,6 +44,11 @@
 		<!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
 		<PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
 		<RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="umbraco\Data\TEMP\FileUploads\" />
+	  <Folder Include="umbraco\Data\TEMP\InMemoryAuto\" />
 	</ItemGroup>
 
 	<PropertyGroup>

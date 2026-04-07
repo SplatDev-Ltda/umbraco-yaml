@@ -1,0 +1,17 @@
+{
+  "javascript": [
+    "~/App_Plugins/Schema2Yaml/schemaExport.resource.js",
+    "~/App_Plugins/Schema2Yaml/schemaExport.controller.js"
+  ],
+  "dashboards": [
+    {
+      "alias": "schemaExportDashboard",
+      "view": "/App_Plugins/Schema2Yaml/dashboard.html",
+      "sections": [ "settings" ],
+      "weight": 20,
+      "access": [
+        { "deny": "translator" }
+      ]
+    }
+  ]
+}
