@@ -9,7 +9,7 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Schema2Yaml</PackageId>
-    <Version>1.0.9</Version>
+    <Version>1.0.10</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
@@ -22,7 +22,7 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v1.0.9: Fix nullable warnings, replace obsolete IHostingEnvironment with IWebHostEnvironment, default export path to .yml. Umbraco 13 only (net8.0). For Umbraco 14–17, use v2.x.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.10: Maintenance release for Umbraco 13 (net8.0). For Umbraco 14–17, use v2.x.</PackageReleaseNotes>
 
     <!-- Umbraco Marketplace metadata -->
     <PackageType>Dependency</PackageType>
