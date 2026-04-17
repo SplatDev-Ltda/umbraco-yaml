@@ -1,0 +1,24 @@
+{
+  "name": "RISIN - Plataforma Empresarial Digital",
+  "short_name": "RISIN",
+  "description": "Integração de 08 websites sob um ecossistema tecnológico único com modelo regional estruturado.",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#059669",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/"
+}
