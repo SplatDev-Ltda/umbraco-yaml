@@ -11,14 +11,22 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 
+    <!-- Pack settings for themed variants (metadata-only) -->
+    <Schema2YamlThemePackage>false</Schema2YamlThemePackage>
+    <Schema2YamlThemeName></Schema2YamlThemeName>
+
     <!-- NuGet package metadata -->
-    <PackageId>SplatDev.Umbraco.Plugins.Schema2Yaml</PackageId>
+    <_BasePackageId>SplatDev.Umbraco.Plugins.Schema2Yaml</_BasePackageId>
+    <_BaseDescription>An Umbraco plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file. Supports Umbraco 14–17. For Umbraco 13, use v1.x.</_BaseDescription>
+    <_BasePackageTags>umbraco yaml infrastructure-as-code cms content-management export schema document-types data-types templates media languages dictionary members users umbraco-marketplace</_BasePackageTags>
+
+    <PackageId>$(_BasePackageId)</PackageId>
     <Version>2.0.5</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
-    <Description>An Umbraco plugin that exports your existing Umbraco schema and content to YAML format. Exports DataTypes, DocumentTypes, Media Types, Templates, Content, Media, Languages, Dictionary Items, Members, and Users to a declarative Infrastructure-as-Code YAML file. Supports Umbraco 14–17. For Umbraco 13, use v1.x.</Description>
-    <PackageTags>umbraco yaml infrastructure-as-code cms content-management export schema document-types data-types templates media languages dictionary members users umbraco-marketplace</PackageTags>
+    <Description>$(_BaseDescription)</Description>
+    <PackageTags>$(_BasePackageTags)</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -35,6 +43,17 @@
     <!-- Suppress transitive vulnerability warnings from Umbraco's own dependencies (MimeKit, Lucene) -->
     <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Schema2YamlThemePackage)' == 'true'">
+    <PackageId>$(_BasePackageId).$(Schema2YamlThemeName)</PackageId>
+    <Description>$(_BaseDescription) Themed package: $(Schema2YamlThemeName).</Description>
+    <PackageTags>$(_BasePackageTags);theme;$(Schema2YamlThemeName)</PackageTags>
+  </PropertyGroup>
+
+  <Target Name="ValidateSchema2YamlThemePackageSettings" BeforeTargets="Pack">
+    <Error Condition="'$(Schema2YamlThemePackage)' == 'true' and '$(Schema2YamlThemeName)' == ''"
+           Text="Schema2Yaml themed pack requires Schema2YamlThemeName when Schema2YamlThemePackage=true." />
+  </Target>
 
   <ItemGroup>
     <!-- Provides IWebHostEnvironment, IHttpClientFactory, and other ASP.NET Core abstractions -->

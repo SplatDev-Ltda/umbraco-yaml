@@ -74,6 +74,41 @@ Install-Package SplatDev.Umbraco.Plugins.Schema2Yaml
 
 No further registration is required — the plugin self-registers via `Schema2YamlComposer` on startup and the dashboard appears automatically in the **Settings** section.
 
+### Pack a themed NuGet package (metadata-only)
+
+By default, packing produces the standard package `SplatDev.Umbraco.Plugins.Schema2Yaml`.
+
+To produce a themed variant from the same project, set pack properties:
+
+```bash
+dotnet pack SplatDev.Umbraco.Plugins.Schema2Yaml/SplatDev.Umbraco.Plugins.Schema2Yaml.csproj -c Release -p:Schema2YamlThemePackage=true -p:Schema2YamlThemeName=Corporate
+```
+
+This generates package id:
+
+`SplatDev.Umbraco.Plugins.Schema2Yaml.Corporate`
+
+Notes:
+- This only changes NuGet metadata (PackageId, Description, Tags).
+- One theme package is produced per pack run.
+- If `Schema2YamlThemePackage=false` (default), behavior is unchanged.
+
+### Publish themed package via GitHub Actions
+
+Push a tag using this format:
+
+`schema2yaml-theme-<ThemeName>-v<Version>`
+
+Example:
+
+`schema2yaml-theme-Corporate-v2.0.6`
+
+The publish workflow will automatically:
+- detect `<ThemeName>` from the tag
+- pack with `Schema2YamlThemePackage=true`
+- pack with `Schema2YamlThemeName=<ThemeName>`
+- publish the themed package to NuGet
+
 ---
 
 ## Usage
