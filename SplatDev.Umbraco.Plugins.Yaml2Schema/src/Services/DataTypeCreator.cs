@@ -131,7 +131,10 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                                         _         => ValueStorageType.Nvarchar
                                     }
                                     : MapValueType(yamlDataType.ValueType);
+#if !NET8_0
+                                // EditorUiAlias is a Umbraco 14+ (new backoffice) concept; not present in U13
                                 existing.EditorUiAlias = ResolveEditorUiAlias(yamlDataType.Editor);
+#endif
                             }
 
                             // Re-apply config so stale or incorrectly-formatted config is fixed
@@ -228,7 +231,10 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     {
                         Name = yamlDataType.Name,
                         DatabaseType = dbType,
+#if !NET8_0
+                        // EditorUiAlias is a Umbraco 14+ (new backoffice) concept; not present in U13
                         EditorUiAlias = ResolveEditorUiAlias(yamlDataType.Editor)
+#endif
                     };
 
                     // Apply config from YAML (supports Block List, Image Cropper, etc.)

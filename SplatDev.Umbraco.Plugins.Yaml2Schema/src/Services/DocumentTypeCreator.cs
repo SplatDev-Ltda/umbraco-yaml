@@ -8,26 +8,42 @@ using Umbraco.Cms.Core.Strings;
 using Microsoft.Extensions.Logging;
 using SplatDev.Umbraco.Plugins.Yaml2Schema.Models;
 
+// ITemplateService is a Umbraco 14+ API. Umbraco 13 uses IFileService for templates.
+
 namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
 {
     public class DocumentTypeCreator
     {
         private readonly IContentTypeService _contentTypeService;
         private readonly IDataTypeService _dataTypeService;
+#if NET8_0
+        // Umbraco 13: template resolution goes through IFileService
+        private readonly IFileService _fileService;
+#else
+        // Umbraco 14+ / 17: dedicated ITemplateService
         private readonly ITemplateService _templateService;
+#endif
         private readonly IShortStringHelper _shortStringHelper;
         private readonly ILogger<DocumentTypeCreator>? _logger;
 
         public DocumentTypeCreator(
             IContentTypeService contentTypeService,
             IDataTypeService dataTypeService,
+#if NET8_0
+            IFileService fileService,
+#else
             ITemplateService templateService,
+#endif
             IShortStringHelper shortStringHelper,
             ILogger<DocumentTypeCreator>? logger = null)
         {
             _contentTypeService = contentTypeService ?? throw new ArgumentNullException(nameof(contentTypeService));
             _dataTypeService = dataTypeService ?? throw new ArgumentNullException(nameof(dataTypeService));
+#if NET8_0
+            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+#else
             _templateService = templateService ?? throw new ArgumentNullException(nameof(templateService));
+#endif
             _shortStringHelper = shortStringHelper ?? throw new ArgumentNullException(nameof(shortStringHelper));
             _logger = logger;
         }
@@ -223,7 +239,11 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                 var resolvedTemplates = new List<ITemplate>();
                 foreach (var alias in aliases)
                 {
+#if NET8_0
+                    var template = _fileService.GetTemplate(alias);
+#else
                     var template = _templateService.GetAsync(alias).GetAwaiter().GetResult();
+#endif
                     if (template == null)
                     {
                         _logger?.LogWarning(

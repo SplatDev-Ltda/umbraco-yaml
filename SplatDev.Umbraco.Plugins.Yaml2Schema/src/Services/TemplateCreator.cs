@@ -6,10 +6,34 @@ using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core.Services;
 using SplatDev.Umbraco.Plugins.Yaml2Schema.Models;
 
+// ITemplateService was introduced in Umbraco 14 (new backoffice).
+// Umbraco 13 (net8.0 target) uses IFileService for template CRUD operations.
+#if NET8_0
+using Umbraco.Cms.Core.Models;
+using Umbraco.Cms.Core.Strings;
+#endif
+
 namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
 {
     public class TemplateCreator
     {
+#if NET8_0
+        // Umbraco 13: IFileService handles templates; IShortStringHelper is needed for new Template()
+        private readonly IFileService _fileService;
+        private readonly IShortStringHelper _shortStringHelper;
+        private readonly ILogger<TemplateCreator>? _logger;
+
+        public TemplateCreator(
+            IFileService fileService,
+            IShortStringHelper shortStringHelper,
+            ILogger<TemplateCreator>? logger = null)
+        {
+            _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+            _shortStringHelper = shortStringHelper ?? throw new ArgumentNullException(nameof(shortStringHelper));
+            _logger = logger;
+        }
+#else
+        // Umbraco 14+ / 17: dedicated ITemplateService
         private readonly ITemplateService _templateService;
         private readonly ILogger<TemplateCreator>? _logger;
 
@@ -18,6 +42,7 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
             _templateService = templateService ?? throw new ArgumentNullException(nameof(templateService));
             _logger = logger;
         }
+#endif
 
         public void CreateTemplates(List<YamlTemplate> templates)
         {
@@ -42,6 +67,72 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
+#if NET8_0
+                    // Umbraco 13: use IFileService for template operations
+                    // [UPDATE]
+                    if (yamlTemplate.Update)
+                    {
+                        var toUpdate = _fileService.GetTemplate(yamlTemplate.Alias);
+                        if (toUpdate != null)
+                        {
+                            toUpdate.Content = !string.IsNullOrWhiteSpace(yamlTemplate.RazorContent)
+                                ? yamlTemplate.RazorContent
+                                : GenerateDefaultTemplateContent(yamlTemplate.Name, yamlTemplate.Scripts, yamlTemplate.Stylesheets);
+                            _fileService.SaveTemplate(toUpdate);
+                            _logger?.LogInformation(
+                                "Template '{Name}' with alias '{Alias}' updated.",
+                                yamlTemplate.Name, yamlTemplate.Alias);
+                            processedAliases.Add(yamlTemplate.Alias);
+                            continue;
+                        }
+                        _logger?.LogInformation(
+                            "Template '{Alias}' not found during UPDATE; will create it.",
+                            yamlTemplate.Alias);
+                    }
+
+                    // [REMOVE]
+                    if (yamlTemplate.Remove)
+                    {
+                        var toDelete = _fileService.GetTemplate(yamlTemplate.Alias);
+                        if (toDelete != null)
+                        {
+                            _fileService.DeleteTemplate(yamlTemplate.Alias);
+                            _logger?.LogInformation(
+                                "Template '{Name}' with alias '{Alias}' removed.",
+                                yamlTemplate.Name, yamlTemplate.Alias);
+                        }
+                        else
+                        {
+                            _logger?.LogDebug(
+                                "Template with alias '{Alias}' not found for removal. Skipping.",
+                                yamlTemplate.Alias);
+                        }
+                        processedAliases.Add(yamlTemplate.Alias);
+                        continue;
+                    }
+
+                    var existingTemplate = _fileService.GetTemplate(yamlTemplate.Alias);
+                    if (existingTemplate != null)
+                    {
+                        _logger?.LogInformation(
+                            "Template with alias '{Alias}' already exists. Skipping.",
+                            yamlTemplate.Alias
+                        );
+                        processedAliases.Add(yamlTemplate.Alias);
+                        continue;
+                    }
+
+                    var fileContent13 = !string.IsNullOrWhiteSpace(yamlTemplate.RazorContent)
+                        ? yamlTemplate.RazorContent
+                        : GenerateDefaultTemplateContent(yamlTemplate.Name, yamlTemplate.Scripts, yamlTemplate.Stylesheets);
+
+                    var newTemplate = new Template(_shortStringHelper, yamlTemplate.Name, yamlTemplate.Alias)
+                    {
+                        Content = fileContent13
+                    };
+                    _fileService.SaveTemplate(newTemplate);
+#else
+                    // Umbraco 14+ / 17: use ITemplateService
                     // [UPDATE] — update if exists, create if not found
                     if (yamlTemplate.Update)
                     {
@@ -105,6 +196,7 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     // Create new Template via service
                     _templateService.CreateAsync(yamlTemplate.Name, yamlTemplate.Alias, fileContent, Guid.Empty, null)
                         .GetAwaiter().GetResult();
+#endif
 
                     _logger?.LogInformation(
                         "Template '{Name}' with alias '{Alias}' created successfully.",
