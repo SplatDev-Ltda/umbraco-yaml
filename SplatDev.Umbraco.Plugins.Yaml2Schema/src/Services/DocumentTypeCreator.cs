@@ -137,6 +137,7 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                         Name = yamlDocType.Name,
                         Alias = yamlDocType.Alias,
                         Icon = yamlDocType.Icon ?? "icon-document",
+                        Description = yamlDocType.Description ?? string.Empty,
                         AllowedAsRoot = yamlDocType.AllowAsRoot,
                         IsElement = yamlDocType.IsElement
                     };
@@ -145,7 +146,12 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     foreach (var tab in yamlDocType.Tabs ?? [])
                     {
                         var tabAlias = _shortStringHelper.CleanStringForSafeAlias(tab.Name);
-                        var contentTab = new PropertyGroup(false) { Name = tab.Name, Alias = tabAlias };
+                        var contentTab = new PropertyGroup(false)
+                        {
+                            Name = tab.Name,
+                            Alias = tabAlias,
+                            SortOrder = tab.SortOrder
+                        };
 
                         foreach (var property in tab.Properties)
                         {
@@ -167,13 +173,34 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                                 Alias = property.Alias,
                                 Name = property.Name,
                                 Mandatory = property.Required,
-                                Description = property.Description
+                                Description = property.Description,
+                                SortOrder = property.SortOrder,
+                                ValidationRegExp = property.ValidationRegExp ?? string.Empty
                             };
 
                             contentTab.PropertyTypes!.Add(contentProp);
                         }
 
                         contentType.PropertyGroups.Add(contentTab);
+                    }
+
+                    // Apply compositions (mixin types whose property groups are added to this type)
+                    if (yamlDocType.Compositions?.Any() == true)
+                    {
+                        var compositionTypes = yamlDocType.Compositions
+                            .Select(alias => _contentTypeService.Get(alias))
+                            .Where(ct => ct != null)
+                            .ToList();
+
+                        foreach (var comp in compositionTypes)
+                        {
+                            contentType.AddContentType(comp!);
+                        }
+
+                        var missing = yamlDocType.Compositions.Except(
+                            compositionTypes.Select(c => c!.Alias), StringComparer.OrdinalIgnoreCase).ToList();
+                        foreach (var m in missing)
+                            _logger?.LogWarning("Composition type '{Alias}' not found for DocumentType '{DocAlias}'. Skipping.", m, yamlDocType.Alias);
                     }
 
                     // Set allowed child types
@@ -185,7 +212,11 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                             .ToList();
 
                         contentType.AllowedContentTypes = childTypes
+#if NET10_0_OR_GREATER
                             .Select(ct => new ContentTypeSort(ct!.Key, 0, ct.Alias))
+#else
+                            .Select(ct => new ContentTypeSort(new Lazy<int>(() => ct!.Id), 0, ct!.Alias))
+#endif
                             .ToList();
                     }
 
@@ -285,6 +316,8 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
         {
             existing.Name = yaml.Name;
             existing.Icon = yaml.Icon ?? "icon-document";
+            if (yaml.Description != null)
+                existing.Description = yaml.Description;
             existing.AllowedAsRoot = yaml.AllowAsRoot;
             existing.IsElement = yaml.IsElement;
 
@@ -297,7 +330,7 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                 if (existingTab == null)
                 {
                     // Add the entire new tab
-                    var newTab = new PropertyGroup(false) { Name = tab.Name, Alias = tabAlias };
+                    var newTab = new PropertyGroup(false) { Name = tab.Name, Alias = tabAlias, SortOrder = tab.SortOrder };
                     foreach (var property in tab.Properties)
                     {
                         var dtName = dataTypeNameByAlias.TryGetValue(property.DataType, out var mapped) ? mapped : property.DataType;
@@ -314,7 +347,9 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                             Alias = property.Alias,
                             Name = property.Name,
                             Mandatory = property.Required,
-                            Description = property.Description
+                            Description = property.Description,
+                            SortOrder = property.SortOrder,
+                            ValidationRegExp = property.ValidationRegExp ?? string.Empty
                         });
                     }
                     existing.PropertyGroups.Add(newTab);
@@ -341,7 +376,9 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                             Alias = property.Alias,
                             Name = property.Name,
                             Mandatory = property.Required,
-                            Description = property.Description
+                            Description = property.Description,
+                            SortOrder = property.SortOrder,
+                            ValidationRegExp = property.ValidationRegExp ?? string.Empty
                         });
                     }
                 }
@@ -356,7 +393,11 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     .ToList();
 
                 existing.AllowedContentTypes = childTypes
+#if NET10_0_OR_GREATER
                     .Select(ct => new ContentTypeSort(ct!.Key, 0, ct.Alias))
+#else
+                    .Select(ct => new ContentTypeSort(new Lazy<int>(() => ct!.Id), 0, ct!.Alias))
+#endif
                     .ToList();
             }
         }

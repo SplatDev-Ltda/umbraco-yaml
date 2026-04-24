@@ -24,6 +24,8 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Handlers
         private readonly LanguageCreator _languageCreator;
         private readonly DictionaryCreator _dictionaryCreator;
         private readonly MemberCreator _memberCreator;
+        private readonly MemberTypeCreator _memberTypeCreator;
+        private readonly MemberGroupCreator _memberGroupCreator;
         private readonly UserCreator _userCreator;
         private readonly PackageInstaller _packageInstaller;
         private readonly PackageValidator _packageValidator;
@@ -48,6 +50,8 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Handlers
             LanguageCreator languageCreator,
             DictionaryCreator dictionaryCreator,
             MemberCreator memberCreator,
+            MemberTypeCreator memberTypeCreator,
+            MemberGroupCreator memberGroupCreator,
             UserCreator userCreator,
             PackageInstaller packageInstaller,
             PackageValidator packageValidator,
@@ -71,6 +75,8 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Handlers
             _languageCreator = languageCreator ?? throw new ArgumentNullException(nameof(languageCreator));
             _dictionaryCreator = dictionaryCreator ?? throw new ArgumentNullException(nameof(dictionaryCreator));
             _memberCreator = memberCreator ?? throw new ArgumentNullException(nameof(memberCreator));
+            _memberTypeCreator = memberTypeCreator ?? throw new ArgumentNullException(nameof(memberTypeCreator));
+            _memberGroupCreator = memberGroupCreator ?? throw new ArgumentNullException(nameof(memberGroupCreator));
             _userCreator = userCreator ?? throw new ArgumentNullException(nameof(userCreator));
             _packageInstaller = packageInstaller ?? throw new ArgumentNullException(nameof(packageInstaller));
             _packageValidator = packageValidator ?? throw new ArgumentNullException(nameof(packageValidator));
@@ -286,6 +292,20 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Handlers
                 {
                     _logger.LogInformation("YamlInitializationHandler: Creating {Count} Dictionary items.", yamlRoot.Umbraco.DictionaryItems.Count);
                     _dictionaryCreator.CreateDictionaryItems(yamlRoot.Umbraco.DictionaryItems);
+                }
+
+                // Create Member Groups (before MemberTypes and Members so groups exist for access rules)
+                if (yamlRoot.Umbraco.MemberGroups?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} MemberGroups.", yamlRoot.Umbraco.MemberGroups.Count);
+                    _memberGroupCreator.CreateMemberGroups(yamlRoot.Umbraco.MemberGroups);
+                }
+
+                // Create Member Types (before Members so custom types exist when members are created)
+                if (yamlRoot.Umbraco.MemberTypes?.Count > 0)
+                {
+                    _logger.LogInformation("YamlInitializationHandler: Creating {Count} MemberTypes.", yamlRoot.Umbraco.MemberTypes.Count);
+                    _memberTypeCreator.CreateMemberTypes(yamlRoot.Umbraco.MemberTypes, yamlRoot.Umbraco.DataTypes);
                 }
 
                 // Create Members

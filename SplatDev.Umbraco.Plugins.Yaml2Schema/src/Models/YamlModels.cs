@@ -21,6 +21,12 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Models
         [YamlMember(Alias = "mediaTypes")]
         public List<YamlMediaType> MediaTypes { get; set; } = new();
 
+        [YamlMember(Alias = "memberTypes")]
+        public List<YamlMemberType> MemberTypes { get; set; } = new();
+
+        [YamlMember(Alias = "memberGroups")]
+        public List<YamlMemberGroup> MemberGroups { get; set; } = new();
+
         [YamlMember(Alias = "templates")]
         public List<YamlTemplate> Templates { get; set; } = new();
 
@@ -109,6 +115,9 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Models
         [YamlMember(Alias = "icon")]
         public string Icon { get; set; }
 
+        [YamlMember(Alias = "description")]
+        public string? Description { get; set; }
+
         [YamlMember(Alias = "isElement")]
         public bool IsElement { get; set; } = false;
 
@@ -117,6 +126,13 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Models
 
         [YamlMember(Alias = "allowedChildTypes")]
         public List<string> AllowedChildTypes { get; set; } = new();
+
+        /// <summary>
+        /// Aliases of other document/element types to use as compositions (mixins).
+        /// Compositions add their property groups and properties to this type without inheritance.
+        /// </summary>
+        [YamlMember(Alias = "compositions")]
+        public List<string> Compositions { get; set; } = new();
 
         [YamlMember(Alias = "tabs")]
         public List<YamlTab> Tabs { get; set; } = new();
@@ -139,6 +155,9 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Models
         [YamlMember(Alias = "name")]
         public string Name { get; set; }
 
+        [YamlMember(Alias = "sortOrder")]
+        public int SortOrder { get; set; } = 0;
+
         [YamlMember(Alias = "properties")]
         public List<YamlProperty> Properties { get; set; } = new();
     }
@@ -159,6 +178,12 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Models
 
         [YamlMember(Alias = "description")]
         public string Description { get; set; }
+
+        [YamlMember(Alias = "sortOrder")]
+        public int SortOrder { get; set; } = 0;
+
+        [YamlMember(Alias = "validationRegExp")]
+        public string? ValidationRegExp { get; set; }
     }
 
     public class YamlTemplate
@@ -511,6 +536,99 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Models
         /// </summary>
         [YamlMember(Alias = "mode")]
         public string? Mode { get; set; }
+    }
+
+    // ── Member Type ───────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Defines a custom Umbraco member type (used to extend the built-in Member schema with
+    /// site-specific properties). Member types group properties into tabs exactly like document types.
+    /// </summary>
+    public class YamlMemberType
+    {
+        [YamlMember(Alias = "alias")]
+        public string Alias { get; set; }
+
+        [YamlMember(Alias = "name")]
+        public string Name { get; set; }
+
+        [YamlMember(Alias = "description")]
+        public string? Description { get; set; }
+
+        [YamlMember(Alias = "icon")]
+        public string? Icon { get; set; }
+
+        [YamlMember(Alias = "tabs")]
+        public List<YamlMemberTypeTab> Tabs { get; set; } = new();
+
+        [YamlMember(Alias = "remove")]
+        public bool Remove { get; set; } = false;
+
+        [YamlMember(Alias = "update")]
+        public bool Update { get; set; } = false;
+    }
+
+    public class YamlMemberTypeTab
+    {
+        [YamlMember(Alias = "name")]
+        public string Name { get; set; }
+
+        [YamlMember(Alias = "sortOrder")]
+        public int SortOrder { get; set; } = 0;
+
+        [YamlMember(Alias = "properties")]
+        public List<YamlMemberTypeProperty> Properties { get; set; } = new();
+    }
+
+    public class YamlMemberTypeProperty
+    {
+        [YamlMember(Alias = "alias")]
+        public string Alias { get; set; }
+
+        [YamlMember(Alias = "name")]
+        public string Name { get; set; }
+
+        [YamlMember(Alias = "dataType")]
+        public string DataType { get; set; }
+
+        [YamlMember(Alias = "required")]
+        public bool Required { get; set; } = false;
+
+        [YamlMember(Alias = "description")]
+        public string? Description { get; set; }
+
+        [YamlMember(Alias = "sortOrder")]
+        public int SortOrder { get; set; } = 0;
+
+        [YamlMember(Alias = "validationRegExp")]
+        public string? ValidationRegExp { get; set; }
+
+        /// <summary>When true the member can edit this property from their profile.</summary>
+        [YamlMember(Alias = "memberCanEdit")]
+        public bool MemberCanEdit { get; set; } = false;
+
+        /// <summary>When true the property is visible on the member's public profile.</summary>
+        [YamlMember(Alias = "showOnProfile")]
+        public bool ShowOnProfile { get; set; } = false;
+
+        /// <summary>When true the property value is treated as sensitive (hidden in the back-office unless the current user has access).</summary>
+        [YamlMember(Alias = "isSensitive")]
+        public bool IsSensitive { get; set; } = false;
+    }
+
+    // ── Member Group ──────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Declares an Umbraco member group. Member groups are used for public access rules
+    /// (restricting content to logged-in members belonging to specific groups).
+    /// </summary>
+    public class YamlMemberGroup
+    {
+        [YamlMember(Alias = "name")]
+        public string Name { get; set; }
+
+        [YamlMember(Alias = "remove")]
+        public bool Remove { get; set; } = false;
     }
 
     // ── PropertyEditor ────────────────────────────────────────────────────────

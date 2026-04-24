@@ -26,6 +26,8 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Composers
             builder.Services.AddScoped<LanguageCreator>();
             builder.Services.AddScoped<DictionaryCreator>();
             builder.Services.AddScoped<MemberCreator>();
+            builder.Services.AddScoped<MemberTypeCreator>();
+            builder.Services.AddScoped<MemberGroupCreator>();
             builder.Services.AddScoped<UserCreator>();
             builder.Services.AddScoped<PackageInstaller>();
             builder.Services.AddScoped<PackageValidator>();
