@@ -11,10 +11,18 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
 {
     public class LanguageCreator
     {
+#if NET10_0_OR_GREATER
         private readonly ILanguageService _languageService;
+#else
+        private readonly ILocalizationService _languageService;
+#endif
         private readonly ILogger<LanguageCreator>? _logger;
 
+#if NET10_0_OR_GREATER
         public LanguageCreator(ILanguageService languageService, ILogger<LanguageCreator>? logger = null)
+#else
+        public LanguageCreator(ILocalizationService languageService, ILogger<LanguageCreator>? logger = null)
+#endif
         {
             _languageService = languageService ?? throw new ArgumentNullException(nameof(languageService));
             _logger = logger;
@@ -45,11 +53,19 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     // [REMOVE]
                     if (yamlLang.Remove)
                     {
+#if NET10_0_OR_GREATER
                         var toDelete = _languageService.GetAsync(yamlLang.IsoCode).GetAwaiter().GetResult();
+#else
+                        var toDelete = _languageService.GetLanguageByIsoCode(yamlLang.IsoCode);
+#endif
                         if (toDelete != null)
                         {
+#if NET10_0_OR_GREATER
                             _languageService.DeleteAsync(yamlLang.IsoCode, Constants.Security.SuperUserKey)
                                 .GetAwaiter().GetResult();
+#else
+                            _languageService.Delete(toDelete, Constants.Security.SuperUserId);
+#endif
                             _logger?.LogInformation("Language '{IsoCode}' removed.", yamlLang.IsoCode);
                         }
                         else
@@ -60,14 +76,22 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                         continue;
                     }
 
+#if NET10_0_OR_GREATER
                     var existing = _languageService.GetAsync(yamlLang.IsoCode).GetAwaiter().GetResult();
+#else
+                    var existing = _languageService.GetLanguageByIsoCode(yamlLang.IsoCode);
+#endif
 
                     // [UPDATE]
                     if (yamlLang.Update && existing != null)
                     {
                         existing.IsDefault = yamlLang.IsDefault;
                         existing.IsMandatory = yamlLang.IsMandatory;
+#if NET10_0_OR_GREATER
                         _languageService.UpdateAsync(existing, Constants.Security.SuperUserKey).GetAwaiter().GetResult();
+#else
+                        _languageService.Save(existing, Constants.Security.SuperUserId);
+#endif
                         _logger?.LogInformation("Language '{IsoCode}' updated.", yamlLang.IsoCode);
                         processedCodes.Add(yamlLang.IsoCode);
                         continue;
@@ -90,7 +114,11 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                         IsMandatory = yamlLang.IsMandatory
                     };
 
+#if NET10_0_OR_GREATER
                     _languageService.CreateAsync(language, Constants.Security.SuperUserKey).GetAwaiter().GetResult();
+#else
+                    _languageService.Save(language, Constants.Security.SuperUserId);
+#endif
                     _logger?.LogInformation("Language '{IsoCode}' created.", yamlLang.IsoCode);
                     processedCodes.Add(yamlLang.IsoCode);
                 }

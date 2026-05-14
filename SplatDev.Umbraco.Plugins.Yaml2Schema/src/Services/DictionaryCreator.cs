@@ -12,12 +12,20 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
     public class DictionaryCreator
     {
         private readonly ILocalizationService _localizationService;
+#if NET10_0_OR_GREATER
         private readonly ILanguageService _languageService;
+#else
+        private readonly ILocalizationService _languageService;
+#endif
         private readonly ILogger<DictionaryCreator>? _logger;
 
         public DictionaryCreator(
             ILocalizationService localizationService,
+#if NET10_0_OR_GREATER
             ILanguageService languageService,
+#else
+            ILocalizationService languageService,
+#endif
             ILogger<DictionaryCreator>? logger = null)
         {
             _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
@@ -88,7 +96,11 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     // Set translation values
                     foreach (var (isoCode, value) in yamlItem.Translations)
                     {
+#if NET10_0_OR_GREATER
                         var language = _languageService.GetAsync(isoCode).GetAwaiter().GetResult();
+#else
+                        var language = _languageService.GetLanguageByIsoCode(isoCode);
+#endif
                         if (language == null)
                         {
                             _logger?.LogWarning(

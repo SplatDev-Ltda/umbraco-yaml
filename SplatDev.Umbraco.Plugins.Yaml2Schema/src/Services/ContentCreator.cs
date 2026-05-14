@@ -65,7 +65,11 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                             _contentService.Save(toUpdate, null, null);
 
                             if (yamlContent.Published)
+                                #if NET10_0_OR_GREATER
                                 _contentService.Publish(toUpdate, Array.Empty<string>(), Constants.Security.SuperUserId);
+#else
+                                _contentService.SaveAndPublish(toUpdate, userId: Constants.Security.SuperUserId);
+#endif
 
                             _logger?.LogInformation("Content '{Name}' updated.", yamlContent.Name);
 
@@ -128,7 +132,11 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
 
                     if (yamlContent.Published)
                     {
+#if NET10_0_OR_GREATER
                         _contentService.Publish(content, Array.Empty<string>(), Constants.Security.SuperUserId);
+#else
+                        _contentService.SaveAndPublish(content, userId: Constants.Security.SuperUserId);
+#endif
                     }
 
                     _logger?.LogInformation("Created Content: {Alias}", yamlContent.Alias);

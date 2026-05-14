@@ -10,6 +10,9 @@
     <PackageReference Include="Umbraco.Cms" Version="17.2.2" />
     <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="17.2.2" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../../../../SplatDev.Api.Common.ApiVersioning/SplatDev.Api.Common.ApiVersioning.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->

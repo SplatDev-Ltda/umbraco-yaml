@@ -141,7 +141,9 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                             if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
                             {
                                 ApplyConfig(yamlDataType.Config);
+                                #if NET10_0_OR_GREATER
                                 existing.SetConfigurationData(yamlDataType.Config);
+#endif
                             }
 
                             _dataTypeService.Save(existing, Constants.Security.SuperUserId);
@@ -241,7 +243,9 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     if (yamlDataType.Config != null && yamlDataType.Config.Count > 0)
                     {
                         ApplyConfig(yamlDataType.Config);
+#if NET10_0_OR_GREATER
                         dataType.SetConfigurationData(yamlDataType.Config);
+#endif
                     }
 
                     // Save the DataType
@@ -357,7 +361,9 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     var sbExisting = _dataTypeService.GetDataType(yamlDataType.Name);
                     if (sbExisting is DataType sbDt)
                     {
+#if NET10_0_OR_GREATER
                         sbDt.SetConfigurationData(yamlDataType.Config);
+#endif
                         _dataTypeService.Save(sbDt, Constants.Security.SuperUserId);
                     }
 
@@ -415,7 +421,9 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                 var existing = _dataTypeService.GetDataType(yamlDataType.Name);
                 if (existing is DataType dt)
                 {
+#if NET10_0_OR_GREATER
                     dt.SetConfigurationData(yamlDataType.Config);
+#endif
                     _dataTypeService.Save(dt, Constants.Security.SuperUserId);
                     _logger?.LogInformation(
                         "DataType '{Name}' saved with resolved Block List element type keys.",
