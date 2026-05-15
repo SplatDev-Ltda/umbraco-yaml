@@ -37,6 +37,15 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         _profiles:         { state: true },
         _activeProfile:    { state: true },
         _showConfigDialog: { state: true },
+        _editingProfileId:   { state: true },
+        _editingProfileName: { state: true },
+        _configuring:        { state: true },
+        _loadingItems:       { state: true },
+        _availableItems:     { state: true },
+        _contentTree:        { state: true },
+        _mediaTree:          { state: true },
+        _expandedCategories: { state: true },
+        _expandedTreeNodes:  { state: true },
     };
 
     static styles = css`
@@ -140,6 +149,80 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             white-space: pre;
             margin: 0;
         }
+
+        .config-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.4); z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .config-dialog {
+            background: var(--uui-color-surface,#fff);
+            border-radius: var(--uui-border-radius,4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,.18);
+            width: 900px; max-width: 96vw; max-height: 90vh;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .config-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--uui-color-border,#e3e3e3);
+            font-weight: 600; font-size: 16px;
+        }
+        .config-body { display: flex; flex: 1; overflow: hidden; }
+        .config-profiles {
+            width: 210px; min-width: 170px;
+            border-right: 1px solid var(--uui-color-border,#e3e3e3);
+            display: flex; flex-direction: column; overflow-y: auto; padding: 16px; gap: 6px;
+        }
+        .config-selection { flex: 1; overflow-y: auto; padding: 16px 24px; }
+        .config-footer {
+            display: flex; gap: 8px; justify-content: flex-end;
+            padding: 12px 24px;
+            border-top: 1px solid var(--uui-color-border,#e3e3e3);
+        }
+        .profile-item {
+            padding: 7px 10px; border-radius: 4px; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; font-size: 13px;
+        }
+        .profile-item:hover { background: var(--uui-color-surface-alt,#f5f5f5); }
+        .profile-item.active-profile { background: var(--uui-color-selected,#e3edff); font-weight: 500; }
+        .profile-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--uui-color-positive,#2e7d32); flex-shrink: 0;
+        }
+        .profile-name-input {
+            width: 100%; padding: 8px; box-sizing: border-box;
+            border: 1px solid var(--uui-color-border,#ddd);
+            border-radius: 4px; font-size: 14px; margin-bottom: 16px;
+        }
+        .section-label {
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            color: var(--uui-color-text-alt,#888); letter-spacing: .05em; margin-bottom: 8px;
+        }
+        .cat-row {
+            display: flex; align-items: flex-start; gap: 8px;
+            padding: 8px 0; border-bottom: 1px solid var(--uui-color-border,#f0f0f0);
+        }
+        .cat-row:last-child { border-bottom: none; }
+        .cat-name { font-weight: 500; font-size: 14px; }
+        .cat-meta { font-size: 12px; color: var(--uui-color-text-alt,#888); margin-left: 4px; }
+        .filter-toggle {
+            font-size: 11px; color: var(--uui-color-interactive,#1b264f);
+            cursor: pointer; margin-top: 4px; display: inline-block;
+        }
+        .entity-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .chip {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 4px 10px; border-radius: 16px; font-size: 12px;
+            border: 1px solid var(--uui-color-border,#ddd);
+            cursor: pointer; user-select: none;
+            background: var(--uui-color-surface,#fff);
+        }
+        .chip.selected {
+            background: var(--uui-color-selected,#e3edff);
+            border-color: var(--uui-color-interactive,#1b264f);
+            color: var(--uui-color-interactive,#1b264f);
+        }
     `;
 
     constructor() {
@@ -156,6 +239,24 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         this._profiles         = [];
         this._activeProfile    = null;
         this._showConfigDialog = false;
+        this._editingProfileId   = null;
+        this._editingProfileName = '';
+        this._configuring        = this._defaultSelection();
+        this._loadingItems       = false;
+        this._availableItems     = null;
+        this._contentTree        = null;
+        this._mediaTree          = null;
+        this._expandedCategories = new Set();
+        this._expandedTreeNodes  = new Set();
+    }
+
+    _defaultSelection() {
+        const cat = () => ({ includeAll: true, aliases: [], nodeIds: [] });
+        return {
+            languages: cat(), dataTypes: cat(), documentTypes: cat(),
+            mediaTypes: cat(), templates: cat(), media: cat(),
+            content: cat(), dictionaryItems: cat(), members: cat(), users: cat()
+        };
     }
 
     connectedCallback() {
@@ -407,11 +508,117 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         }
     }
 
-    // ─── Config dialog (stubs — implemented in Tasks 12–15) ───────────────────
+    // ─── Config dialog ─────────────────────────────────────────────────────────
 
-    _openConfigDialog()  { this._showConfigDialog = true; }
+    async _openConfigDialog() {
+        this._showConfigDialog = true;
+        await this._loadProfiles();
+        if (this._activeProfile) {
+            this._editingProfileId   = this._activeProfile.id;
+            this._editingProfileName = this._activeProfile.name;
+            this._configuring        = JSON.parse(JSON.stringify(this._activeProfile.selection));
+        } else if (this._profiles.length > 0) {
+            await this._selectProfile(this._profiles[0].id);
+        } else {
+            this._newProfile();
+        }
+        if (!this._availableItems) await this._fetchAvailableItems();
+    }
+
+    async _loadProfiles() {
+        try {
+            const res = await this._fetchWithAuth('/umbraco/api/ExportProfile/List');
+            if (res.ok) this._profiles = await res.json();
+        } catch { /* silently ignore */ }
+    }
+
+    async _selectProfile(id) {
+        try {
+            const res = await this._fetchWithAuth(`/umbraco/api/ExportProfile/Get/${id}`);
+            if (!res.ok) return;
+            const p = await res.json();
+            this._editingProfileId   = p.id;
+            this._editingProfileName = p.name;
+            this._configuring        = JSON.parse(JSON.stringify(p.selection));
+        } catch { /* silently ignore */ }
+    }
+
+    _newProfile() {
+        this._editingProfileId   = null;
+        this._editingProfileName = '';
+        this._configuring        = this._defaultSelection();
+    }
+
     _closeConfigDialog() { this._showConfigDialog = false; }
-    _renderConfigDialog() { return html`<div></div>`; }
+
+    _renderConfigDialog() {
+        return html`
+            <div class="config-overlay"
+                 @click=${(e) => { if (e.target === e.currentTarget) this._closeConfigDialog(); }}>
+                <div class="config-dialog">
+                    <div class="config-header">
+                        Configure Export
+                        <uui-button look="secondary" compact @click=${this._closeConfigDialog}>✕</uui-button>
+                    </div>
+
+                    <div class="config-body">
+                        <div class="config-profiles">
+                            <div class="section-label">Profiles</div>
+                            <uui-button look="secondary" compact @click=${this._newProfile}>
+                                + New profile
+                            </uui-button>
+                            <hr style="border:none;border-top:1px solid var(--uui-color-border,#e3e3e3);margin:4px 0">
+
+                            ${this._profiles.map(p => html`
+                                <div class="profile-item ${this._editingProfileId === p.id ? 'active-profile' : ''}"
+                                     @click=${() => this._selectProfile(p.id)}>
+                                    ${p.isActive ? html`<span class="profile-dot"></span>` : nothing}
+                                    ${p.name}
+                                </div>`)}
+
+                            ${this._editingProfileId !== null ? html`
+                                <hr style="border:none;border-top:1px solid var(--uui-color-border,#e3e3e3);margin:8px 0">
+                                <uui-button look="secondary" color="danger" compact
+                                            @click=${this._deleteProfile}>
+                                    Delete
+                                </uui-button>` : nothing}
+                        </div>
+
+                        <div class="config-selection">
+                            ${this._renderSelectionPanel()}
+                        </div>
+                    </div>
+
+                    <div class="config-footer">
+                        <uui-button look="secondary" @click=${this._closeConfigDialog}>Cancel</uui-button>
+                        <uui-button look="primary" color="default" @click=${this._saveProfile}>Save</uui-button>
+                        <uui-button look="primary" color="positive" @click=${this._saveAndApplyProfile}>
+                            Save &amp; Apply
+                        </uui-button>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    _renderSelectionPanel() {
+        return html`
+            <div class="section-label">Profile name</div>
+            <input class="profile-name-input" type="text"
+                   .value=${this._editingProfileName}
+                   @input=${(e) => { this._editingProfileName = e.target.value; }}
+                   placeholder="Enter profile name...">
+            <div class="section-label">Selection</div>
+            <p style="color:var(--uui-color-text-alt,#888);font-size:13px">
+                Category filters loading… (Task 13)
+            </p>`;
+    }
+
+    // ─── Config dialog stubs (Tasks 13–15) ─────────────────────────────────────
+
+    async _fetchAvailableItems() { /* Task 13 */ }
+    async _saveProfile()         { /* Task 15 */ }
+    async _saveAndApplyProfile() { /* Task 15 */ }
+    async _deleteProfile()       { /* Task 15 */ }
 
     // ─── Render ────────────────────────────────────────────────────────────────
 
