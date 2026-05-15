@@ -61,6 +61,47 @@ public class MediaExporter
     }
 
     /// <summary>
+    /// Exports media items that match the provided NodeIds filter.
+    /// When IncludeAll is false and NodeIds is empty, returns empty collections.
+    /// When a node's ID is in the list, it and all its descendants are exported fully.
+    /// </summary>
+    public virtual async Task<(List<ExportMedia> Media, Dictionary<string, byte[]> Files)> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.NodeIds.Count == 0)
+            return ([], new Dictionary<string, byte[]>());
+
+        if (filter.IncludeAll)
+            return await ExportAsync();
+
+        _logger.LogInformation("Filtered media export: {Count} node IDs", filter.NodeIds.Count);
+
+        var exported = new List<ExportMedia>();
+        var files    = new Dictionary<string, byte[]>();
+        foreach (var root in _mediaService.GetRootMedia())
+            await CollectFilteredMediaAsync(root, filter.NodeIds, exported, files, string.Empty);
+
+        return (exported, files);
+    }
+
+    private async Task CollectFilteredMediaAsync(
+        IMedia node,
+        List<int> nodeIds,
+        List<ExportMedia> exported,
+        Dictionary<string, byte[]> files,
+        string folder)
+    {
+        if (nodeIds.Contains(node.Id))
+        {
+            await ExportMediaItemAsync(node, exported, files, folder, 0);
+            return;
+        }
+
+        // Not selected — traverse children to find selected descendants
+        foreach (var child in _mediaService.GetPagedChildren(node.Id, 0, int.MaxValue, out _))
+            await CollectFilteredMediaAsync(child, nodeIds, exported, files, folder);
+    }
+
+    /// <summary>
     /// Recursively exports a media item and its children.
     /// </summary>
     private async Task ExportMediaItemAsync(
