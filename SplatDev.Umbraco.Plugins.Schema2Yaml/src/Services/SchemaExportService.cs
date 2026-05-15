@@ -163,6 +163,12 @@ public class SchemaExportService : ISchemaExportService
     /// </summary>
     public async Task<string> ExportToYamlAsync(ExportSelection selection)
     {
+        var (mediaItems, _) = await _mediaExporter.ExportAsync(selection.Media);
+        return await BuildFilteredYamlAsync(selection, mediaItems);
+    }
+
+    private async Task<string> BuildFilteredYamlAsync(ExportSelection selection, List<ExportMedia> mediaItems)
+    {
         _logger.LogInformation("Starting filtered schema export");
         var startTime = DateTime.UtcNow;
 
@@ -171,7 +177,7 @@ public class SchemaExportService : ISchemaExportService
         var documentTypes = await _documentTypeExporter.ExportAsync(selection.DocumentTypes);
         var mediaTypes    = await _mediaTypeExporter.ExportAsync(selection.MediaTypes);
         var templates     = await _templateExporter.ExportAsync(selection.Templates);
-        var (media, _)    = await _mediaExporter.ExportAsync(selection.Media);
+        var media         = mediaItems;
         var content       = await _contentExporter.ExportAsync(selection.Content);
         var dictionary    = await _dictionaryExporter.ExportAsync(selection.DictionaryItems);
         var members       = await _memberExporter.ExportAsync(selection.Members);
@@ -222,8 +228,9 @@ public class SchemaExportService : ISchemaExportService
     /// </summary>
     public async Task<byte[]> ExportToZipAsync(ExportSelection selection)
     {
-        var yaml            = await ExportToYamlAsync(selection);
-        var (_, mediaFiles) = await _mediaExporter.ExportAsync(selection.Media);
+        // Fetch media once — items go into YAML, files go into the ZIP entries.
+        var (mediaItems, mediaFiles) = await _mediaExporter.ExportAsync(selection.Media);
+        var yaml = await BuildFilteredYamlAsync(selection, mediaItems);
 
         using var memStream = new MemoryStream();
         using (var archive = new ZipArchive(memStream, ZipArchiveMode.Create, true))

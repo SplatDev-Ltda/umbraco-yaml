@@ -1,6 +1,8 @@
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Packaging;
 using Microsoft.Extensions.DependencyInjection;
+using SplatDev.Umbraco.Plugins.Schema2Yaml.Migrations;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Configuration;
 
@@ -37,6 +39,10 @@ public class Schema2YamlComposer : IComposer
 
         // Register export profile service
         builder.Services.AddScoped<IExportProfileService, ExportProfileService>();
+
+        // Register DB migration plan so Umbraco runs it on startup
+        builder.WithCollectionBuilder<PackageMigrationPlanCollectionBuilder>()
+            .Add<Schema2YamlMigrationPlan>();
 
         // Dashboard is registered via App_Plugins/Schema2Yaml/umbraco-package.json (Umbraco 14+)
     }

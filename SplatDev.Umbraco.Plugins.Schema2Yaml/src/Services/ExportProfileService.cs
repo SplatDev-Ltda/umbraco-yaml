@@ -106,10 +106,11 @@ public class ExportProfileService : IExportProfileService
     public async Task DeleteAsync(int id)
     {
         using var scope = _scopeProvider.CreateScope();
-        await scope.Database.ExecuteAsync(
+        var affected = await scope.Database.ExecuteAsync(
             "DELETE FROM schema2yamlExportProfiles WHERE id = @0",
             new object[] { id },
             default);
+        if (affected == 0) throw new KeyNotFoundException($"Export profile {id} not found");
         scope.Complete();
         _logger.LogInformation("Deleted export profile id={Id}", id);
     }
@@ -117,18 +118,13 @@ public class ExportProfileService : IExportProfileService
     public async Task ActivateAsync(int id)
     {
         using var scope = _scopeProvider.CreateScope();
-        var count = await scope.Database.ExecuteScalarAsync<int>(
-            "SELECT COUNT(*) FROM schema2yamlExportProfiles WHERE id = @0",
-            new object[] { id },
+        // Single atomic statement — sets isActive=1 for the target row and isActive=0 for all others.
+        // Avoids the race window of three separate UPDATEs.
+        var affected = await scope.Database.ExecuteAsync(
+            "UPDATE schema2yamlExportProfiles SET isActive = CASE WHEN id = @0 THEN 1 ELSE 0 END, modifiedDate = CASE WHEN id = @0 THEN @1 ELSE modifiedDate END",
+            new object[] { id, DateTime.UtcNow },
             default);
-        if (count == 0) throw new KeyNotFoundException($"Export profile {id} not found");
-        await scope.Database.ExecuteAsync(
-            "UPDATE schema2yamlExportProfiles SET isActive = 0",
-            default);
-        await scope.Database.ExecuteAsync(
-            "UPDATE schema2yamlExportProfiles SET isActive = 1, modifiedDate = @0 WHERE id = @1",
-            new object[] { DateTime.UtcNow, id },
-            default);
+        if (affected == 0) throw new KeyNotFoundException($"Export profile {id} not found");
         scope.Complete();
         _logger.LogInformation("Activated export profile id={Id}", id);
     }

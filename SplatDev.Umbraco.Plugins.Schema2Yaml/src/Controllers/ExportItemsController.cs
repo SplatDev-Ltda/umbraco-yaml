@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Models;
+using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common.Authorization;
@@ -12,6 +13,9 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Controllers;
 [Authorize(Policy = AuthorizationPolicies.SectionAccessSettings)]
 public class ExportItemsController : UmbracoApiController
 {
+    private const int MaxMembersUsers = 500;
+    private const int MaxTreeDepth    = 5;
+
     private readonly IDataTypeService    _dataTypes;
     private readonly IContentTypeService _contentTypes;
     private readonly IMediaTypeService   _mediaTypes;
@@ -51,7 +55,7 @@ public class ExportItemsController : UmbracoApiController
             return Ok(new AvailableItemsResponse
             {
                 DataTypes = _dataTypes.GetAll()
-                    .Select(dt => new AvailableItem { Alias = dt.Name ?? string.Empty, Name = dt.Name ?? string.Empty })
+                    .Select(dt => new AvailableItem { Alias = DataTypeExporter.GenerateAlias(dt.Name ?? string.Empty), Name = dt.Name ?? string.Empty })
                     .OrderBy(x => x.Name).ToList(),
 
                 DocumentTypes = _contentTypes.GetAll()
@@ -74,11 +78,11 @@ public class ExportItemsController : UmbracoApiController
                     .Select(d => new AvailableItem { Alias = d.ItemKey, Name = d.ItemKey })
                     .OrderBy(x => x.Name).ToList(),
 
-                Members = _members.GetAll(0, int.MaxValue, out _)
+                Members = _members.GetAll(0, MaxMembersUsers, out _)
                     .Select(m => new AvailableItem { Alias = m.Email, Name = m.Name ?? m.Email })
                     .OrderBy(x => x.Name).ToList(),
 
-                Users = _users.GetAll(0, int.MaxValue, out _)
+                Users = _users.GetAll(0, MaxMembersUsers, out _)
                     .Select(u => new AvailableItem { Alias = u.Email, Name = u.Name ?? u.Email })
                     .OrderBy(x => x.Name).ToList()
             });
@@ -139,19 +143,23 @@ public class ExportItemsController : UmbracoApiController
         }
     }
 
-    private TreeNode BuildContentNode(IContent n) => new()
+    private TreeNode BuildContentNode(IContent n, int depth = 0) => new()
     {
         Id       = n.Id,
         Name     = n.Name ?? "(unnamed)",
-        Children = _content.GetPagedChildren(n.Id, 0, int.MaxValue, out _)
-                           .Select(BuildContentNode).ToList()
+        Children = depth >= MaxTreeDepth
+            ? []
+            : _content.GetPagedChildren(n.Id, 0, int.MaxValue, out _)
+                      .Select(c => BuildContentNode(c, depth + 1)).ToList()
     };
 
-    private TreeNode BuildMediaNode(IMedia n) => new()
+    private TreeNode BuildMediaNode(IMedia n, int depth = 0) => new()
     {
         Id       = n.Id,
         Name     = n.Name ?? "(unnamed)",
-        Children = _media.GetPagedChildren(n.Id, 0, int.MaxValue, out _)
-                         .Select(BuildMediaNode).ToList()
+        Children = depth >= MaxTreeDepth
+            ? []
+            : _media.GetPagedChildren(n.Id, 0, int.MaxValue, out _)
+                    .Select(c => BuildMediaNode(c, depth + 1)).ToList()
     };
 }

@@ -655,7 +655,9 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
                                     return html`
                                         <span class="chip ${sel ? 'selected' : ''}"
                                               @click=${() => {
+                                                  if (!items?.length) return;
                                                   if (cat.includeAll) {
+                                                      // Deselect one from "all" — keep every other alias selected
                                                       this._configuring = {
                                                           ...this._configuring,
                                                           [key]: {
@@ -742,11 +744,15 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
                     <input type="checkbox" .checked=${isSelected}
                            @change=${(e) => {
                                if (cat.includeAll) {
-                                   // switch from "all" to this-node-only selected
+                                   // Deselect one subtree from "all" — keep all other root descendants selected
+                                   const tree = key === 'content' ? this._contentTree : this._mediaTree;
+                                   const uncheckedIds = new Set(this._allDescendantIds(node));
+                                   const remaining = (tree ?? [])
+                                       .flatMap(r => this._allDescendantIds(r))
+                                       .filter(id => !uncheckedIds.has(id));
                                    this._configuring = {
                                        ...this._configuring,
-                                       [key]: { includeAll: false, aliases: [],
-                                                nodeIds: [node.id] }
+                                       [key]: { includeAll: false, aliases: [], nodeIds: remaining }
                                    };
                                } else {
                                    this._toggleNodeIds(key, node, e.target.checked);
@@ -839,7 +845,7 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
     async _saveProfile() {
         if (!this._editingProfileName.trim()) {
             this._notify('warning', 'Name required', 'Enter a profile name before saving.');
-            return;
+            return false;
         }
         try {
             let res, p;
@@ -860,13 +866,15 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             this._editingProfileId = p.id;
             await this._loadProfiles();
             this._notify('positive', 'Profile saved', `"${p.name}" saved.`);
+            return true;
         } catch (e) {
             this._notify('danger', 'Save failed', e.message ?? 'Unknown error');
+            return false;
         }
     }
     async _saveAndApplyProfile() {
-        await this._saveProfile();
-        if (this._editingProfileId === null) return; // save failed
+        const saved = await this._saveProfile();
+        if (!saved) return;
         try {
             const res = await this._fetchWithAuth(
                 `/umbraco/api/ExportProfile/Activate/${this._editingProfileId}`,

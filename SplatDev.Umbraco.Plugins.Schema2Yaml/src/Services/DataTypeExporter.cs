@@ -174,7 +174,7 @@ public class DataTypeExporter
     /// <summary>
     /// Generates a safe alias from a name.
     /// </summary>
-    private string GenerateAlias(string name)
+    public static string GenerateAlias(string name)
     {
         ArgumentNullException.ThrowIfNull(name);
 
