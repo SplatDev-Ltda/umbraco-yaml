@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms" Version="17.3.4" />
     <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="17.3.4" />
+    <PackageReference Include="Umbraco.TheStarterKit" Version="17.0.0" />
   </ItemGroup>
 
 
@@ -23,10 +24,31 @@
     <ProjectReference Include="..\SplatDev.Umbraco.Plugins.Schema2Yaml\SplatDev.Umbraco.Plugins.Schema2Yaml.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="umbraco\Data\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <!-- Razor files are needed for the backoffice to work correctly -->
     <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
   </PropertyGroup>
+
+  <!--
+    Copy App_Plugins from project-referenced plugin libraries into this project's wwwroot.
+    The buildTransitive/*.targets mechanism only fires for NuGet consumers; for ProjectReferences
+    we must do this explicitly so Umbraco discovers the umbraco-package.json manifests.
+  -->
+  <Target Name="CopyPluginAppPlugins" AfterTargets="Build">
+    <ItemGroup>
+      <_PluginAppPluginFiles
+          Include="$(MSBuildThisFileDirectory)..\SplatDev.Umbraco.Plugins.Schema2Yaml\wwwroot\App_Plugins\**\*.*" />
+      <_PluginAppPluginFiles
+          Include="$(MSBuildThisFileDirectory)..\SplatDev.Umbraco.Plugins.Yaml2Schema\wwwroot\App_Plugins\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_PluginAppPluginFiles)"
+          DestinationFolder="$(MSBuildProjectDirectory)\wwwroot\App_Plugins\%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
 
   <PropertyGroup>
     <!-- Remove RazorCompileOnBuild and RazorCompileOnPublish when not using ModelsMode InMemoryAuto -->
