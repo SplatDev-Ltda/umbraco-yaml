@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Web.Common.Controllers;
 using Umbraco.Cms.Web.Common.Authorization;
+using SplatDev.Umbraco.Plugins.Schema2Yaml.Models;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using System.Text;
 
@@ -108,6 +109,81 @@ public class SchemaExportController : UmbracoApiController
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to create ZIP");
+            return StatusCode(500, new { error = "ZIP creation failed", message = ex.Message });
+        }
+    }
+
+    // POST /umbraco/api/schemaexport/exportselected
+    [HttpPost]
+    public async Task<IActionResult> ExportSelected([FromBody] ExportSelection? selection)
+    {
+        try
+        {
+            _logger.LogInformation("Dashboard: Filtered export requested");
+            selection ??= new ExportSelection();
+            var yaml  = await _exportService.ExportToYamlAsync(selection);
+            var stats = _exportService.GetLastExportStatistics();
+            return Ok(new
+            {
+                yaml,
+                statistics = new
+                {
+                    exportDate      = stats.ExportDate,
+                    umbracoVersion  = stats.UmbracoVersion,
+                    languages       = stats.LanguageCount,
+                    dataTypes       = stats.DataTypeCount,
+                    documentTypes   = stats.DocumentTypeCount,
+                    mediaTypes      = stats.MediaTypeCount,
+                    templates       = stats.TemplateCount,
+                    media           = stats.MediaCount,
+                    content         = stats.ContentCount,
+                    dictionaryItems = stats.DictionaryItemCount,
+                    members         = stats.MemberCount,
+                    users           = stats.UserCount,
+                    durationSeconds = stats.Duration.TotalSeconds
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Filtered export failed");
+            return StatusCode(500, new { error = "Filtered export failed", message = ex.Message });
+        }
+    }
+
+    // POST /umbraco/api/schemaexport/downloadyamlselected
+    [HttpPost]
+    public async Task<IActionResult> DownloadYamlSelected([FromBody] ExportSelection? selection)
+    {
+        try
+        {
+            selection ??= new ExportSelection();
+            var yaml  = await _exportService.ExportToYamlAsync(selection);
+            var bytes = Encoding.UTF8.GetBytes(yaml);
+            return File(bytes, "application/x-yaml",
+                $"umbraco-selected-{DateTime.UtcNow:yyyyMMdd-HHmmss}.yml");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Filtered YAML download failed");
+            return StatusCode(500, new { error = "Download failed", message = ex.Message });
+        }
+    }
+
+    // POST /umbraco/api/schemaexport/downloadzipselected
+    [HttpPost]
+    public async Task<IActionResult> DownloadZipSelected([FromBody] ExportSelection? selection)
+    {
+        try
+        {
+            selection ??= new ExportSelection();
+            var zip = await _exportService.ExportToZipAsync(selection);
+            return File(zip, "application/zip",
+                $"umbraco-selected-{DateTime.UtcNow:yyyyMMdd-HHmmss}.zip");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Filtered ZIP download failed");
             return StatusCode(500, new { error = "ZIP creation failed", message = ex.Message });
         }
     }
