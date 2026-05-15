@@ -679,7 +679,85 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
     }
 
     _renderTreeCategoryRow(key, label) {
-        return html`<!-- tree picker: Task 14 -->`;
+        const cat      = this._configuring[key];
+        const included = cat.includeAll || (cat.nodeIds?.length ?? 0) > 0;
+        const expanded = this._expandedCategories.has(key);
+        const tree     = key === 'content' ? this._contentTree : this._mediaTree;
+
+        return html`
+            <div class="cat-row">
+                <input type="checkbox" .checked=${included}
+                       @change=${async (e) => {
+                           this._toggleCategory(key, e.target.checked);
+                           if (e.target.checked && !tree) {
+                               if (key === 'content') await this._fetchContentTree();
+                               else await this._fetchMediaTree();
+                           }
+                       }}>
+                <div style="flex:1">
+                    <span class="cat-name">${label}</span>
+                    ${included && cat.includeAll
+                        ? html`<span class="cat-meta">(all)</span>`
+                        : nothing}
+                    ${included ? html`
+                        <div>
+                            <span class="filter-toggle"
+                                  @click=${async () => {
+                                      this._toggleEntityExpand(key);
+                                      if (!tree) {
+                                          if (key === 'content') await this._fetchContentTree();
+                                          else await this._fetchMediaTree();
+                                      }
+                                  }}>
+                                ${expanded ? '▲ hide' : '▼ tree...'}
+                            </span>
+                        </div>
+                        ${expanded && tree
+                            ? html`<div style="margin-top:8px">
+                                ${tree.map(n => this._renderTreeNode(key, n, 0))}
+                              </div>`
+                            : nothing}
+                    ` : nothing}
+                </div>
+            </div>`;
+    }
+
+    _renderTreeNode(key, node, depth) {
+        const cat        = this._configuring[key];
+        const nodeIds    = cat?.nodeIds ?? [];
+        const isSelected = cat?.includeAll || nodeIds.includes(node.id);
+        const expandKey  = `${key}-${node.id}`;
+        const isExpanded = this._expandedTreeNodes.has(expandKey);
+        const hasChildren = (node.children ?? []).length > 0;
+
+        return html`
+            <div style="padding-left:${depth * 16}px;margin:2px 0">
+                <div style="display:flex;align-items:center;gap:6px">
+                    ${hasChildren
+                        ? html`<span style="width:14px;font-size:11px;cursor:pointer;color:var(--uui-color-text-alt,#888)"
+                                     @click=${() => this._toggleTreeExpand(key, node.id)}>
+                                   ${isExpanded ? '▼' : '▶'}
+                               </span>`
+                        : html`<span style="width:14px"></span>`}
+                    <input type="checkbox" .checked=${isSelected}
+                           @change=${(e) => {
+                               if (cat.includeAll) {
+                                   // switch from "all" to this-node-only selected
+                                   this._configuring = {
+                                       ...this._configuring,
+                                       [key]: { includeAll: false, aliases: [],
+                                                nodeIds: [node.id] }
+                                   };
+                               } else {
+                                   this._toggleNodeIds(key, node, e.target.checked);
+                               }
+                           }}>
+                    <span style="font-size:13px">${node.name}</span>
+                </div>
+                ${isExpanded && hasChildren
+                    ? node.children.map(c => this._renderTreeNode(key, c, depth + 1))
+                    : nothing}
+            </div>`;
     }
 
     // ─── Config dialog helpers (Task 13) ──────────────────────────────────────
@@ -714,6 +792,45 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         this._configuring = {
             ...this._configuring,
             [key]: { ...cat, includeAll: false, aliases }
+        };
+    }
+
+
+    async _fetchContentTree() {
+        try {
+            const res = await this._fetchWithAuth('/umbraco/api/ExportItems/ContentTree');
+            if (res.ok) this._contentTree = await res.json();
+        } catch { /* silently ignore */ }
+    }
+
+    async _fetchMediaTree() {
+        try {
+            const res = await this._fetchWithAuth('/umbraco/api/ExportItems/MediaTree');
+            if (res.ok) this._mediaTree = await res.json();
+        } catch { /* silently ignore */ }
+    }
+
+    _toggleTreeExpand(categoryKey, nodeId) {
+        const k    = `${categoryKey}-${nodeId}`;
+        const next = new Set(this._expandedTreeNodes);
+        next.has(k) ? next.delete(k) : next.add(k);
+        this._expandedTreeNodes = next;
+    }
+
+    _allDescendantIds(node) {
+        return [node.id, ...(node.children ?? []).flatMap(c => this._allDescendantIds(c))];
+    }
+
+    _toggleNodeIds(key, node, selected) {
+        const ids  = this._allDescendantIds(node);
+        const cat  = this._configuring[key];
+        const prev = cat.nodeIds ?? [];
+        const next = selected
+            ? [...new Set([...prev, ...ids])]
+            : prev.filter(id => !ids.includes(id));
+        this._configuring = {
+            ...this._configuring,
+            [key]: { ...cat, includeAll: false, nodeIds: next }
         };
     }
 
