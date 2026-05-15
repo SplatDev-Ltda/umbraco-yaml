@@ -72,7 +72,7 @@ public class UmbracoVersionDetector
     /// <summary>
     /// Gets the version string for export metadata.
     /// </summary>
-    public string GetVersionString()
+    public virtual string GetVersionString()
     {
         return _umbracoVersion.Version.ToString();
     }
