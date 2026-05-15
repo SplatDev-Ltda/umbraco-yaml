@@ -1,11 +1,4 @@
-using SplatDev.Api.Common.ApiVersioning;
-using Microsoft.AspNetCore.Mvc; // for ApiVersion
-using Microsoft.AspNetCore.Mvc.Versioning; // for ApiVersioning extension methods
-
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-// Use centralized API Versioning extensions
-builder.Services.AddSplatApiVersioning();
 
 builder.CreateUmbracoBuilder()
     .AddBackOffice()
