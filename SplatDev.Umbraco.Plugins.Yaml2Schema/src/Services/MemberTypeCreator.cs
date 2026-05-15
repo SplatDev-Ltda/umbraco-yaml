@@ -166,7 +166,7 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     if (prop.MemberCanEdit)
                         memberType.SetMemberCanEditProperty(prop.Alias, true);
                     if (prop.ShowOnProfile)
-                        memberType.SetMemberViewProperty(prop.Alias, true);
+                        memberType.SetMemberCanViewProperty(prop.Alias, true);
                     if (prop.IsSensitive)
                         memberType.SetIsSensitiveProperty(prop.Alias, true);
                 }
@@ -236,7 +236,7 @@ namespace SplatDev.Umbraco.Plugins.Yaml2Schema.Services
                     if (prop.MemberCanEdit)
                         existing.SetMemberCanEditProperty(prop.Alias, true);
                     if (prop.ShowOnProfile)
-                        existing.SetMemberViewProperty(prop.Alias, true);
+                        existing.SetMemberCanViewProperty(prop.Alias, true);
                     if (prop.IsSensitive)
                         existing.SetIsSensitiveProperty(prop.Alias, true);
                 }
