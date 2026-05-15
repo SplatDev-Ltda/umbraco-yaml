@@ -836,9 +836,67 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
 
     // ─── Config dialog stubs (Tasks 15) ────────────────────────────────────────
 
-    async _saveProfile()         { /* Task 15 */ }
-    async _saveAndApplyProfile() { /* Task 15 */ }
-    async _deleteProfile()       { /* Task 15 */ }
+    async _saveProfile() {
+        if (!this._editingProfileName.trim()) {
+            this._notify('warning', 'Name required', 'Enter a profile name before saving.');
+            return;
+        }
+        try {
+            let res, p;
+            if (this._editingProfileId === null) {
+                res = await this._fetchWithAuth('/umbraco/api/ExportProfile/Create', {
+                    method: 'POST',
+                    body: JSON.stringify({ name: this._editingProfileName, selection: this._configuring }),
+                });
+            } else {
+                res = await this._fetchWithAuth(
+                    `/umbraco/api/ExportProfile/Update/${this._editingProfileId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ name: this._editingProfileName, selection: this._configuring }),
+                });
+            }
+            if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? res.statusText);
+            p = await res.json();
+            this._editingProfileId = p.id;
+            await this._loadProfiles();
+            this._notify('positive', 'Profile saved', `"${p.name}" saved.`);
+        } catch (e) {
+            this._notify('danger', 'Save failed', e.message ?? 'Unknown error');
+        }
+    }
+    async _saveAndApplyProfile() {
+        await this._saveProfile();
+        if (this._editingProfileId === null) return; // save failed
+        try {
+            const res = await this._fetchWithAuth(
+                `/umbraco/api/ExportProfile/Activate/${this._editingProfileId}`,
+                { method: 'POST' });
+            if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? res.statusText);
+            await this._loadActiveProfile();
+            this._closeConfigDialog();
+            this._notify('positive', 'Profile applied', `Exporting with "${this._editingProfileName}".`);
+        } catch (e) {
+            this._notify('danger', 'Apply failed', e.message ?? 'Unknown error');
+        }
+    }
+    async _deleteProfile() {
+        if (this._editingProfileId === null) return;
+        try {
+            const res = await this._fetchWithAuth(
+                `/umbraco/api/ExportProfile/Delete/${this._editingProfileId}`,
+                { method: 'DELETE' });
+            if (!res.ok) throw new Error((await res.json().catch(() => ({}))).message ?? res.statusText);
+            if (this._activeProfile?.id === this._editingProfileId)
+                this._activeProfile = null;
+            this._editingProfileId   = null;
+            this._editingProfileName = '';
+            this._configuring        = this._defaultSelection();
+            await this._loadProfiles();
+            this._notify('positive', 'Profile deleted', 'Profile removed.');
+        } catch (e) {
+            this._notify('danger', 'Delete failed', e.message ?? 'Unknown error');
+        }
+    }
 
     // ─── Render ────────────────────────────────────────────────────────────────
 
