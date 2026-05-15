@@ -140,14 +140,17 @@ var allowedChild = new ContentTypeSort(Guid.NewGuid(), 0, "article");
     [Fact]
     public async Task ExportAsync_ExportsTabs_WithProperties()
     {
+        var dataTypeKey = Guid.NewGuid();
         var dataType = new Mock<IDataType>();
         dataType.Setup(d => d.Name).Returns("Textstring");
-        _mockDataTypeService.Setup(s => s.GetDataType(It.IsAny<int>())).Returns(dataType.Object);
+        _mockDataTypeService.Setup(s => s.GetAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(dataType.Object);
 
         var prop = new Mock<IPropertyType>();
         prop.Setup(p => p.Alias).Returns("title");
         prop.Setup(p => p.Name).Returns("Title");
         prop.Setup(p => p.DataTypeId).Returns(1);
+        prop.Setup(p => p.DataTypeKey).Returns(dataTypeKey);
         prop.Setup(p => p.Mandatory).Returns(true);
         prop.Setup(p => p.Description).Returns("Page title");
         prop.Setup(p => p.SortOrder).Returns(0);

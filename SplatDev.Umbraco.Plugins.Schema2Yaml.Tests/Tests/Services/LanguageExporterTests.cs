@@ -8,22 +8,23 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 
 public class LanguageExporterTests
 {
-    private readonly Mock<ILocalizationService> _mockLocalizationService;
+    private readonly Mock<ILanguageService> _mockLanguageService;
     private readonly Mock<ILogger<LanguageExporter>> _mockLogger;
     private readonly LanguageExporter _sut;
 
     public LanguageExporterTests()
     {
-        _mockLocalizationService = new Mock<ILocalizationService>();
+        _mockLanguageService = new Mock<ILanguageService>();
         _mockLogger = new Mock<ILogger<LanguageExporter>>();
 
-        _sut = new LanguageExporter(_mockLocalizationService.Object, _mockLogger.Object);
+        _sut = new LanguageExporter(_mockLanguageService.Object, _mockLogger.Object);
     }
 
     [Fact]
     public async Task ExportAsync_WhenNoLanguages_ReturnsEmptyList()
     {
-        _mockLocalizationService.Setup(s => s.GetAllLanguages()).Returns([]);
+        _mockLanguageService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(Enumerable.Empty<ILanguage>());
 
         var result = await _sut.ExportAsync();
 
@@ -39,7 +40,8 @@ public class LanguageExporterTests
         mockLanguage.Setup(l => l.IsDefault).Returns(true);
         mockLanguage.Setup(l => l.IsMandatory).Returns(false);
 
-        _mockLocalizationService.Setup(s => s.GetAllLanguages()).Returns([mockLanguage.Object]);
+        _mockLanguageService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(new[] { mockLanguage.Object });
 
         var result = await _sut.ExportAsync();
 
@@ -57,7 +59,8 @@ public class LanguageExporterTests
         mockLanguage.Setup(l => l.IsDefault).Returns(false);
         mockLanguage.Setup(l => l.IsMandatory).Returns(true);
 
-        _mockLocalizationService.Setup(s => s.GetAllLanguages()).Returns([mockLanguage.Object]);
+        _mockLanguageService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(new[] { mockLanguage.Object });
 
         var result = await _sut.ExportAsync();
 
@@ -81,8 +84,8 @@ public class LanguageExporterTests
         mockPt.Setup(l => l.IsDefault).Returns(false);
         mockPt.Setup(l => l.IsMandatory).Returns(false);
 
-        _mockLocalizationService.Setup(s => s.GetAllLanguages())
-            .Returns([mockEn.Object, mockPt.Object]);
+        _mockLanguageService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(new[] { mockEn.Object, mockPt.Object });
 
         var result = await _sut.ExportAsync();
 

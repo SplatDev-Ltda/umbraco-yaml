@@ -9,14 +9,14 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 /// </summary>
 public class TemplateExporter
 {
-    private readonly IFileService _fileService;
+    private readonly ITemplateService _templateService;
     private readonly ILogger<TemplateExporter> _logger;
 
     public TemplateExporter(
-        IFileService fileService,
+        ITemplateService templateService,
         ILogger<TemplateExporter> logger)
     {
-        _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+        _templateService = templateService ?? throw new ArgumentNullException(nameof(templateService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -27,7 +27,7 @@ public class TemplateExporter
     {
         _logger.LogInformation("Starting Template export");
 
-        var templates = _fileService.GetTemplates();
+        var templates = await _templateService.GetAllAsync(Array.Empty<string>());
         var exported = new List<ExportTemplate>();
 
         foreach (var template in templates)
@@ -37,7 +37,7 @@ public class TemplateExporter
                 var export = new ExportTemplate
                 {
                     Alias = template.Alias,
-                    Name = template.Name,
+                    Name = template.Name ?? string.Empty,
                     MasterTemplate = template.MasterTemplateAlias,
                     Content = template.Content
                 };
@@ -52,7 +52,7 @@ public class TemplateExporter
         }
 
         _logger.LogInformation("Exported {Count} Templates", exported.Count);
-        return await Task.FromResult(exported);
+        return exported;
     }
 
     /// <summary>

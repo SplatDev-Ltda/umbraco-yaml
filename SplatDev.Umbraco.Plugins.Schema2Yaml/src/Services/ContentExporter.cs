@@ -13,18 +13,18 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 public class ContentExporter
 {
     private readonly IContentService _contentService;
-    private readonly IFileService _fileService;
+    private readonly ITemplateService _templateService;
     private readonly Schema2YamlOptions _options;
     private readonly ILogger<ContentExporter> _logger;
 
     public ContentExporter(
         IContentService contentService,
-        IFileService fileService,
+        ITemplateService templateService,
         IOptions<Schema2YamlOptions> options,
         ILogger<ContentExporter> logger)
     {
         _contentService = contentService ?? throw new ArgumentNullException(nameof(contentService));
-        _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+        _templateService = templateService ?? throw new ArgumentNullException(nameof(templateService));
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -47,17 +47,15 @@ public class ContentExporter
 
         foreach (var root in roots)
         {
-            ExportNode(root, exported, 0);
+            await ExportNodeAsync(root, exported, 0);
         }
 
         _logger.LogInformation("Exported {Count} Content nodes", exported.Count);
-        return await Task.FromResult(exported);
+        return exported;
     }
 
     /// <summary>
     /// Exports content nodes that match the provided NodeIds filter.
-    /// When IncludeAll is false and NodeIds is empty, returns an empty list.
-    /// When a node's ID is in the list, it and all its descendants are exported fully.
     /// </summary>
     public virtual async Task<List<ExportContent>> ExportAsync(CategorySelection filter)
     {
@@ -71,32 +69,30 @@ public class ContentExporter
 
         var result = new List<ExportContent>();
         foreach (var root in _contentService.GetRootContent())
-            CollectFilteredContent(root, filter.NodeIds, result);
+            await CollectFilteredContentAsync(root, filter.NodeIds, result);
 
         return result;
     }
 
-    private void CollectFilteredContent(IContent node, List<int> nodeIds, List<ExportContent> result)
+    private async Task CollectFilteredContentAsync(IContent node, List<int> nodeIds, List<ExportContent> result)
     {
         if (nodeIds.Contains(node.Id))
         {
-            // Export this node and ALL its descendants fully by reusing ExportNode
             var temp = new List<ExportContent>();
-            ExportNode(node, temp, 0);
+            await ExportNodeAsync(node, temp, 0);
             if (temp.Count > 0)
                 result.Add(temp[0]);
             return;
         }
 
-        // Not selected — traverse children to find selected descendants
         foreach (var child in _contentService.GetPagedChildren(node.Id, 0, int.MaxValue, out _))
-            CollectFilteredContent(child, nodeIds, result);
+            await CollectFilteredContentAsync(child, nodeIds, result);
     }
 
     /// <summary>
     /// Recursively exports a content node and its children.
     /// </summary>
-    private void ExportNode(IContent content, List<ExportContent> exported, int depth)
+    private async Task ExportNodeAsync(IContent content, List<ExportContent> exported, int depth)
     {
         if (depth >= _options.MaxHierarchyDepth)
         {
@@ -108,9 +104,9 @@ public class ContentExporter
         {
             var export = new ExportContent
             {
-                Name = content.Name,
+                Name = content.Name ?? string.Empty,
                 DocumentType = content.ContentType.Alias,
-                Template = GetTemplateName(content),
+                Template = await GetTemplateNameAsync(content),
                 SortOrder = content.SortOrder,
                 IsPublished = content.Published,
                 Properties = ExportProperties(content),
@@ -120,11 +116,10 @@ public class ContentExporter
             exported.Add(export);
             _logger.LogDebug("Exported Content: {Name} ({DocumentType})", export.Name, export.DocumentType);
 
-            // Export children recursively
             var children = _contentService.GetPagedChildren(content.Id, 0, int.MaxValue, out _);
             foreach (var child in children.OrderBy(c => c.SortOrder))
             {
-                ExportNode(child, export.Children, depth + 1);
+                await ExportNodeAsync(child, export.Children, depth + 1);
             }
         }
         catch (Exception ex)
@@ -133,19 +128,14 @@ public class ContentExporter
         }
     }
 
-    /// <summary>
-    /// Gets the template name for a content node.
-    /// </summary>
-    private string? GetTemplateName(IContent content)
+    private async Task<string?> GetTemplateNameAsync(IContent content)
     {
         if (!content.TemplateId.HasValue)
-        {
             return null;
-        }
 
         try
         {
-            var template = _fileService.GetTemplate(content.TemplateId.Value);
+            var template = await _templateService.GetAsync(content.TemplateId.Value);
             return template?.Alias;
         }
         catch
@@ -154,9 +144,6 @@ public class ContentExporter
         }
     }
 
-    /// <summary>
-    /// Exports all property values from a content node.
-    /// </summary>
     private Dictionary<string, object> ExportProperties(IContent content)
     {
         var properties = new Dictionary<string, object>();
@@ -173,7 +160,7 @@ public class ContentExporter
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Failed to export property: {Alias} on {ContentName}", 
+                _logger.LogWarning(ex, "Failed to export property: {Alias} on {ContentName}",
                     property.Alias, content.Name);
             }
         }
@@ -181,18 +168,11 @@ public class ContentExporter
         return properties;
     }
 
-    /// <summary>
-    /// Converts property values to YAML-serializable format.
-    /// </summary>
     private object ConvertPropertyValue(object value)
     {
-        // Handle null
         if (value == null)
-        {
             return string.Empty;
-        }
 
-        // Handle common types
         return value switch
         {
             string str => str,

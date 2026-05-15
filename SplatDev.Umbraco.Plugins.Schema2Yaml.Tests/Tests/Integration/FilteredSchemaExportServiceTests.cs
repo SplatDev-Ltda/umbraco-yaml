@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -5,7 +6,6 @@ using SplatDev.Umbraco.Plugins.Schema2Yaml.Configuration;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Models;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using Umbraco.Cms.Core;
-using Umbraco.Cms.Core.Hosting;
 using Umbraco.Cms.Core.Services;
 using System.IO.Compression;
 
@@ -52,7 +52,7 @@ public class FilteredSchemaExportServiceTests
             Substitute.For<ILogger<UmbracoVersionDetector>>());
 
         _languageExporter = Substitute.For<LanguageExporter>(
-            Substitute.For<ILocalizationService>(),
+            Substitute.For<ILanguageService>(),
             Substitute.For<ILogger<LanguageExporter>>());
 
         _dataTypeExporter = Substitute.For<DataTypeExporter>(
@@ -71,23 +71,23 @@ public class FilteredSchemaExportServiceTests
             Substitute.For<ILogger<MediaTypeExporter>>());
 
         _templateExporter = Substitute.For<TemplateExporter>(
-            Substitute.For<IFileService>(),
+            Substitute.For<ITemplateService>(),
             Substitute.For<ILogger<TemplateExporter>>());
 
         _mediaExporter = Substitute.For<MediaExporter>(
             Substitute.For<IMediaService>(),
-            Substitute.For<IHostingEnvironment>(),
+            Substitute.For<IWebHostEnvironment>(),
             options,
             Substitute.For<ILogger<MediaExporter>>());
 
         _contentExporter = Substitute.For<ContentExporter>(
             Substitute.For<IContentService>(),
-            Substitute.For<IFileService>(),
+            Substitute.For<ITemplateService>(),
             options,
             Substitute.For<ILogger<ContentExporter>>());
 
         _dictionaryExporter = Substitute.For<DictionaryExporter>(
-            Substitute.For<ILocalizationService>(),
+            Substitute.For<IDictionaryItemService>(),
             Substitute.For<ILogger<DictionaryExporter>>());
 
         _memberExporter = Substitute.For<MemberExporter>(

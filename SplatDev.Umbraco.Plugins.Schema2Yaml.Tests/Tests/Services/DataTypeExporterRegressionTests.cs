@@ -48,7 +48,7 @@ public class DataTypeExporterRegressionTests
     {
         var (sut, mockService) = CreateSut(umbracoMajor);
         var dt = BuildDataType("Textstring", "Umb.PropertyEditorUi.TextBox", ValueStorageType.Nvarchar);
-        mockService.Setup(s => s.GetAll()).Returns([dt.Object]);
+        mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { dt.Object });
 
         var result = await sut.ExportAsync();
 
@@ -66,7 +66,7 @@ public class DataTypeExporterRegressionTests
         dt.Setup(d => d.EditorUiAlias).Returns((string?)null);
         dt.Setup(d => d.EditorAlias).Returns("Umbraco.TinyMCE");
         dt.Setup(d => d.ConfigurationObject).Returns(null as object);
-        mockService.Setup(s => s.GetAll()).Returns([dt.Object]);
+        mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { dt.Object });
 
         var result = await sut.ExportAsync();
 
@@ -86,7 +86,7 @@ public class DataTypeExporterRegressionTests
     {
         var (sut, mockService) = CreateSut(17);
         var dt = BuildDataType(name, "Umb.PropertyEditorUi.TextBox", ValueStorageType.Nvarchar);
-        mockService.Setup(s => s.GetAll()).Returns([dt.Object]);
+        mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { dt.Object });
 
         var result = await sut.ExportAsync();
 
@@ -106,7 +106,7 @@ public class DataTypeExporterRegressionTests
     {
         var (sut, mockService) = CreateSut(17);
         var dt = BuildDataType("Test", "Umb.PropertyEditorUi.TextBox", dbType);
-        mockService.Setup(s => s.GetAll()).Returns([dt.Object]);
+        mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { dt.Object });
 
         var result = await sut.ExportAsync();
 
@@ -121,7 +121,7 @@ public class DataTypeExporterRegressionTests
     {
         var (sut, mockService) = CreateSut(17);
         var dt = BuildDataType("Simple Text", "Umb.PropertyEditorUi.TextBox", ValueStorageType.Nvarchar);
-        mockService.Setup(s => s.GetAll()).Returns([dt.Object]);
+        mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { dt.Object });
 
         var result = await sut.ExportAsync();
 
@@ -139,7 +139,7 @@ public class DataTypeExporterRegressionTests
         dt.Setup(d => d.DatabaseType).Returns(ValueStorageType.Nvarchar);
         dt.Setup(d => d.EditorUiAlias).Returns("Umb.PropertyEditorUi.TextBox");
         dt.Setup(d => d.ConfigurationObject).Returns(config);
-        mockService.Setup(s => s.GetAll()).Returns([dt.Object]);
+        mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { dt.Object });
 
         var result = await sut.ExportAsync();
 
@@ -164,7 +164,7 @@ public class DataTypeExporterRegressionTests
 
         var good = BuildDataType("Textstring", "Umb.PropertyEditorUi.TextBox", ValueStorageType.Nvarchar);
 
-        mockService.Setup(s => s.GetAll()).Returns([broken.Object, good.Object]);
+        mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new IDataType[] { broken.Object, good.Object });
 
         var result = await sut.ExportAsync();
 

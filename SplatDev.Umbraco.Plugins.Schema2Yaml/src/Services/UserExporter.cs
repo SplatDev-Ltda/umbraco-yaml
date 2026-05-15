@@ -47,7 +47,7 @@ public class UserExporter
             {
                 var export = new ExportUser
                 {
-                    Name = user.Name,
+                    Name = user.Name ?? string.Empty,
                     Email = user.Email,
                     Username = user.Username,
                     UserGroups = user.Groups?

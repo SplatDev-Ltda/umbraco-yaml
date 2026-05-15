@@ -9,14 +9,14 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 /// </summary>
 public class LanguageExporter
 {
-    private readonly ILocalizationService _localizationService;
+    private readonly ILanguageService _languageService;
     private readonly ILogger<LanguageExporter> _logger;
 
     public LanguageExporter(
-        ILocalizationService localizationService,
+        ILanguageService languageService,
         ILogger<LanguageExporter> logger)
     {
-        _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
+        _languageService = languageService ?? throw new ArgumentNullException(nameof(languageService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -27,7 +27,7 @@ public class LanguageExporter
     {
         _logger.LogInformation("Starting Language export");
 
-        var languages = _localizationService.GetAllLanguages();
+        var languages = await _languageService.GetAllAsync();
         var exported = new List<ExportLanguage>();
 
         foreach (var language in languages)
@@ -52,7 +52,7 @@ public class LanguageExporter
         }
 
         _logger.LogInformation("Exported {Count} Languages", exported.Count);
-        return await Task.FromResult(exported);
+        return exported;
     }
 
     /// <summary>

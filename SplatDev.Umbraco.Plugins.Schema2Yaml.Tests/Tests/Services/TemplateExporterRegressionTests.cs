@@ -13,13 +13,13 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 /// </summary>
 public class TemplateExporterRegressionTests
 {
-    private readonly Mock<IFileService> _mockFileService = new();
+    private readonly Mock<ITemplateService> _mockTemplateService = new();
     private readonly Mock<ILogger<TemplateExporter>> _mockLogger = new();
     private readonly TemplateExporter _sut;
 
     public TemplateExporterRegressionTests()
     {
-        _sut = new TemplateExporter(_mockFileService.Object, _mockLogger.Object);
+        _sut = new TemplateExporter(_mockTemplateService.Object, _mockLogger.Object);
     }
 
     // ── Core field mapping regression ────────────────────────────────────────
@@ -28,7 +28,8 @@ public class TemplateExporterRegressionTests
     public async Task ExportAsync_MapsAllFourFields()
     {
         var tpl = BuildTemplate("homePage", "Home Page", masterAlias: "_Layout", content: "@inherits UmbracoViewPage\n<h1>Home</h1>");
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([tpl]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new[] { tpl });
 
         var result = await _sut.ExportAsync();
 
@@ -45,7 +46,8 @@ public class TemplateExporterRegressionTests
     public async Task ExportAsync_LeavesMasterTemplateNull_WhenNotSet()
     {
         var tpl = BuildTemplate("master", "Master", masterAlias: null, content: "@inherits UmbracoViewPage");
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([tpl]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new[] { tpl });
 
         var result = await _sut.ExportAsync();
 
@@ -57,7 +59,8 @@ public class TemplateExporterRegressionTests
     public async Task ExportAsync_MapsMasterTemplateAlias_WhenSet()
     {
         var tpl = BuildTemplate("page", "Page", masterAlias: "master", content: "");
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([tpl]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new[] { tpl });
 
         var result = await _sut.ExportAsync();
 
@@ -70,7 +73,8 @@ public class TemplateExporterRegressionTests
     public async Task ExportAsync_MapsEmptyContent_WhenTemplateHasNoRazor()
     {
         var tpl = BuildTemplate("blank", "Blank", masterAlias: null, content: null);
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([tpl]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new[] { tpl });
 
         var result = await _sut.ExportAsync();
 
@@ -89,7 +93,8 @@ public class TemplateExporterRegressionTests
     public async Task ExportAsync_MapsEachTemplate(string alias, string name, string? masterAlias)
     {
         var tpl = BuildTemplate(alias, name, masterAlias, content: "");
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([tpl]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new[] { tpl });
 
         var result = await _sut.ExportAsync();
 
@@ -108,7 +113,8 @@ public class TemplateExporterRegressionTests
             BuildTemplate("homePage",    "Home Page",    "_Layout", ""),
             BuildTemplate("contentPage", "Content Page", "_Layout", ""),
         };
-        _mockFileService.Setup(s => s.GetTemplates()).Returns(templates);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(templates);
 
         var result = await _sut.ExportAsync();
 
@@ -132,7 +138,8 @@ public class TemplateExporterRegressionTests
         broken.Setup(t => t.Content).Throws(new InvalidOperationException("Disk read error"));
 
         var good = BuildTemplate("homePage", "Home Page", null, "");
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([broken.Object, good]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new ITemplate[] { broken.Object, good });
 
         var result = await _sut.ExportAsync();
 
@@ -143,7 +150,8 @@ public class TemplateExporterRegressionTests
     [Fact]
     public async Task ExportAsync_ReturnsEmptyList_WhenNoTemplatesExist()
     {
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(Enumerable.Empty<ITemplate>());
 
         var result = await _sut.ExportAsync();
 
@@ -163,7 +171,7 @@ public class TemplateExporterRegressionTests
     public void Constructor_ThrowsArgumentNullException_WhenLoggerIsNull()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new TemplateExporter(_mockFileService.Object, null!));
+            new TemplateExporter(_mockTemplateService.Object, null!));
     }
 
     private static ITemplate BuildTemplate(string alias, string name, string? masterAlias, string? content)

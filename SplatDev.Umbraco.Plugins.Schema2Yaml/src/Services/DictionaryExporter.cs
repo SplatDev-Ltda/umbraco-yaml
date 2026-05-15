@@ -10,14 +10,14 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 /// </summary>
 public class DictionaryExporter
 {
-    private readonly ILocalizationService _localizationService;
+    private readonly IDictionaryItemService _dictionaryItemService;
     private readonly ILogger<DictionaryExporter> _logger;
 
     public DictionaryExporter(
-        ILocalizationService localizationService,
+        IDictionaryItemService dictionaryItemService,
         ILogger<DictionaryExporter> logger)
     {
-        _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
+        _dictionaryItemService = dictionaryItemService ?? throw new ArgumentNullException(nameof(dictionaryItemService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -28,16 +28,16 @@ public class DictionaryExporter
     {
         _logger.LogInformation("Starting Dictionary Item export");
 
-        var rootItems = _localizationService.GetRootDictionaryItems();
+        var rootItems = await _dictionaryItemService.GetAtRootAsync();
         var exported = new List<ExportDictionaryItem>();
 
         foreach (var item in rootItems)
         {
-            ExportDictionaryItem(item, exported);
+            await ExportDictionaryItemAsync(item, exported);
         }
 
         _logger.LogInformation("Exported {Count} Dictionary Items", exported.Count);
-        return await Task.FromResult(exported);
+        return exported;
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public class DictionaryExporter
     /// <summary>
     /// Recursively exports a dictionary item and its children.
     /// </summary>
-    private void ExportDictionaryItem(IDictionaryItem item, List<ExportDictionaryItem> exported)
+    private async Task ExportDictionaryItemAsync(IDictionaryItem item, List<ExportDictionaryItem> exported)
     {
         try
         {
@@ -78,11 +78,10 @@ public class DictionaryExporter
             exported.Add(export);
             _logger.LogDebug("Exported Dictionary Item: {Key}", export.Key);
 
-            // Export children recursively
-            var children = _localizationService.GetDictionaryItemChildren(item.Key);
+            var children = await _dictionaryItemService.GetChildrenAsync(item.Key);
             foreach (var child in children)
             {
-                ExportDictionaryItem(child, exported);
+                await ExportDictionaryItemAsync(child, exported);
             }
         }
         catch (Exception ex)

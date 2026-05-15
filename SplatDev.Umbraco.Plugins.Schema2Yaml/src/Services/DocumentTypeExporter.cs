@@ -41,7 +41,7 @@ public class DocumentTypeExporter
                 var export = new ExportDocumentType
                 {
                     Alias = contentType.Alias,
-                    Name = contentType.Name,
+                    Name = contentType.Name ?? string.Empty,
                     Icon = contentType.Icon,
                     IsElement = contentType.IsElement,
                     AllowAsRoot = contentType.AllowedAsRoot,
@@ -49,14 +49,14 @@ public class DocumentTypeExporter
                         .Select(x => x.Alias)
                         .ToList() ?? [],
                     Compositions = contentType.ContentTypeComposition
-                        .Where(c => c.Id != contentType.Id) // Exclude self
+                        .Where(c => c.Id != contentType.Id)
                         .Select(c => c.Alias)
                         .ToList(),
                     AllowedTemplates = contentType.AllowedTemplates?
                         .Select(t => t.Alias)
                         .ToList() ?? [],
                     DefaultTemplate = contentType.DefaultTemplate?.Alias,
-                    Tabs = ExportTabs(contentType)
+                    Tabs = await ExportTabsAsync(contentType)
                 };
 
                 exported.Add(export);
@@ -69,7 +69,7 @@ public class DocumentTypeExporter
         }
 
         _logger.LogInformation("Exported {Count} DocumentTypes", exported.Count);
-        return await Task.FromResult(exported);
+        return exported;
     }
 
     /// <summary>
@@ -84,27 +84,22 @@ public class DocumentTypeExporter
         return all.Where(x => filter.Aliases.Contains(x.Alias)).ToList();
     }
 
-    /// <summary>
-    /// Exports property tabs from a content type.
-    /// </summary>
-    private List<ExportTab> ExportTabs(IContentType contentType)
+    private async Task<List<ExportTab>> ExportTabsAsync(IContentType contentType)
     {
         var tabs = new List<ExportTab>();
-        var propertyGroups = contentType.PropertyGroups;
 
-        foreach (var group in propertyGroups.OrderBy(g => g.SortOrder))
+        foreach (var group in contentType.PropertyGroups.OrderBy(g => g.SortOrder))
         {
             var tab = new ExportTab
             {
-                Name = group.Name,
+                Name = group.Name ?? string.Empty,
                 SortOrder = group.SortOrder,
-                Properties = ExportProperties(group.PropertyTypes)
+                Properties = await ExportPropertiesAsync(group.PropertyTypes ?? Enumerable.Empty<IPropertyType>())
             };
 
             tabs.Add(tab);
         }
 
-        // Handle properties without a tab (generic properties)
         var genericProperties = contentType.PropertyTypes
             .Where(p => string.IsNullOrEmpty(p.PropertyGroupId?.ToString()))
             .ToList();
@@ -115,17 +110,14 @@ public class DocumentTypeExporter
             {
                 Name = "Generic",
                 SortOrder = 999,
-                Properties = ExportProperties(genericProperties)
+                Properties = await ExportPropertiesAsync(genericProperties)
             });
         }
 
         return tabs;
     }
 
-    /// <summary>
-    /// Exports properties from a collection of property types.
-    /// </summary>
-    private List<ExportProperty> ExportProperties(IEnumerable<IPropertyType> propertyTypes)
+    private async Task<List<ExportProperty>> ExportPropertiesAsync(IEnumerable<IPropertyType> propertyTypes)
     {
         var properties = new List<ExportProperty>();
 
@@ -133,7 +125,7 @@ public class DocumentTypeExporter
         {
             try
             {
-                var dataType = _dataTypeService.GetDataType(prop.DataTypeId);
+                var dataType = await _dataTypeService.GetAsync(prop.DataTypeKey);
                 var dataTypeName = dataType?.Name ?? "Unknown";
 
                 var exportProp = new ExportProperty

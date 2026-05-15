@@ -12,7 +12,7 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 /// </summary>
 public class LanguageExporterRegressionTests
 {
-    private readonly Mock<ILocalizationService> _mockService = new();
+    private readonly Mock<ILanguageService> _mockService = new();
     private readonly Mock<ILogger<LanguageExporter>> _mockLogger = new();
     private readonly LanguageExporter _sut;
 
@@ -27,7 +27,7 @@ public class LanguageExporterRegressionTests
     public async Task ExportAsync_MapsAllFourFields()
     {
         var lang = BuildLanguage("en-US", "English (United States)", isDefault: true, isMandatory: true);
-        _mockService.Setup(s => s.GetAllLanguages()).Returns([lang]);
+        _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { lang });
 
         var result = await _sut.ExportAsync();
 
@@ -50,7 +50,7 @@ public class LanguageExporterRegressionTests
         string isoCode, string cultureName, bool isDefault, bool isMandatory)
     {
         var lang = BuildLanguage(isoCode, cultureName, isDefault, isMandatory);
-        _mockService.Setup(s => s.GetAllLanguages()).Returns([lang]);
+        _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { lang });
 
         var result = await _sut.ExportAsync();
 
@@ -70,7 +70,7 @@ public class LanguageExporterRegressionTests
             BuildLanguage("pt-BR", "Portuguese", isDefault: false, isMandatory: false),
             BuildLanguage("fr-FR", "French", isDefault: false, isMandatory: true)
         };
-        _mockService.Setup(s => s.GetAllLanguages()).Returns(languages);
+        _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(languages);
 
         var result = await _sut.ExportAsync();
 
@@ -90,7 +90,7 @@ public class LanguageExporterRegressionTests
     public async Task ExportAsync_MapsDefaultAndMandatoryPermutations(bool isDefault, bool isMandatory)
     {
         var lang = BuildLanguage("en-US", "English", isDefault, isMandatory);
-        _mockService.Setup(s => s.GetAllLanguages()).Returns([lang]);
+        _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new[] { lang });
 
         var result = await _sut.ExportAsync();
 
@@ -110,7 +110,7 @@ public class LanguageExporterRegressionTests
         broken.Setup(l => l.CultureName).Throws(new InvalidOperationException("Service failure"));
 
         var good = BuildLanguage("en-US", "English", isDefault: true, isMandatory: false);
-        _mockService.Setup(s => s.GetAllLanguages()).Returns([broken.Object, good]);
+        _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new ILanguage[] { broken.Object, good });
 
         var result = await _sut.ExportAsync();
 
@@ -121,7 +121,7 @@ public class LanguageExporterRegressionTests
     [Fact]
     public async Task ExportAsync_ReturnsEmptyList_WhenNoLanguagesExist()
     {
-        _mockService.Setup(s => s.GetAllLanguages()).Returns([]);
+        _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(Enumerable.Empty<ILanguage>());
 
         var result = await _sut.ExportAsync();
 

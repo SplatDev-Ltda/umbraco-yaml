@@ -8,22 +8,23 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 
 public class DictionaryExporterTests
 {
-    private readonly Mock<ILocalizationService> _mockLocalizationService;
+    private readonly Mock<IDictionaryItemService> _mockDictionaryItemService;
     private readonly Mock<ILogger<DictionaryExporter>> _mockLogger;
     private readonly DictionaryExporter _sut;
 
     public DictionaryExporterTests()
     {
-        _mockLocalizationService = new Mock<ILocalizationService>();
+        _mockDictionaryItemService = new Mock<IDictionaryItemService>();
         _mockLogger = new Mock<ILogger<DictionaryExporter>>();
 
-        _sut = new DictionaryExporter(_mockLocalizationService.Object, _mockLogger.Object);
+        _sut = new DictionaryExporter(_mockDictionaryItemService.Object, _mockLogger.Object);
     }
 
     [Fact]
     public async Task ExportAsync_WhenNoRootItems_ReturnsEmptyList()
     {
-        _mockLocalizationService.Setup(s => s.GetRootDictionaryItems()).Returns([]);
+        _mockDictionaryItemService.Setup(s => s.GetAtRootAsync())
+            .ReturnsAsync(Enumerable.Empty<IDictionaryItem>());
 
         var result = await _sut.ExportAsync();
 
@@ -37,15 +38,16 @@ public class DictionaryExporterTests
         mockTranslation.Setup(t => t.LanguageIsoCode).Returns("en-US");
         mockTranslation.Setup(t => t.Value).Returns("Welcome");
 
+        var itemKey = Guid.NewGuid();
         var mockItem = new Mock<IDictionaryItem>();
         mockItem.Setup(i => i.ItemKey).Returns("general.welcome");
-        mockItem.Setup(i => i.Key).Returns(Guid.NewGuid());
+        mockItem.Setup(i => i.Key).Returns(itemKey);
         mockItem.Setup(i => i.Translations).Returns([mockTranslation.Object]);
 
-        _mockLocalizationService.Setup(s => s.GetRootDictionaryItems())
-            .Returns([mockItem.Object]);
-        _mockLocalizationService.Setup(s => s.GetDictionaryItemChildren(It.IsAny<Guid>()))
-            .Returns([]);
+        _mockDictionaryItemService.Setup(s => s.GetAtRootAsync())
+            .ReturnsAsync(new[] { mockItem.Object });
+        _mockDictionaryItemService.Setup(s => s.GetChildrenAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(Enumerable.Empty<IDictionaryItem>());
 
         var result = await _sut.ExportAsync();
 
@@ -70,12 +72,12 @@ public class DictionaryExporterTests
         mockChild.Setup(i => i.Key).Returns(Guid.NewGuid());
         mockChild.Setup(i => i.Translations).Returns([]);
 
-        _mockLocalizationService.Setup(s => s.GetRootDictionaryItems())
-            .Returns([mockParent.Object]);
-        _mockLocalizationService.Setup(s => s.GetDictionaryItemChildren(parentKey))
-            .Returns([mockChild.Object]);
-        _mockLocalizationService.Setup(s => s.GetDictionaryItemChildren(It.Is<Guid>(g => g != parentKey)))
-            .Returns([]);
+        _mockDictionaryItemService.Setup(s => s.GetAtRootAsync())
+            .ReturnsAsync(new[] { mockParent.Object });
+        _mockDictionaryItemService.Setup(s => s.GetChildrenAsync(parentKey))
+            .ReturnsAsync(new[] { mockChild.Object });
+        _mockDictionaryItemService.Setup(s => s.GetChildrenAsync(It.Is<Guid>(g => g != parentKey)))
+            .ReturnsAsync(Enumerable.Empty<IDictionaryItem>());
 
         var result = await _sut.ExportAsync();
 
@@ -96,10 +98,10 @@ public class DictionaryExporterTests
         mockItem.Setup(i => i.Key).Returns(Guid.NewGuid());
         mockItem.Setup(i => i.Translations).Returns([mockTranslation.Object]);
 
-        _mockLocalizationService.Setup(s => s.GetRootDictionaryItems())
-            .Returns([mockItem.Object]);
-        _mockLocalizationService.Setup(s => s.GetDictionaryItemChildren(It.IsAny<Guid>()))
-            .Returns([]);
+        _mockDictionaryItemService.Setup(s => s.GetAtRootAsync())
+            .ReturnsAsync(new[] { mockItem.Object });
+        _mockDictionaryItemService.Setup(s => s.GetChildrenAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(Enumerable.Empty<IDictionaryItem>());
 
         var result = await _sut.ExportAsync();
 

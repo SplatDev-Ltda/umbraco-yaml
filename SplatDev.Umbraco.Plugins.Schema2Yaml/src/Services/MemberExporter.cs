@@ -48,7 +48,7 @@ public class MemberExporter
             {
                 var export = new ExportMember
                 {
-                    Name = member.Name,
+                    Name = member.Name ?? string.Empty,
                     Email = member.Email,
                     Username = member.Username,
                     MemberType = member.ContentType.Alias,

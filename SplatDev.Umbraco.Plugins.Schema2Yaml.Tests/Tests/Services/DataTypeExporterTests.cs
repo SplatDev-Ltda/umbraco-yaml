@@ -32,7 +32,8 @@ public class DataTypeExporterTests
     [Fact]
     public async Task ExportAsync_WhenNoDataTypes_ReturnsEmptyList()
     {
-        _mockDataTypeService.Setup(s => s.GetAll()).Returns([]);
+        _mockDataTypeService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(Enumerable.Empty<IDataType>());
 
         var result = await _sut.ExportAsync();
 
@@ -48,7 +49,8 @@ public class DataTypeExporterTests
         mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
         mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Ntext);
 
-        _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
+        _mockDataTypeService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(new[] { mockDataType.Object });
 
         var result = await _sut.ExportAsync();
 
@@ -66,7 +68,8 @@ public class DataTypeExporterTests
         mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
         mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Ntext);
 
-        _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
+        _mockDataTypeService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(new[] { mockDataType.Object });
 
         var result = await _sut.ExportAsync();
 
@@ -89,7 +92,8 @@ public class DataTypeExporterTests
         mockDt2.Setup(dt => dt.ConfigurationObject).Returns(null as object);
         mockDt2.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Integer);
 
-        _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDt1.Object, mockDt2.Object]);
+        _mockDataTypeService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(new[] { mockDt1.Object, mockDt2.Object });
 
         var result = await _sut.ExportAsync();
 
@@ -107,7 +111,8 @@ public class DataTypeExporterTests
         mockDataType.Setup(dt => dt.ConfigurationObject).Returns(null as object);
         mockDataType.Setup(dt => dt.DatabaseType).Returns(ValueStorageType.Integer);
 
-        _mockDataTypeService.Setup(s => s.GetAll()).Returns([mockDataType.Object]);
+        _mockDataTypeService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(new[] { mockDataType.Object });
 
         var result = await _sut.ExportAsync();
 

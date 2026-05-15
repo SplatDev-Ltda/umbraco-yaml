@@ -41,10 +41,10 @@ public class MediaTypeExporter
                 var export = new ExportMediaType
                 {
                     Alias = mediaType.Alias,
-                    Name = mediaType.Name,
+                    Name = mediaType.Name ?? string.Empty,
                     Icon = mediaType.Icon,
                     AllowedAtRoot = mediaType.AllowedAsRoot,
-                    Tabs = ExportTabs(mediaType)
+                    Tabs = await ExportTabsAsync(mediaType)
                 };
 
                 exported.Add(export);
@@ -57,7 +57,7 @@ public class MediaTypeExporter
         }
 
         _logger.LogInformation("Exported {Count} MediaTypes", exported.Count);
-        return await Task.FromResult(exported);
+        return exported;
     }
 
     /// <summary>
@@ -72,27 +72,22 @@ public class MediaTypeExporter
         return all.Where(x => filter.Aliases.Contains(x.Alias)).ToList();
     }
 
-    /// <summary>
-    /// Exports property tabs from a media type.
-    /// </summary>
-    private List<ExportTab> ExportTabs(IMediaType mediaType)
+    private async Task<List<ExportTab>> ExportTabsAsync(IMediaType mediaType)
     {
         var tabs = new List<ExportTab>();
-        var propertyGroups = mediaType.PropertyGroups;
 
-        foreach (var group in propertyGroups.OrderBy(g => g.SortOrder))
+        foreach (var group in mediaType.PropertyGroups.OrderBy(g => g.SortOrder))
         {
             var tab = new ExportTab
             {
-                Name = group.Name,
+                Name = group.Name ?? string.Empty,
                 SortOrder = group.SortOrder,
-                Properties = ExportProperties(group.PropertyTypes)
+                Properties = await ExportPropertiesAsync(group.PropertyTypes ?? Enumerable.Empty<IPropertyType>())
             };
 
             tabs.Add(tab);
         }
 
-        // Handle properties without a tab
         var genericProperties = mediaType.PropertyTypes
             .Where(p => string.IsNullOrEmpty(p.PropertyGroupId?.ToString()))
             .ToList();
@@ -103,17 +98,14 @@ public class MediaTypeExporter
             {
                 Name = "Generic",
                 SortOrder = 999,
-                Properties = ExportProperties(genericProperties)
+                Properties = await ExportPropertiesAsync(genericProperties)
             });
         }
 
         return tabs;
     }
 
-    /// <summary>
-    /// Exports properties from a collection of property types.
-    /// </summary>
-    private List<ExportProperty> ExportProperties(IEnumerable<IPropertyType> propertyTypes)
+    private async Task<List<ExportProperty>> ExportPropertiesAsync(IEnumerable<IPropertyType> propertyTypes)
     {
         var properties = new List<ExportProperty>();
 
@@ -121,7 +113,7 @@ public class MediaTypeExporter
         {
             try
             {
-                var dataType = _dataTypeService.GetDataType(prop.DataTypeId);
+                var dataType = await _dataTypeService.GetAsync(prop.DataTypeKey);
                 var dataTypeName = dataType?.Name ?? "Unknown";
 
                 var exportProp = new ExportProperty

@@ -24,7 +24,7 @@ public class ExportProfileDto
     public bool IsActive { get; set; }
 
     [Column("selectionJson")]
-    [SpecialDbType(SpecialDbTypes.NTEXT)]
+    [SpecialDbType(SpecialDbTypes.NVARCHARMAX)]
     [NullSetting(NullSetting = NullSettings.NotNull)]
     public string SelectionJson { get; set; } = string.Empty;
 
@@ -37,6 +37,19 @@ public class ExportProfileDto
     public DateTime ModifiedDate { get; set; }
 }
 
+#if NET10_0_OR_GREATER
+public class AddExportProfilesTableMigration : AsyncMigrationBase
+{
+    public AddExportProfilesTableMigration(IMigrationContext context) : base(context) { }
+
+    protected override Task MigrateAsync()
+    {
+        if (!TableExists("schema2yamlExportProfiles"))
+            Create.Table<ExportProfileDto>().Do();
+        return Task.CompletedTask;
+    }
+}
+#else
 public class AddExportProfilesTableMigration : MigrationBase
 {
     public AddExportProfilesTableMigration(IMigrationContext context) : base(context) { }
@@ -47,6 +60,7 @@ public class AddExportProfilesTableMigration : MigrationBase
             Create.Table<ExportProfileDto>().Do();
     }
 }
+#endif
 
 public class Schema2YamlMigrationPlan : PackageMigrationPlan
 {

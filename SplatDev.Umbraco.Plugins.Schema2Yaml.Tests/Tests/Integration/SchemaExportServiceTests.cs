@@ -1,12 +1,16 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Configuration;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using Umbraco.Cms.Core;
-using Umbraco.Cms.Core.Hosting;
 using Umbraco.Cms.Core.Services;
 using System.IO.Compression;
+using ITemplate = Umbraco.Cms.Core.Models.ITemplate;
+using IDictionaryItem = Umbraco.Cms.Core.Models.IDictionaryItem;
+using ILanguage = Umbraco.Cms.Core.Models.ILanguage;
+using IDataType = Umbraco.Cms.Core.Models.IDataType;
 
 namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Integration;
 
@@ -180,12 +184,17 @@ public class SchemaExportServiceTests : IDisposable
 
     private static SchemaExportService CreateService(IOptions<Schema2YamlOptions> options)
     {
-        var mockLocalization = new Mock<ILocalizationService>();
-        mockLocalization.Setup(s => s.GetAllLanguages()).Returns([]);
-        mockLocalization.Setup(s => s.GetRootDictionaryItems()).Returns([]);
+        var mockLanguageService = new Mock<ILanguageService>();
+        mockLanguageService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(Enumerable.Empty<ILanguage>());
+
+        var mockDictionaryItemService = new Mock<IDictionaryItemService>();
+        mockDictionaryItemService.Setup(s => s.GetAtRootAsync())
+            .ReturnsAsync(Enumerable.Empty<IDictionaryItem>());
 
         var mockDataTypeService = new Mock<IDataTypeService>();
-        mockDataTypeService.Setup(s => s.GetAll()).Returns([]);
+        mockDataTypeService.Setup(s => s.GetAllAsync())
+            .ReturnsAsync(Enumerable.Empty<IDataType>());
 
         var mockContentTypeService = new Mock<IContentTypeService>();
         mockContentTypeService.Setup(s => s.GetAll()).Returns([]);
@@ -193,8 +202,9 @@ public class SchemaExportServiceTests : IDisposable
         var mockMediaTypeService = new Mock<IMediaTypeService>();
         mockMediaTypeService.Setup(s => s.GetAll()).Returns([]);
 
-        var mockFileService = new Mock<IFileService>();
-        mockFileService.Setup(s => s.GetTemplates()).Returns([]);
+        var mockTemplateService = new Mock<ITemplateService>();
+        mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(Enumerable.Empty<ITemplate>());
 
         var mockMediaService = new Mock<IMediaService>();
         mockMediaService.Setup(s => s.GetRootMedia()).Returns([]);
@@ -209,8 +219,8 @@ public class SchemaExportServiceTests : IDisposable
         var mockUserService = new Mock<IUserService>();
         mockUserService.Setup(s => s.GetAll(0, int.MaxValue, out total)).Returns([]);
 
-        var mockHostingEnv = new Mock<IHostingEnvironment>();
-        mockHostingEnv.Setup(h => h.MapPathWebRoot(It.IsAny<string>())).Returns(string.Empty);
+        var mockWebHostEnv = new Mock<IWebHostEnvironment>();
+        mockWebHostEnv.Setup(h => h.WebRootPath).Returns(string.Empty);
 
         var mockUmbracoVersion = new Mock<IUmbracoVersion>();
         mockUmbracoVersion.Setup(v => v.Version).Returns(new Version(17, 0, 0));
@@ -220,7 +230,7 @@ public class SchemaExportServiceTests : IDisposable
             Mock.Of<ILogger<UmbracoVersionDetector>>());
 
         var languageExporter = new LanguageExporter(
-            mockLocalization.Object,
+            mockLanguageService.Object,
             Mock.Of<ILogger<LanguageExporter>>());
 
         var dataTypeExporter = new DataTypeExporter(
@@ -239,23 +249,23 @@ public class SchemaExportServiceTests : IDisposable
             Mock.Of<ILogger<MediaTypeExporter>>());
 
         var templateExporter = new TemplateExporter(
-            mockFileService.Object,
+            mockTemplateService.Object,
             Mock.Of<ILogger<TemplateExporter>>());
 
         var mediaExporter = new MediaExporter(
             mockMediaService.Object,
-            mockHostingEnv.Object,
+            mockWebHostEnv.Object,
             options,
             Mock.Of<ILogger<MediaExporter>>());
 
         var contentExporter = new ContentExporter(
             mockContentService.Object,
-            mockFileService.Object,
+            mockTemplateService.Object,
             options,
             Mock.Of<ILogger<ContentExporter>>());
 
         var dictionaryExporter = new DictionaryExporter(
-            mockLocalization.Object,
+            mockDictionaryItemService.Object,
             Mock.Of<ILogger<DictionaryExporter>>());
 
         var memberExporter = new MemberExporter(

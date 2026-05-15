@@ -17,10 +17,10 @@ public class FilteredTreeExporterTests
         IContentService contentService,
         bool includeContent = true)
     {
-        var fileService = Substitute.For<IFileService>();
-        var options     = Options.Create(new Schema2YamlOptions { IncludeContent = includeContent, MaxHierarchyDepth = 10 });
-        var logger      = Substitute.For<ILogger<ContentExporter>>();
-        return new ContentExporter(contentService, fileService, options, logger);
+        var templateService = Substitute.For<ITemplateService>();
+        var options         = Options.Create(new Schema2YamlOptions { IncludeContent = includeContent, MaxHierarchyDepth = 10 });
+        var logger          = Substitute.For<ILogger<ContentExporter>>();
+        return new ContentExporter(contentService, templateService, options, logger);
     }
 
     private static IContent CreateFakeContent(int id, string name)

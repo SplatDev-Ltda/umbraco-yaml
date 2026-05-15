@@ -6,55 +6,59 @@ using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common.Authorization;
-using Umbraco.Cms.Web.Common.Controllers;
 
 namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Controllers;
 
+[ApiController]
+[Route("umbraco/api/[controller]/[action]")]
 [Authorize(Policy = AuthorizationPolicies.SectionAccessSettings)]
-public class ExportItemsController : UmbracoApiController
+public class ExportItemsController : ControllerBase
 {
     private const int MaxMembersUsers = 500;
     private const int MaxTreeDepth    = 5;
 
-    private readonly IDataTypeService    _dataTypes;
-    private readonly IContentTypeService _contentTypes;
-    private readonly IMediaTypeService   _mediaTypes;
-    private readonly IFileService        _files;
-    private readonly ILocalizationService _localization;
-    private readonly IContentService     _content;
-    private readonly IMediaService       _media;
-    private readonly IMemberService      _members;
-    private readonly IUserService        _users;
+    private readonly IDataTypeService      _dataTypes;
+    private readonly IContentTypeService   _contentTypes;
+    private readonly IMediaTypeService     _mediaTypes;
+    private readonly ITemplateService      _templates;
+    private readonly ILanguageService      _languages;
+    private readonly IDictionaryItemService _dictionaryItems;
+    private readonly IContentService       _content;
+    private readonly IMediaService         _media;
+    private readonly IMemberService        _members;
+    private readonly IUserService          _users;
     private readonly ILogger<ExportItemsController> _logger;
 
     public ExportItemsController(
         IDataTypeService dataTypes, IContentTypeService contentTypes,
-        IMediaTypeService mediaTypes, IFileService files,
-        ILocalizationService localization, IContentService content,
-        IMediaService media, IMemberService members,
-        IUserService users, ILogger<ExportItemsController> logger)
+        IMediaTypeService mediaTypes, ITemplateService templates,
+        ILanguageService languages, IDictionaryItemService dictionaryItems,
+        IContentService content, IMediaService media,
+        IMemberService members, IUserService users,
+        ILogger<ExportItemsController> logger)
     {
-        _dataTypes    = dataTypes;
-        _contentTypes = contentTypes;
-        _mediaTypes   = mediaTypes;
-        _files        = files;
-        _localization = localization;
-        _content      = content;
-        _media        = media;
-        _members      = members;
-        _users        = users;
-        _logger       = logger;
+        _dataTypes       = dataTypes;
+        _contentTypes    = contentTypes;
+        _mediaTypes      = mediaTypes;
+        _templates       = templates;
+        _languages       = languages;
+        _dictionaryItems = dictionaryItems;
+        _content         = content;
+        _media           = media;
+        _members         = members;
+        _users           = users;
+        _logger          = logger;
     }
 
     // GET /umbraco/api/exportitems/available
     [HttpGet]
-    public IActionResult Available()
+    public async Task<IActionResult> Available()
     {
         try
         {
             return Ok(new AvailableItemsResponse
             {
-                DataTypes = _dataTypes.GetAll()
+                DataTypes = (await _dataTypes.GetAllAsync())
                     .Select(dt => new AvailableItem { Alias = DataTypeExporter.GenerateAlias(dt.Name ?? string.Empty), Name = dt.Name ?? string.Empty })
                     .OrderBy(x => x.Name).ToList(),
 
@@ -66,15 +70,15 @@ public class ExportItemsController : UmbracoApiController
                     .Select(mt => new AvailableItem { Alias = mt.Alias, Name = mt.Name ?? mt.Alias })
                     .OrderBy(x => x.Name).ToList(),
 
-                Templates = _files.GetTemplates()
+                Templates = (await _templates.GetAllAsync(Array.Empty<string>()))
                     .Select(t => new AvailableItem { Alias = t.Alias, Name = t.Name ?? t.Alias })
                     .OrderBy(x => x.Name).ToList(),
 
-                Languages = _localization.GetAllLanguages()
+                Languages = (await _languages.GetAllAsync())
                     .Select(l => new AvailableItem { Alias = l.IsoCode, Name = l.CultureName ?? l.IsoCode })
                     .OrderBy(x => x.Name).ToList(),
 
-                DictionaryItems = GetAllDictionaryItems()
+                DictionaryItems = (await GetAllDictionaryItemsAsync())
                     .Select(d => new AvailableItem { Alias = d.ItemKey, Name = d.ItemKey })
                     .OrderBy(x => x.Name).ToList(),
 
@@ -126,20 +130,21 @@ public class ExportItemsController : UmbracoApiController
         }
     }
 
-    private IEnumerable<IDictionaryItem> GetAllDictionaryItems()
+    private async Task<IEnumerable<IDictionaryItem>> GetAllDictionaryItemsAsync()
     {
         var result = new List<IDictionaryItem>();
-        CollectDictionaryItems(_localization.GetRootDictionaryItems(), result);
+        var rootItems = await _dictionaryItems.GetAtRootAsync();
+        await CollectDictionaryItemsAsync(rootItems, result);
         return result;
     }
 
-    private void CollectDictionaryItems(IEnumerable<IDictionaryItem> items, List<IDictionaryItem> result)
+    private async Task CollectDictionaryItemsAsync(IEnumerable<IDictionaryItem> items, List<IDictionaryItem> result)
     {
         foreach (var item in items)
         {
             result.Add(item);
-            var children = _localization.GetDictionaryItemChildren(item.Key);
-            CollectDictionaryItems(children, result);
+            var children = await _dictionaryItems.GetChildrenAsync(item.Key);
+            await CollectDictionaryItemsAsync(children, result);
         }
     }
 

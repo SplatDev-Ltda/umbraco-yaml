@@ -4,12 +4,13 @@ using Microsoft.Extensions.Logging;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Models;
 using SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 using Umbraco.Cms.Web.Common.Authorization;
-using Umbraco.Cms.Web.Common.Controllers;
 
 namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Controllers;
 
+[ApiController]
+[Route("umbraco/api/[controller]/[action]")]
 [Authorize(Policy = AuthorizationPolicies.SectionAccessSettings)]
-public class ExportProfileController : UmbracoApiController
+public class ExportProfileController : ControllerBase
 {
     private readonly IExportProfileService _profiles;
     private readonly ILogger<ExportProfileController> _logger;

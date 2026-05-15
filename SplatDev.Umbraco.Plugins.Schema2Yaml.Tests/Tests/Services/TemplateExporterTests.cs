@@ -8,22 +8,23 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Tests.Services;
 
 public class TemplateExporterTests
 {
-    private readonly Mock<IFileService> _mockFileService;
+    private readonly Mock<ITemplateService> _mockTemplateService;
     private readonly Mock<ILogger<TemplateExporter>> _mockLogger;
     private readonly TemplateExporter _sut;
 
     public TemplateExporterTests()
     {
-        _mockFileService = new Mock<IFileService>();
+        _mockTemplateService = new Mock<ITemplateService>();
         _mockLogger = new Mock<ILogger<TemplateExporter>>();
 
-        _sut = new TemplateExporter(_mockFileService.Object, _mockLogger.Object);
+        _sut = new TemplateExporter(_mockTemplateService.Object, _mockLogger.Object);
     }
 
     [Fact]
     public async Task ExportAsync_WhenNoTemplates_ReturnsEmptyList()
     {
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(Enumerable.Empty<ITemplate>());
 
         var result = await _sut.ExportAsync();
 
@@ -39,7 +40,8 @@ public class TemplateExporterTests
         mockTemplate.Setup(t => t.MasterTemplateAlias).Returns("master");
         mockTemplate.Setup(t => t.Content).Returns("@inherits Umbraco.Web.Mvc.UmbracoViewPage");
 
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([mockTemplate.Object]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new[] { mockTemplate.Object });
 
         var result = await _sut.ExportAsync();
 
@@ -58,7 +60,8 @@ public class TemplateExporterTests
         mockTemplate.Setup(t => t.MasterTemplateAlias).Returns((string?)null);
         mockTemplate.Setup(t => t.Content).Returns(string.Empty);
 
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([mockTemplate.Object]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new[] { mockTemplate.Object });
 
         var result = await _sut.ExportAsync();
 
@@ -81,7 +84,8 @@ public class TemplateExporterTests
         mockT2.Setup(t => t.MasterTemplateAlias).Returns("master");
         mockT2.Setup(t => t.Content).Returns(string.Empty);
 
-        _mockFileService.Setup(s => s.GetTemplates()).Returns([mockT1.Object, mockT2.Object]);
+        _mockTemplateService.Setup(s => s.GetAllAsync(It.IsAny<string[]>()))
+            .ReturnsAsync(new[] { mockT1.Object, mockT2.Object });
 
         var result = await _sut.ExportAsync();
 
