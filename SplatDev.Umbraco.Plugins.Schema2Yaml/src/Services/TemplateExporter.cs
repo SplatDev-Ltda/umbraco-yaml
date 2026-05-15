@@ -54,4 +54,16 @@ public class TemplateExporter
         _logger.LogInformation("Exported {Count} Templates", exported.Count);
         return await Task.FromResult(exported);
     }
+
+    /// <summary>
+    /// Exports Templates filtered by a CategorySelection.
+    /// </summary>
+    public virtual async Task<List<ExportTemplate>> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.Aliases.Count == 0)
+            return [];
+        var all = await ExportAsync();
+        if (filter.IncludeAll) return all;
+        return all.Where(x => filter.Aliases.Contains(x.Alias)).ToList();
+    }
 }

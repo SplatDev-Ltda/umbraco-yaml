@@ -73,6 +73,18 @@ public class DocumentTypeExporter
     }
 
     /// <summary>
+    /// Exports DocumentTypes filtered by a CategorySelection.
+    /// </summary>
+    public virtual async Task<List<ExportDocumentType>> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.Aliases.Count == 0)
+            return [];
+        var all = await ExportAsync();
+        if (filter.IncludeAll) return all;
+        return all.Where(x => filter.Aliases.Contains(x.Alias)).ToList();
+    }
+
+    /// <summary>
     /// Exports property tabs from a content type.
     /// </summary>
     private List<ExportTab> ExportTabs(IContentType contentType)

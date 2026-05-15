@@ -70,6 +70,18 @@ public class MemberExporter
     }
 
     /// <summary>
+    /// Exports Members filtered by a CategorySelection.
+    /// </summary>
+    public virtual async Task<List<ExportMember>> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.Aliases.Count == 0)
+            return [];
+        var all = await ExportAsync();
+        if (filter.IncludeAll) return all;
+        return all.Where(x => filter.Aliases.Contains(x.Email)).ToList();
+    }
+
+    /// <summary>
     /// Exports all property values from a member.
     /// </summary>
     private Dictionary<string, object> ExportProperties(IMember member)

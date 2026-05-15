@@ -41,6 +41,18 @@ public class DictionaryExporter
     }
 
     /// <summary>
+    /// Exports Dictionary Items filtered by a CategorySelection.
+    /// </summary>
+    public virtual async Task<List<ExportDictionaryItem>> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.Aliases.Count == 0)
+            return [];
+        var all = await ExportAsync();
+        if (filter.IncludeAll) return all;
+        return all.Where(x => filter.Aliases.Contains(x.Key)).ToList();
+    }
+
+    /// <summary>
     /// Recursively exports a dictionary item and its children.
     /// </summary>
     private void ExportDictionaryItem(IDictionaryItem item, List<ExportDictionaryItem> exported)
