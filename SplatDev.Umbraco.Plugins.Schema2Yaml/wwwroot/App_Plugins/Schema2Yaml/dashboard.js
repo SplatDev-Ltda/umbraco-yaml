@@ -601,6 +601,17 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
     }
 
     _renderSelectionPanel() {
+        const flatCats = [
+            { key: 'languages',       label: 'Languages',       items: this._availableItems?.languages },
+            { key: 'dataTypes',       label: 'Data Types',       items: this._availableItems?.dataTypes },
+            { key: 'documentTypes',   label: 'Document Types',   items: this._availableItems?.documentTypes },
+            { key: 'mediaTypes',      label: 'Media Types',      items: this._availableItems?.mediaTypes },
+            { key: 'templates',       label: 'Templates',        items: this._availableItems?.templates },
+            { key: 'dictionaryItems', label: 'Dictionary Items', items: this._availableItems?.dictionaryItems },
+            { key: 'members',         label: 'Members',          items: this._availableItems?.members },
+            { key: 'users',           label: 'Users',            items: this._availableItems?.users },
+        ];
+
         return html`
             <div class="section-label">Profile name</div>
             <input class="profile-name-input" type="text"
@@ -608,14 +619,106 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
                    @input=${(e) => { this._editingProfileName = e.target.value; }}
                    placeholder="Enter profile name...">
             <div class="section-label">Selection</div>
-            <p style="color:var(--uui-color-text-alt,#888);font-size:13px">
-                Category filters loading… (Task 13)
-            </p>`;
+            ${this._loadingItems
+                ? html`<uui-loader-circle></uui-loader-circle>`
+                : flatCats.map(c => this._renderFlatCategoryRow(c))}
+            ${this._renderTreeCategoryRow('content', 'Content')}
+            ${this._renderTreeCategoryRow('media',   'Media')}`;
     }
 
-    // ─── Config dialog stubs (Tasks 13–15) ─────────────────────────────────────
+    _renderFlatCategoryRow({ key, label, items }) {
+        const cat      = this._configuring[key];
+        const included = cat.includeAll || cat.aliases.length > 0;
+        const expanded = this._expandedCategories.has(key);
 
-    async _fetchAvailableItems() { /* Task 13 */ }
+        return html`
+            <div class="cat-row">
+                <input type="checkbox" .checked=${included}
+                       @change=${(e) => this._toggleCategory(key, e.target.checked)}>
+                <div style="flex:1">
+                    <span class="cat-name">${label}</span>
+                    ${included && cat.includeAll
+                        ? html`<span class="cat-meta">(all)</span>`
+                        : nothing}
+                    ${included && items?.length > 0 ? html`
+                        <div>
+                            <span class="filter-toggle"
+                                  @click=${() => this._toggleEntityExpand(key)}>
+                                ${expanded ? '▲ hide' : '▼ filter...'}
+                            </span>
+                        </div>
+                        ${expanded ? html`
+                            <div class="entity-list">
+                                ${items.map(item => {
+                                    const sel = cat.includeAll
+                                        || cat.aliases.includes(item.alias);
+                                    return html`
+                                        <span class="chip ${sel ? 'selected' : ''}"
+                                              @click=${() => {
+                                                  if (cat.includeAll) {
+                                                      this._configuring = {
+                                                          ...this._configuring,
+                                                          [key]: {
+                                                              includeAll: false,
+                                                              aliases: items.map(i => i.alias)
+                                                                            .filter(a => a !== item.alias),
+                                                              nodeIds: []
+                                                          }
+                                                      };
+                                                  } else {
+                                                      this._toggleAlias(key, item.alias, !cat.aliases.includes(item.alias));
+                                                  }
+                                              }}>
+                                            ${item.name}
+                                        </span>`;
+                                })}
+                            </div>` : nothing}
+                    ` : nothing}
+                </div>
+            </div>`;
+    }
+
+    _renderTreeCategoryRow(key, label) {
+        return html`<!-- tree picker: Task 14 -->`;
+    }
+
+    // ─── Config dialog helpers (Task 13) ──────────────────────────────────────
+
+    async _fetchAvailableItems() {
+        this._loadingItems = true;
+        try {
+            const res = await this._fetchWithAuth('/umbraco/api/ExportItems/Available');
+            if (res.ok) this._availableItems = await res.json();
+        } catch { /* silently ignore */ }
+        finally { this._loadingItems = false; }
+    }
+
+    _toggleCategory(key, enabled) {
+        this._configuring = {
+            ...this._configuring,
+            [key]: { ...this._configuring[key], includeAll: enabled, aliases: [], nodeIds: [] }
+        };
+    }
+
+    _toggleEntityExpand(key) {
+        const next = new Set(this._expandedCategories);
+        next.has(key) ? next.delete(key) : next.add(key);
+        this._expandedCategories = next;
+    }
+
+    _toggleAlias(key, alias, selected) {
+        const cat     = this._configuring[key];
+        const aliases = selected
+            ? [...cat.aliases, alias]
+            : cat.aliases.filter(a => a !== alias);
+        this._configuring = {
+            ...this._configuring,
+            [key]: { ...cat, includeAll: false, aliases }
+        };
+    }
+
+    // ─── Config dialog stubs (Tasks 15) ────────────────────────────────────────
+
     async _saveProfile()         { /* Task 15 */ }
     async _saveAndApplyProfile() { /* Task 15 */ }
     async _deleteProfile()       { /* Task 15 */ }
