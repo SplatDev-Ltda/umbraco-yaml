@@ -70,4 +70,16 @@ public class UserExporter
 
         return await Task.FromResult(exported);
     }
+
+    /// <summary>
+    /// Exports Users filtered by a CategorySelection.
+    /// </summary>
+    public virtual async Task<List<ExportUser>> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.Aliases.Count == 0)
+            return [];
+        var all = await ExportAsync();
+        if (filter.IncludeAll) return all;
+        return all.Where(x => filter.Aliases.Contains(x.Email)).ToList();
+    }
 }

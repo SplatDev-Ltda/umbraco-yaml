@@ -63,6 +63,18 @@ public class DataTypeExporter
     }
 
     /// <summary>
+    /// Exports DataTypes filtered by a CategorySelection.
+    /// </summary>
+    public virtual async Task<List<ExportDataType>> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.Aliases.Count == 0)
+            return [];
+        var all = await ExportAsync();
+        if (filter.IncludeAll) return all;
+        return all.Where(x => filter.Aliases.Contains(x.Alias)).ToList();
+    }
+
+    /// <summary>
     /// Gets the appropriate editor alias based on Umbraco version.
     /// </summary>
     private string GetEditorAlias(IDataType dataType)
@@ -162,7 +174,7 @@ public class DataTypeExporter
     /// <summary>
     /// Generates a safe alias from a name.
     /// </summary>
-    private string GenerateAlias(string name)
+    public static string GenerateAlias(string name)
     {
         ArgumentNullException.ThrowIfNull(name);
 

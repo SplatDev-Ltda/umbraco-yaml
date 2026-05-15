@@ -55,6 +55,45 @@ public class ContentExporter
     }
 
     /// <summary>
+    /// Exports content nodes that match the provided NodeIds filter.
+    /// When IncludeAll is false and NodeIds is empty, returns an empty list.
+    /// When a node's ID is in the list, it and all its descendants are exported fully.
+    /// </summary>
+    public virtual async Task<List<ExportContent>> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.NodeIds.Count == 0)
+            return [];
+
+        if (filter.IncludeAll)
+            return await ExportAsync();
+
+        _logger.LogInformation("Filtered content export: {Count} node IDs", filter.NodeIds.Count);
+
+        var result = new List<ExportContent>();
+        foreach (var root in _contentService.GetRootContent())
+            CollectFilteredContent(root, filter.NodeIds, result);
+
+        return result;
+    }
+
+    private void CollectFilteredContent(IContent node, List<int> nodeIds, List<ExportContent> result)
+    {
+        if (nodeIds.Contains(node.Id))
+        {
+            // Export this node and ALL its descendants fully by reusing ExportNode
+            var temp = new List<ExportContent>();
+            ExportNode(node, temp, 0);
+            if (temp.Count > 0)
+                result.Add(temp[0]);
+            return;
+        }
+
+        // Not selected — traverse children to find selected descendants
+        foreach (var child in _contentService.GetPagedChildren(node.Id, 0, int.MaxValue, out _))
+            CollectFilteredContent(child, nodeIds, result);
+    }
+
+    /// <summary>
     /// Recursively exports a content node and its children.
     /// </summary>
     private void ExportNode(IContent content, List<ExportContent> exported, int depth)

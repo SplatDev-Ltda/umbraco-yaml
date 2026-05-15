@@ -15,8 +15,10 @@ namespace SplatDev.Umbraco.Plugins.Schema2Yaml.Services;
 public interface ISchemaExportService
 {
     Task<string> ExportToYamlAsync();
+    Task<string> ExportToYamlAsync(ExportSelection selection);
     Task ExportToFileAsync(string filePath);
     Task<byte[]> ExportToZipAsync();
+    Task<byte[]> ExportToZipAsync(ExportSelection selection);
     ExportStatistics GetLastExportStatistics();
 }
 
@@ -154,6 +156,102 @@ public class SchemaExportService : ISchemaExportService
             _logger.LogError(ex, "Schema export failed");
             throw;
         }
+    }
+
+    /// <summary>
+    /// Exports the Umbraco schema to YAML string, filtered by the provided selection.
+    /// </summary>
+    public async Task<string> ExportToYamlAsync(ExportSelection selection)
+    {
+        var (mediaItems, _) = await _mediaExporter.ExportAsync(selection.Media);
+        return await BuildFilteredYamlAsync(selection, mediaItems);
+    }
+
+    private async Task<string> BuildFilteredYamlAsync(ExportSelection selection, List<ExportMedia> mediaItems)
+    {
+        _logger.LogInformation("Starting filtered schema export");
+        var startTime = DateTime.UtcNow;
+
+        var languages     = await _languageExporter.ExportAsync(selection.Languages);
+        var dataTypes     = await _dataTypeExporter.ExportAsync(selection.DataTypes);
+        var documentTypes = await _documentTypeExporter.ExportAsync(selection.DocumentTypes);
+        var mediaTypes    = await _mediaTypeExporter.ExportAsync(selection.MediaTypes);
+        var templates     = await _templateExporter.ExportAsync(selection.Templates);
+        var media         = mediaItems;
+        var content       = await _contentExporter.ExportAsync(selection.Content);
+        var dictionary    = await _dictionaryExporter.ExportAsync(selection.DictionaryItems);
+        var members       = await _memberExporter.ExportAsync(selection.Members);
+        var users         = await _userExporter.ExportAsync(selection.Users);
+
+        var root = new ExportRoot
+        {
+            Umbraco = new UmbracoExport
+            {
+                Languages = languages,
+                DataTypes = dataTypes,
+                DocumentTypes = documentTypes,
+                MediaTypes = mediaTypes,
+                Templates = templates,
+                Media = media,
+                Content = content,
+                DictionaryItems = dictionary,
+                Members = members,
+                Users = users
+            }
+        };
+
+        _lastStatistics = new ExportStatistics
+        {
+            ExportDate = DateTime.UtcNow,
+            UmbracoVersion = _versionDetector.GetVersionString(),
+            LanguageCount = languages.Count,
+            DataTypeCount = dataTypes.Count,
+            DocumentTypeCount = documentTypes.Count,
+            MediaTypeCount = mediaTypes.Count,
+            TemplateCount = templates.Count,
+            MediaCount = media.Count,
+            ContentCount = content.Count,
+            DictionaryItemCount = dictionary.Count,
+            MemberCount = members.Count,
+            UserCount = users.Count,
+            Duration = DateTime.UtcNow - startTime
+        };
+
+        var serializer = new SerializerBuilder()
+            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .Build();
+        return serializer.Serialize(root);
+    }
+
+    /// <summary>
+    /// Exports schema and media files to a ZIP archive, filtered by the provided selection.
+    /// </summary>
+    public async Task<byte[]> ExportToZipAsync(ExportSelection selection)
+    {
+        // Fetch media once — items go into YAML, files go into the ZIP entries.
+        var (mediaItems, mediaFiles) = await _mediaExporter.ExportAsync(selection.Media);
+        var yaml = await BuildFilteredYamlAsync(selection, mediaItems);
+
+        using var memStream = new MemoryStream();
+        using (var archive = new ZipArchive(memStream, ZipArchiveMode.Create, true))
+        {
+            var yamlEntry = archive.CreateEntry("umbraco.yml", CompressionLevel.Optimal);
+            using (var entryStream = yamlEntry.Open())
+            using (var writer = new StreamWriter(entryStream, Encoding.UTF8))
+            {
+                await writer.WriteAsync(yaml);
+            }
+
+            foreach (var (path, bytes) in mediaFiles)
+            {
+                var mediaEntry = archive.CreateEntry($"media/{path}", CompressionLevel.Optimal);
+                using var entryStream = mediaEntry.Open();
+                await entryStream.WriteAsync(bytes);
+            }
+        }
+
+        memStream.Position = 0;
+        return memStream.ToArray();
     }
 
     /// <summary>

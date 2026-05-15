@@ -54,4 +54,16 @@ public class LanguageExporter
         _logger.LogInformation("Exported {Count} Languages", exported.Count);
         return await Task.FromResult(exported);
     }
+
+    /// <summary>
+    /// Exports Languages filtered by a CategorySelection.
+    /// </summary>
+    public virtual async Task<List<ExportLanguage>> ExportAsync(CategorySelection filter)
+    {
+        if (!filter.IncludeAll && filter.Aliases.Count == 0)
+            return [];
+        var all = await ExportAsync();
+        if (filter.IncludeAll) return all;
+        return all.Where(x => filter.Aliases.Contains(x.IsoCode)).ToList();
+    }
 }
