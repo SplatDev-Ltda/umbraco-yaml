@@ -34,6 +34,9 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         _yamlPreview:      { state: true },
         _previewTruncated: { state: true },
         _hasExport:        { state: true },
+        _profiles:         { state: true },
+        _activeProfile:    { state: true },
+        _showConfigDialog: { state: true },
     };
 
     static styles = css`
@@ -150,6 +153,9 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         this._hasExport = false;
         this._authContext = null;
         this._notificationContext = null;
+        this._profiles         = [];
+        this._activeProfile    = null;
+        this._showConfigDialog = false;
     }
 
     connectedCallback() {
@@ -160,6 +166,7 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             this._authContext = ctx;
             // Load last-export statistics on mount (silently — may not exist yet)
             this._loadStatistics();
+            this._loadActiveProfile();
         });
 
         // Resolve notification context for toast messages
@@ -168,7 +175,7 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         });
     }
 
-    // ─── Auth helper ───────────────────────────────────────────────────────────
+    // ─── Auth helpers ──────────────────────────────────────────────────────────
 
     async _fetchAuthenticated(path, options = {}) {
         const headers = { 'Content-Type': 'application/json', ...(options.headers ?? {}) };
@@ -181,6 +188,15 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         }
 
         return fetch(`${API_BASE}${path}`, { ...options, headers });
+    }
+
+    async _fetchWithAuth(url, options = {}) {
+        const headers = { 'Content-Type': 'application/json', ...(options.headers ?? {}) };
+        if (this._authContext) {
+            const token = await this._authContext.getLatestToken();
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+        }
+        return fetch(url, { ...options, headers });
     }
 
     // ─── API calls ─────────────────────────────────────────────────────────────
@@ -199,17 +215,44 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         }
     }
 
+    async _loadActiveProfile() {
+        try {
+            const res = await this._fetchWithAuth('/umbraco/api/ExportProfile/Active');
+            if (res.status === 204) { this._activeProfile = null; return; }
+            if (res.ok) this._activeProfile = await res.json();
+        } catch { /* silently ignore */ }
+    }
+
+    async _deactivateProfile(e) {
+        e.stopPropagation();
+        try {
+            await this._fetchWithAuth('/umbraco/api/ExportProfile/Deactivate', { method: 'POST' });
+            this._activeProfile = null;
+            this._notify('positive', 'Filter cleared', 'Next export will include everything.');
+        } catch (err) {
+            this._notify('danger', 'Failed to clear filter', err.message ?? 'Unknown error');
+        }
+    }
+
     async _runExport() {
         if (this._loading) return;
 
-        this._loading = true;
+        this._loading   = true;
         this._hasExport = false;
-        this._stats = null;
-        this._yaml = null;
+        this._stats     = null;
+        this._yaml      = null;
         this._yamlPreview = null;
 
         try {
-            const res = await this._fetchAuthenticated('/Export');
+            let res;
+            if (this._activeProfile) {
+                res = await this._fetchWithAuth('/umbraco/api/SchemaExport/ExportSelected', {
+                    method: 'POST',
+                    body: JSON.stringify(this._activeProfile.selection),
+                });
+            } else {
+                res = await this._fetchAuthenticated('/Export');
+            }
 
             if (!res.ok) {
                 const err = await res.json().catch(() => ({ message: res.statusText }));
@@ -242,9 +285,12 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
     }
 
     async _downloadYaml() {
-        // Re-exports server-side and streams the file
-        const url = `${API_BASE}/DownloadYaml`;
-        await this._triggerDownload(url);
+        if (this._activeProfile) {
+            await this._triggerDownloadPost(
+                '/umbraco/api/SchemaExport/DownloadYamlSelected', this._activeProfile.selection);
+        } else {
+            await this._triggerDownload(`${API_BASE}/DownloadYaml`);
+        }
     }
 
     async _downloadZip() {
@@ -252,8 +298,12 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         this._downloadingZip = true;
 
         try {
-            const url = `${API_BASE}/DownloadZip`;
-            await this._triggerDownload(url);
+            if (this._activeProfile) {
+                await this._triggerDownloadPost(
+                    '/umbraco/api/SchemaExport/DownloadZipSelected', this._activeProfile.selection);
+            } else {
+                await this._triggerDownload(`${API_BASE}/DownloadZip`);
+            }
         } finally {
             // Small delay so the button state is visible before re-enabling
             setTimeout(() => { this._downloadingZip = false; }, 2000);
@@ -318,6 +368,37 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         }
     }
 
+    async _triggerDownloadPost(url, body) {
+        try {
+            const res = await this._fetchWithAuth(url, {
+                method: 'POST',
+                body: JSON.stringify(body),
+            });
+            if (!res.ok) throw new Error(`Server returned ${res.status}: ${res.statusText}`);
+            const blob = await res.blob();
+            const cd   = res.headers.get('Content-Disposition') ?? '';
+            const match = cd.match(/filename[^;=\n]*=["']?([^"';\n]+)/i);
+            let name = match ? match[1].trim() : (url.includes('zip') ? 'umbraco-export.zip' : 'umbraco-export.yml');
+            if (typeof window.showSaveFilePicker === 'function') {
+                const ext = name.split('.').pop();
+                const types = ext === 'zip'
+                    ? [{ description: 'ZIP archive', accept: { 'application/zip': ['.zip'] } }]
+                    : [{ description: 'YAML file',   accept: { 'application/x-yaml': ['.yml','.yaml'] } }];
+                try {
+                    const handle = await window.showSaveFilePicker({ suggestedName: name, types });
+                    const w = await handle.createWritable();
+                    await w.write(blob); await w.close(); return;
+                } catch (pe) { if (pe.name === 'AbortError') return; }
+            }
+            const obj = URL.createObjectURL(blob);
+            const a = Object.assign(document.createElement('a'), { href: obj, download: name, style: 'display:none' });
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(obj), 100);
+        } catch (e) {
+            this._notify('danger', 'Download failed', e.message ?? 'Could not download file.');
+        }
+    }
+
     // ─── Notifications ─────────────────────────────────────────────────────────
 
     _notify(color, headline, message) {
@@ -325,6 +406,12 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             this._notificationContext.peek(color, { data: { headline, message } });
         }
     }
+
+    // ─── Config dialog (stubs — implemented in Tasks 12–15) ───────────────────
+
+    _openConfigDialog()  { this._showConfigDialog = true; }
+    _closeConfigDialog() { this._showConfigDialog = false; }
+    _renderConfigDialog() { return html`<div></div>`; }
 
     // ─── Render ────────────────────────────────────────────────────────────────
 
@@ -379,6 +466,10 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
     }
 
     render() {
+        const exportLabel = this._activeProfile
+            ? `Export (${this._activeProfile.name})`
+            : (this._loading ? 'Exporting…' : 'Export to YAML');
+
         return html`
             <div class="header">
                 <h1>Schema Export</h1>
@@ -389,11 +480,15 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
                 <uui-button
                     look="primary"
                     color="default"
-                    label=${this._loading ? 'Exporting…' : 'Export to YAML'}
+                    label=${exportLabel}
                     ?disabled=${this._loading}
                     @click=${this._runExport}>
                     ${this._loading ? html`<uui-loader-circle></uui-loader-circle>` : nothing}
-                    ${this._loading ? 'Exporting…' : 'Export to YAML'}
+                    ${exportLabel}
+                    ${this._activeProfile ? html`
+                        <span style="margin-left:6px;opacity:.7;font-size:11px"
+                              @click=${this._deactivateProfile}
+                              title="Clear filter — export everything">✕</span>` : nothing}
                 </uui-button>
 
                 <uui-button
@@ -414,10 +509,16 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
                     ${this._downloadingZip ? html`<uui-loader-circle></uui-loader-circle>` : nothing}
                     ${this._downloadingZip ? 'Preparing ZIP…' : 'Download ZIP (with media)'}
                 </uui-button>
+
+                <uui-button look="secondary" color="default"
+                    label="Configure Export" @click=${this._openConfigDialog}>
+                    Configure Export
+                </uui-button>
             </div>
 
             ${this._renderStats()}
             ${this._renderPreview()}
+            ${this._showConfigDialog ? this._renderConfigDialog() : nothing}
         `;
     }
 }
