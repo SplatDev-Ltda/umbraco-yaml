@@ -8,7 +8,7 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Yaml2Schema</PackageId>
-    <Version>1.0.37</Version>
+    <Version>1.0.38</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
@@ -21,7 +21,7 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v1.0.37: Add umbraco-marketplace.json for Umbraco Marketplace listing. Dashboard, WCAG UI/UX fixes, and deprecated API removal from v1.0.36.</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.38: Fix auth token — revert _getToken() to getLatestToken() (getOpenApiConfiguration() has no .token, causing 401 on every API call). v1.0.37: Add umbraco-marketplace.json, dashboard, WCAG UI/UX fixes.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
