@@ -178,11 +178,9 @@ class Yaml2SchemaDashboard extends UmbElementMixin(LitElement) {
 
     async _getToken() {
         if (!this._authContext) return null;
-        // Umbraco 17+: getOpenApiConfiguration replaces the deprecated getLatestToken (removed in v19)
-        if (typeof this._authContext.getOpenApiConfiguration === 'function') {
-            const config = await this._authContext.getOpenApiConfiguration();
-            return config?.token ?? null;
-        }
+        // getLatestToken() is deprecated in Umbraco 17 but functional until v19.
+        // getOpenApiConfiguration() configures the OpenAPI SDK client and does not
+        // expose a raw Bearer token for use in custom fetch() calls.
         return this._authContext.getLatestToken?.() ?? null;
     }
 
