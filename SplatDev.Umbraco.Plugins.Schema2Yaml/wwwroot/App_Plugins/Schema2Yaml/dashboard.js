@@ -219,9 +219,9 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             background: var(--uui-color-surface,#fff);
         }
         .chip.selected {
-            background: var(--uui-color-selected,#e3edff);
+            background: var(--uui-color-interactive,#1b264f);
             border-color: var(--uui-color-interactive,#1b264f);
-            color: var(--uui-color-interactive,#1b264f);
+            color: #fff;
         }
     `;
 
