@@ -21,7 +21,7 @@
     <_BasePackageTags>umbraco yaml infrastructure-as-code cms content-management export schema document-types data-types templates media languages dictionary members users umbraco-marketplace</_BasePackageTags>
 
     <PackageId>$(_BasePackageId)</PackageId>
-    <Version>2.0.5</Version>
+    <Version>2.0.6</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
@@ -34,7 +34,7 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v2.0.4: Add strict upper-bound version ranges on Umbraco dependencies so NuGet correctly falls back to v1.x on Umbraco 13 projects. Supports Umbraco 14–17. For Umbraco 13, use v1.x.</PackageReleaseNotes>
+    <PackageReleaseNotes>v2.0.6: Fix ExportProfile controller route templates (Get/Update/Delete/Activate now correctly bind id from the URL path). WCAG UI/UX audit: raise minimum font sizes to 12px, add ARIA dialog attributes, add label to all uui-button elements, replace deprecated getLatestToken() with getOpenApiConfiguration(). Fix tree-expander contrast (#888 → #595959).</PackageReleaseNotes>
 
     <!-- Umbraco Marketplace metadata -->
     <PackageType>Dependency</PackageType>
