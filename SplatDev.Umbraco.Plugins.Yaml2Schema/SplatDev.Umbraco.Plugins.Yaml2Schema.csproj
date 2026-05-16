@@ -8,7 +8,7 @@
 
     <!-- NuGet package metadata -->
     <PackageId>SplatDev.Umbraco.Plugins.Yaml2Schema</PackageId>
-    <Version>1.0.36</Version>
+    <Version>1.0.37</Version>
     <Authors>Carlos Casalicchio</Authors>
     <Company>SplatDev</Company>
     <Copyright>Copyright © 2026 SplatDev</Copyright>
@@ -21,7 +21,7 @@
     <RepositoryUrl>https://github.com/SplatDev-Ltda/umbraco-yaml</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v1.0.36: Add backoffice dashboard in the Settings section showing plugin status, supported entity types, and usage guide. Replace deprecated getLatestToken() with getOpenApiConfiguration() (Umbraco 17+). Remove emoji icons from entity grid (WCAG no-emoji-icons rule).</PackageReleaseNotes>
+    <PackageReleaseNotes>v1.0.37: Add umbraco-marketplace.json for Umbraco Marketplace listing. Dashboard, WCAG UI/UX fixes, and deprecated API removal from v1.0.36.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,10 +41,11 @@
     <PackageReference Include="YamlDotNet" Version="15.1.0" />
   </ItemGroup>
 
-  <!-- Include README and icon in the NuGet package -->
+  <!-- Include README, icon, and Umbraco Marketplace metadata in the NuGet package -->
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="umbraco-marketplace.json" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <!-- Include App_Plugins in the NuGet package via contentFiles (modern NuGet convention) -->
