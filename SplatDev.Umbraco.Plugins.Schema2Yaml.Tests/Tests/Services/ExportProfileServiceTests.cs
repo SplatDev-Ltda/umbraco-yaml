@@ -51,7 +51,7 @@ public class ExportProfileServiceTests
     public async Task GetActiveAsync_ReturnsNull_WhenNoActiveProfile()
     {
         var emptyList = new List<ExportProfileDto>();
-        _database.FetchAsync<ExportProfileDto>(Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _database.FetchAsync<ExportProfileDto>(Arg.Any<string>())
             .Returns(emptyList);
 
         var result = await _sut.GetActiveAsync();
