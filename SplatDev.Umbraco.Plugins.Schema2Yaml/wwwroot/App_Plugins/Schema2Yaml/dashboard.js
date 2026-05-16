@@ -93,8 +93,8 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         }
 
         .stat-label {
-            font-size: 11px;
-            color: var(--uui-color-text-alt, #888);
+            font-size: 12px;
+            color: var(--uui-color-text-alt, #595959);
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: var(--uui-size-2, 6px);
@@ -108,8 +108,8 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         }
 
         .stat-meta {
-            font-size: 11px;
-            color: var(--uui-color-text-alt, #888);
+            font-size: 12px;
+            color: var(--uui-color-text-alt, #595959);
             margin-top: var(--uui-size-2, 6px);
         }
 
@@ -152,7 +152,7 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
 
         .config-overlay {
             position: fixed; inset: 0;
-            background: rgba(0,0,0,.4); z-index: 1000;
+            background: rgba(0,0,0,.5); z-index: 1000;
             display: flex; align-items: center; justify-content: center;
         }
         .config-dialog {
@@ -196,8 +196,8 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             border-radius: 4px; font-size: 14px; margin-bottom: 16px;
         }
         .section-label {
-            font-size: 11px; font-weight: 600; text-transform: uppercase;
-            color: var(--uui-color-text-alt,#888); letter-spacing: .05em; margin-bottom: 8px;
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            color: var(--uui-color-text-alt,#595959); letter-spacing: .05em; margin-bottom: 8px;
         }
         .cat-row {
             display: flex; align-items: flex-start; gap: 8px;
@@ -205,9 +205,9 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
         }
         .cat-row:last-child { border-bottom: none; }
         .cat-name { font-weight: 500; font-size: 14px; }
-        .cat-meta { font-size: 12px; color: var(--uui-color-text-alt,#888); margin-left: 4px; }
+        .cat-meta { font-size: 12px; color: var(--uui-color-text-alt,#595959); margin-left: 4px; }
         .filter-toggle {
-            font-size: 11px; color: var(--uui-color-interactive,#1b264f);
+            font-size: 12px; color: var(--uui-color-interactive,#1b264f);
             cursor: pointer; margin-top: 4px; display: inline-block;
         }
         .entity-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -278,25 +278,27 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
 
     // ─── Auth helpers ──────────────────────────────────────────────────────────
 
+    async _getToken() {
+        if (!this._authContext) return null;
+        // Umbraco 17+: getOpenApiConfiguration replaces the deprecated getLatestToken (removed in v19)
+        if (typeof this._authContext.getOpenApiConfiguration === 'function') {
+            const config = await this._authContext.getOpenApiConfiguration();
+            return config?.token ?? null;
+        }
+        return this._authContext.getLatestToken?.() ?? null;
+    }
+
     async _fetchAuthenticated(path, options = {}) {
         const headers = { 'Content-Type': 'application/json', ...(options.headers ?? {}) };
-
-        if (this._authContext) {
-            const token = await this._authContext.getLatestToken();
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-        }
-
+        const token = await this._getToken();
+        if (token) headers['Authorization'] = `Bearer ${token}`;
         return fetch(`${API_BASE}${path}`, { ...options, headers });
     }
 
     async _fetchWithAuth(url, options = {}) {
         const headers = { 'Content-Type': 'application/json', ...(options.headers ?? {}) };
-        if (this._authContext) {
-            const token = await this._authContext.getLatestToken();
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-        }
+        const token = await this._getToken();
+        if (token) headers['Authorization'] = `Bearer ${token}`;
         return fetch(url, { ...options, headers });
     }
 
@@ -554,17 +556,18 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
     _renderConfigDialog() {
         return html`
             <div class="config-overlay"
+                 role="dialog" aria-modal="true" aria-label="Configure Export"
                  @click=${(e) => { if (e.target === e.currentTarget) this._closeConfigDialog(); }}>
                 <div class="config-dialog">
                     <div class="config-header">
                         Configure Export
-                        <uui-button look="secondary" compact @click=${this._closeConfigDialog}>✕</uui-button>
+                        <uui-button look="secondary" compact label="Close dialog" aria-label="Close dialog" @click=${this._closeConfigDialog}>✕</uui-button>
                     </div>
 
                     <div class="config-body">
                         <div class="config-profiles">
                             <div class="section-label">Profiles</div>
-                            <uui-button look="secondary" compact @click=${this._newProfile}>
+                            <uui-button look="secondary" compact label="New profile" @click=${this._newProfile}>
                                 + New profile
                             </uui-button>
                             <hr style="border:none;border-top:1px solid var(--uui-color-border,#e3e3e3);margin:4px 0">
@@ -579,6 +582,7 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
                             ${this._editingProfileId !== null ? html`
                                 <hr style="border:none;border-top:1px solid var(--uui-color-border,#e3e3e3);margin:8px 0">
                                 <uui-button look="secondary" color="danger" compact
+                                            label="Delete profile"
                                             @click=${this._deleteProfile}>
                                     Delete
                                 </uui-button>` : nothing}
@@ -590,9 +594,9 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
                     </div>
 
                     <div class="config-footer">
-                        <uui-button look="secondary" @click=${this._closeConfigDialog}>Cancel</uui-button>
-                        <uui-button look="primary" color="default" @click=${this._saveProfile}>Save</uui-button>
-                        <uui-button look="primary" color="positive" @click=${this._saveAndApplyProfile}>
+                        <uui-button look="secondary" label="Cancel" @click=${this._closeConfigDialog}>Cancel</uui-button>
+                        <uui-button look="primary" color="default" label="Save" @click=${this._saveProfile}>Save</uui-button>
+                        <uui-button look="primary" color="positive" label="Save and Apply" @click=${this._saveAndApplyProfile}>
                             Save &amp; Apply
                         </uui-button>
                     </div>
@@ -736,7 +740,7 @@ class Schema2YamlDashboard extends UmbElementMixin(LitElement) {
             <div style="padding-left:${depth * 16}px;margin:2px 0">
                 <div style="display:flex;align-items:center;gap:6px">
                     ${hasChildren
-                        ? html`<span style="width:14px;font-size:11px;cursor:pointer;color:var(--uui-color-text-alt,#888)"
+                        ? html`<span style="width:14px;font-size:12px;cursor:pointer;color:var(--uui-color-text-alt,#595959)"
                                      @click=${() => this._toggleTreeExpand(key, node.id)}>
                                    ${isExpanded ? '▼' : '▶'}
                                </span>`

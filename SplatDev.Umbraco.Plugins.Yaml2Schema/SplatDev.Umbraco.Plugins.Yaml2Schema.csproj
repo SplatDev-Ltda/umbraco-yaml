@@ -47,4 +47,14 @@
     <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <!-- Include App_Plugins in the NuGet package via contentFiles (modern NuGet convention) -->
+  <ItemGroup>
+    <Content Include="wwwroot\App_Plugins\**\*" Pack="true" PackagePath="App_Plugins_Package\" />
+  </ItemGroup>
+
+  <!-- Include buildTransitive targets for reliable App_Plugins delivery -->
+  <ItemGroup>
+    <None Include="buildTransitive\**\*.targets" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
 </Project>

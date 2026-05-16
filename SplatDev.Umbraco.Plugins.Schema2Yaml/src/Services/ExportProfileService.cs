@@ -38,8 +38,7 @@ public class ExportProfileService : IExportProfileService
     {
         using var scope = _scopeProvider.CreateScope();
         var dtos = await scope.Database.FetchAsync<ExportProfileDto>(
-            "SELECT id, name, isActive FROM schema2yamlExportProfiles ORDER BY name",
-            default);
+            "SELECT id, name, isActive FROM schema2yamlExportProfiles ORDER BY name");
         scope.Complete();
         return dtos.Select(d => new ExportProfileSummary
             { Id = d.Id, Name = d.Name, IsActive = d.IsActive }).ToList();
@@ -49,8 +48,7 @@ public class ExportProfileService : IExportProfileService
     {
         using var scope = _scopeProvider.CreateScope();
         var dtos = await scope.Database.FetchAsync<ExportProfileDto>(
-            "SELECT * FROM schema2yamlExportProfiles WHERE isActive = 1",
-            default);
+            "SELECT * FROM schema2yamlExportProfiles WHERE isActive = 1");
         scope.Complete();
         return dtos.Count == 0 ? null : Map(dtos[0]);
     }
@@ -133,8 +131,7 @@ public class ExportProfileService : IExportProfileService
     {
         using var scope = _scopeProvider.CreateScope();
         await scope.Database.ExecuteAsync(
-            "UPDATE schema2yamlExportProfiles SET isActive = 0",
-            default);
+            "UPDATE schema2yamlExportProfiles SET isActive = 0");
         scope.Complete();
     }
 

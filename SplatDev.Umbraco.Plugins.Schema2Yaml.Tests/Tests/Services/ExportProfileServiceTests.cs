@@ -36,7 +36,7 @@ public class ExportProfileServiceTests
             new() { Id = 1, Name = "Schema Only", IsActive = true,
                     SelectionJson = "{}", CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow }
         };
-        _database.FetchAsync<ExportProfileDto>(Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _database.FetchAsync<ExportProfileDto>(Arg.Any<string>())
             .Returns(dtoList);
 
         var result = await _sut.GetAllAsync();
@@ -51,7 +51,7 @@ public class ExportProfileServiceTests
     public async Task GetActiveAsync_ReturnsNull_WhenNoActiveProfile()
     {
         var emptyList = new List<ExportProfileDto>();
-        _database.FetchAsync<ExportProfileDto>(Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _database.FetchAsync<ExportProfileDto>(Arg.Any<string>())
             .Returns(emptyList);
 
         var result = await _sut.GetActiveAsync();
@@ -73,7 +73,7 @@ public class ExportProfileServiceTests
             new() { Id = 2, Name = "Test", IsActive = true,
                     SelectionJson = json, CreatedDate = DateTime.UtcNow, ModifiedDate = DateTime.UtcNow }
         };
-        _database.FetchAsync<ExportProfileDto>(Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _database.FetchAsync<ExportProfileDto>(Arg.Any<string>())
             .Returns(dtoList);
 
         var result = await _sut.GetActiveAsync();

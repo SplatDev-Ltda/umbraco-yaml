@@ -42,7 +42,7 @@ public class ExportProfileController : ControllerBase
     }
 
     // GET /umbraco/api/exportprofile/get/{id}
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     {
         try { return Ok(await _profiles.GetByIdAsync(id)); }
@@ -61,7 +61,7 @@ public class ExportProfileController : ControllerBase
     }
 
     // PUT /umbraco/api/exportprofile/update/{id}
-    [HttpPut]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] ProfileRequest request)
     {
         if (string.IsNullOrWhiteSpace(request?.Name))
@@ -72,7 +72,7 @@ public class ExportProfileController : ControllerBase
     }
 
     // DELETE /umbraco/api/exportprofile/delete/{id}
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         try { await _profiles.DeleteAsync(id); return NoContent(); }
@@ -80,7 +80,7 @@ public class ExportProfileController : ControllerBase
     }
 
     // POST /umbraco/api/exportprofile/activate/{id}
-    [HttpPost]
+    [HttpPost("{id}")]
     public async Task<IActionResult> Activate(int id)
     {
         try { await _profiles.ActivateAsync(id); return Ok(); }
